@@ -3,7 +3,7 @@
     "description": "基于YII2.0框架的整合的后台管理界面，实现了权限、配置、日志等基础功能。",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","webadmin","admin"],
-    "license": "",
+    "license": "MIT",
     "authors": [
         {
             "name": "统一",
