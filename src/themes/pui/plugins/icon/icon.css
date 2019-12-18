@@ -1,0 +1,7 @@
+/**
+ @Name：icon V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-6-24 
+ */
+.puiicon{display:inline-block;*zoom:1;*display:inline;width:16px;height:16px;background-repeat:no-repeat;background-position:center center;vertical-align:middle;}
+.i_default{background-image:url(images/default.png);}

@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>mapmark</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<input type="button" value="标注地图" data-pui-mapmark="{callback:function(e){
+                            		alert(e.lnglat.lng + ',' + e.lnglat.lat + ',' + (e.address ? e.address.regeocode.formattedAddress : '未知'));
+                            	}}">
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<input type="button" value="标注地图" id="testbtn">
+	<script language="javascript">
+	pui.use(['jquery','pui/mapmark'],function($,U){
+		$('#testbtn').mapmark({
+				defaultCity:"厦门市",
+				callback:function(e){
+					alert(e.lnglat.lng + ',' + e.lnglat.lat + ',' + (e.address ? e.address.regeocode.formattedAddress : '未知'));
+				}
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

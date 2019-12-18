@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>form</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:600px;">
+	<h3>HTML调用</h3>
+	<form action="?" method="POST" data-pui-form="">
+		<div class="row"><label>普通文本框:</label><input type="text" name="inputtext"/></div>
+		<div class="row"><label>密码框:</label><input type="password" /></div>
+		<div class="row"><label>多选框: </label><input type="checkbox" name="chbox" id=""></div>
+		<div class="row">
+			<label>多个多选框: </label>
+			<label><input type="checkbox" name="chbox" id="">选项一</label>
+			<label><input type="checkbox" name="chbox" id="">选项二</label>
+			<label><input type="checkbox" name="chbox" id="">选项三</label>
+		</div>
+		<div class="row"><label>单选框:</label> 
+			<input type="radio" id="" name="question" value="oui" checked ><label>选项一</label>
+			<input type="radio" id="" name="question" value="non" ><label>选项二</label></div>
+		<div class="row"><label>多行文本框:</label> <textarea cols="40" rows="12" name="mytext"></textarea></div>
+
+		<div class="row">
+			<label>下拉框:</label>
+			<select name="select">
+				<option value="">Option 1&nbsp;</option>
+				<option value="opt1">Option 2&nbsp;</option>
+			</select>
+		</div>
+		<div class="row">
+			<label>较多文本的下拉框:</label>
+			<select name="select2" >
+				<option value="opt1">Big Option test line with more wordssss</option>
+				<option value="opt2">Option 2</option>
+				<option value="opt3">Option 3</option>
+				<option value="opt4">Option 4</option>
+				<option value="opt5">Option 5</option>
+				<option value="opt6">Option 6</option>
+				<option value="opt7">Option 7</option>
+				<option value="opt8">Option 8</option>
+			</select>
+		</div>
+		
+		<div class="row"><label>提交按纽:</label><input type="submit" value="submit" /></div>
+		<div class="row"><label>重置按纽:</label><input type="reset" value="reset" /></div>
+		<div class="row"><label>普通按纽:</label><input type="button" value="bouton" /></div>
+	</form>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<form action="?" method="POST" id="testform">
+		<div class="row"><label>普通文本框:</label><input type="text" name="inputtext"/></div>
+		<div class="row"><label>密码框:</label><input type="password" /></div>
+		<div class="row"><label>多选框: </label><input type="checkbox" name="chbox" id=""></div>
+		<div class="row">
+			<label>多个多选框: </label>
+			<label><input type="checkbox" name="chbox" id="">选项一</label>
+			<label><input type="checkbox" name="chbox" id="">选项二</label>
+			<label><input type="checkbox" name="chbox" id="">选项三</label>
+		</div>
+		<div class="row"><label>单选框:</label> 
+			<input type="radio" id="" name="question" value="oui" checked ><label>选项一</label>
+			<input type="radio" id="" name="question" value="non" ><label>选项二</label></div>
+		<div class="row"><label>多行文本框:</label> <textarea cols="40" rows="12" name="mytext"></textarea></div>
+
+		<div class="row">
+			<label>下拉框:</label>
+			<select name="select">
+				<option value="">Option 1&nbsp;</option>
+				<option value="opt1">Option 2&nbsp;</option>
+			</select>
+		</div>
+		<div class="row">
+			<label>较多文本的下拉框:</label>
+			<select name="select2" >
+				<option value="opt1">Big Option test line with more wordssss</option>
+				<option value="opt2">Option 2</option>
+				<option value="opt3">Option 3</option>
+				<option value="opt4">Option 4</option>
+				<option value="opt5">Option 5</option>
+				<option value="opt6">Option 6</option>
+				<option value="opt7">Option 7</option>
+				<option value="opt8">Option 8</option>
+			</select>
+		</div>
+		
+		<div class="row"><label>提交按纽:</label><input type="submit" value="submit" /></div>
+		<div class="row"><label>重置按纽:</label><input type="reset" value="reset" /></div>
+		<div class="row"><label>普通按纽:</label><input type="button" value="bouton" /></div>
+	</form>
+	<script language="javascript">
+	pui.use(['jquery','pui/form'],function($,U){
+		$('#testform').form();
+	});
+	</script>
+</div>
+</body>
+</html>

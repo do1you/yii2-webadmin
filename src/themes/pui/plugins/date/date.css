@@ -1,0 +1,71 @@
+/**
+ @Name：date V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-1-13 
+ */
+.date_cf:after { visibility:hidden; display:block; font-size:0; content:"."; clear:both; height:0;}
+.date_cf { zoom:1;}
+.date_input{background:url(./date.png) no-repeat right center;border:1px solid #C6C6C6;padding-right:20px !important;outline:0;}
+body div input.date_input{background-image:url(./date.png);background-position:right center;background-repeat:no-repeat;}
+div.date_box li,div.date_box ul,div.date_box td,div.date_box input{list-style:none;margin:0;padding:0;}
+div.date_box{position:absolute;width:240px;display:none;z-index:999;font-size:14px;margin-left:-8px;}
+div.date_box .date_head{height:24px;line-height:24px;padding:6px;position:relative;overflow:hidden;border-radius:4px 4px 0 0;}
+div.date_box .date_head a{float:left; position:relative;width:24px;height:24px;cursor:pointer;text-decoration: inherit;}
+div.date_box .date_head a i,div.date_box .date_year_list a i{ position:absolute;top:50%;left:50%;margin:-5px 0 0 -8px;width:0;height:0;border-width:5px; border-style:dashed; border-color:transparent;font-size:0px;line-height:0px;}
+div.date_box .date_head a.date_year_right i,div.date_box .date_head a.date_month_right i{margin:-5px 0 0 -2px;}
+div.date_box .date_head a.date_year_label i,div.date_box .date_head a.date_month_label i{margin:-3px 0 0 0;left:auto;right:5px;}
+div.date_box .date_head a.date_year_label{width:70px;padding-left:10px;}
+div.date_box .date_head a.date_month_label{width:45px;padding-left:7px;}
+div.date_box .date_table{width:100%;border-collapse: collapse;border-spacing: 0px;}
+div.date_box .date_table th,div.date_box .date_table td{width:34px;text-align:center;height:21px;line-height:21px;text-align:center;}
+div.date_box .date_table th{height:19px;line-height:19px;}
+div.date_box .date_table td{cursor:pointer;font-weight:bold;}
+div.date_box .date_table td.more_date{font-weight:normal;}
+div.date_box .date_foot{line-height:26px;position:relative;height:26px;overflow:hidden;border-radius:0 0 4px 4px;}
+div.date_box .date_foot ul{width:115px;height:26px;}
+div.date_box .date_foot ul,div.date_box .date_foot ul li{float:left;}
+div.date_box .date_foot ul li.date_time_label{padding:0;width:36px;text-align:center;}
+div.date_box .date_foot ul li input{float:left; width:22px; height:26px; line-height:26px; border:0; text-align:center; cursor:pointer; font-size:14px; }
+div.date_box .date_foot .date_btn{line-height:27px; position:absolute;right:0;right:0;}
+div.date_box .date_foot .date_btn a{float:left;width:40px;text-align:center;cursor:pointer;text-decoration: inherit;}
+div.date_box .date_year_list,div.date_box .date_month_list{ position:absolute;left:0px;top:30px;width:134px;height:180px;}
+div.date_box .date_year_list li,div.date_box .date_month_list li{float:left;width:67px;text-align:center;line-height:21px;height:21px;cursor:pointer;}
+div.date_box .date_month_list{left:134px;;width:106px;}
+div.date_box .date_month_list li{width:53px;line-height:30px;height:30px;}
+div.date_box .date_year_list a{display:block;line-height:0px;font-size:0px;width:100%;height:16px; position:relative;cursor:pointer;}
+div.date_box .date_year_list a.date_year_up i{margin:-8px 0 0 -5px;}
+div.date_box .date_year_list a.date_year_down i{margin:-2px 0 0 -5px;}
+div.date_box .date_year_list a.date_year_down{height:17px;}
+div.date_box .date_hours_list,div.date_box .date_minutes_list,div.date_box .date_seconds_list{ position:absolute;bottom:27px;left:0px;width:240px;}
+div.date_box .date_hours_list div,div.date_box .date_minutes_list div,div.date_box .date_seconds_list div{text-align:center;line-height:23px;font-weight:bold;}
+div.date_box .date_hours_list li,div.date_box .date_minutes_list li,div.date_box .date_seconds_list li{float:left;text-align:center;width:25%;line-height:21px;cursor:pointer;}
+div.date_box .date_minutes_list li,div.date_box .date_seconds_list li{width:10%;}
+div.date_box .date_hide{display:none;}
+
+
+/* color config */
+div.date_box{} /* 主容器 */
+div.date_box .date_head,div.date_box .date_year_list,div.date_box .date_month_list{background:#5db2ff;color:#ffffff;} /* 年月容器及年月选择容器 */
+div.date_box .date_head a{color:#ffffff;}/* 年月容器按纽 */
+div.date_box .date_head a:hover,div.date_box .date_year_list a:hover,div.date_box .date_year_list li.date_hover,div.date_box .date_month_list li.date_hover{background:#5579BA;color:#ffffff;font-weight:bold;}/* 年月容器移动到 */
+div.date_box a.date_year_label.expanded,div.date_box a.date_month_label.expanded,div.date_box .date_year_list li.date_checked,div.date_box .date_month_list li.date_checked{background:#5579BA;color:#ffffff;font-weight:bold;}/* 年月选中效果 */
+div.date_box a.date_year_left i,div.date_box a.date_month_left i{border-right-style: solid;border-right-color: #fff;}/* 向左三角尖 */
+div.date_box a.date_year_right i,div.date_box a.date_month_right i{border-left-style: solid;border-left-color: #fff;}/* 向右三角尖 */
+div.date_box a.date_year_label i,div.date_box a.date_month_label i,div.date_box .date_year_list a.date_year_down i{border-top-style: solid;border-top-color: #fff;}/* 向下三角尖 */
+div.date_box .date_year_list a.date_year_up i{border-bottom-style: solid;border-bottom-color: #fff;}/* 向上三角尖 */
+div.date_box .date_table{border-left:1px solid #5db2ff;border-right:1px solid #5db2ff;background:#fff;}/* 日期容器 */
+div.date_box .date_table th{background:#efefef;color:#5579BA;}/* 日期容器标题 */
+div.date_box .date_table td{color:#5db2ff;}/* 单个日期容器 */
+div.date_box .date_table td.more_date{color:#aaaaaa;}/* 非本月日期容器 */
+div.date_box .date_table td.date_hover{background:#dddddd;}/* 日期容器移动到 */
+div.date_box .date_table td.date_checked{background:#5db2ff;color:#ffffff;font-weight:bold;}/* 日期选中效果 */
+div.date_box .date_foot{border-left:1px solid #5db2ff;border-right:1px solid #5db2ff;border-bottom:1px solid #5db2ff;background:#fff;}/* 底部容器 */
+div.date_box .date_foot ul{border-top:1px solid #5db2ff;}/* 时间容器 */
+div.date_box ul li.date_time_label{border-right:1px solid #5db2ff;color:#5579BA;}/* 时间标签容器 */
+div.date_box .date_foot ul li input{color:#5579BA;}
+div.date_box .date_hours_list,div.date_box .date_minutes_list,div.date_box .date_seconds_list{background:#f9f9f9;color:#5579BA;} /* 时分秒选择容器 */
+div.date_box .date_hours_list li.date_hover,div.date_box .date_minutes_list li.date_hover,div.date_box .date_seconds_list li.date_hover{background:#5579BA;color:#ffffff;font-weight:bold;}/* 时分秒选择容器移动到 */
+div.date_box .date_hours_list div,div.date_box .date_minutes_list div,div.date_box .date_seconds_list div{background:#5579BA;color:#ffffff;}/* 时分秒选择容器标题 */
+div.date_box .date_hours_list li.date_checked,div.date_box .date_minutes_list li.date_checked,div.date_box .date_seconds_list li.date_checked{background:#5db2ff;color:#ffffff;font-weight:bold;}/* 时分秒选中效果 */
+div.date_box .date_btn a{border-left:1px solid #dddddd;background:#5db2ff;color:#ffffff;}/* 主容器按纽 */
+div.date_box .date_btn a:hover{background:#5579BA;color:#ffffff;}/* 主容器按纽移动到 */

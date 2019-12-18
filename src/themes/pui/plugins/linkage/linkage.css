@@ -1,0 +1,17 @@
+/**
+ @Name：linkage V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2016-8-16
+ */
+.linkage_box{ position:fixed;left:0;right:0;bottom:0; font-family:"微软雅黑";font-weight:500;z-index:97;}
+.linkage_bg{ position:fixed;left:0;right:0;bottom:0;top:0;background-color:#000000;filter:alpha(opacity=40);-moz-opacity:0.4;opacity:0.4;z-index:1;}
+.linkage_main{position:absolute;width:100%;left:0;bottom:0;z-index:2;background-color:#ffffff;}
+.linkage_title{border-top:1px solid #c6c6c6;border-bottom:1px solid #c6c6c6;height:42px;line-height:42px;}
+.linkage_title a{ text-decoration:none;font-size:15px;color:#333333;padding:0 15px;display:block; position:absolute;cursor:pointer;}
+.linkage_title a.ok{color:#ff3434;right:0;}
+.linkage_list{display:-moz-box;display:-webkit-box;display:-ms-flexbox;display:box; position:relative;padding:6px 0;overflow:hidden;}
+.linkage_selected{line-height:28px;height:30px;box-sizing:border-box;width:100%;;border-top:1px solid #c6c6c6;border-bottom:1px solid #c6c6c6; position:absolute;top:50%;margin-top:-15px;z-index:1;}
+.linkage_flex{height:150px;-webkit-box-flex: 1;-moz-box-flex: 1;box-flex: 1;display:block;position:relative; z-index:2;overflow:hidden; }
+.linkage_flex div{ position:absolute;top:0px;left:0;bottom:0px;right:0;}
+.linkage_flex ul{margin:0;padding:0;display:block;width:100%;}
+.linkage_list li{margin:0;padding:0; list-style:none;text-align:center;height:30px;line-height:30px;color:#333333;}

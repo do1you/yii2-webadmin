@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>startimg</title>
+<script type="text/javascript" src="../../boot.js"></script>
+<style>
+html,body{height:100%;margin:0;padding:0;}
+ul{margin:0;}
+</style>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<div style="width:320px;height:568px;" data-pui-startimg="">
+		<ul>
+			<li><a href="http://www.baidu.com" target="_blank"><img src="./113746_912.jpg" alt="全民红包时代" ></a></li>
+			<li><img src="./150855_641.jpg" alt="福利来啦" ></li>
+			<li><img src="./144503_241.jpg" alt="启动图片" ></li>
+		</ul>
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<div style="width:320px;height:568px;" id="textbox">
+		<ul>
+			<li><a href="http://www.baidu.com" target="_blank"><img src="./113746_912.jpg" alt="全民红包时代" ></a></li>
+			<li><img src="./150855_641.jpg" alt="福利来啦" ></li>
+			<li><img src="./144503_241.jpg" alt="启动图片" ></li>
+		</ul>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/startimg'],function($,U){
+		$('#textbox').startimg();
+	});
+	</script>
+</div>
+</body>
+</html>

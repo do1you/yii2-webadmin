@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>scrollpage</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<div data-pui-scrollpage='{"contentNext":"a.next","scrollTarget":"#box1"}' style="height:300px;overflow:auto;" id="box1">
+		<a href="file.php?page=1" class="next" style="display:none;">下一页</a>
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<div id="box2">
+		<a href="file.php?page=1" class="next" style="display:none;">下一页</a>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/scrollpage'],function($,U){
+		$('#box2').scrollpage({"contentNext":".next"});
+	});
+	</script>
+</div>
+</body>
+</html>

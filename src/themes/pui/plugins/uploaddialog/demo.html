@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>uploaddialog</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;">
+	<h3>HTML调用</h3>
+	<input type="text" id="url" value="">
+	<input type="button" data-pui-uploaddialog='{"defUrl":$("#url").val(),"after":function(url,title){$("#url").val(url)}}' value="选择图片" />
+	<input type="button" data-pui-uploaddialog='{"type":"file","defUrl":$("#url").val(),"after":function(url,title){$("#url").val(url)}}' value="选择文件" />
+	<input type="button" data-pui-uploaddialog='{"type":"flash","defUrl":$("#url").val(),"after":function(url,title){$("#url").val(url)}}' value="选择FLASH" />
+	<input type="button" data-pui-uploaddialog='{"type":"media","defUrl":$("#url").val(),"after":function(url,title){$("#url").val(url)}}' value="选择视频" />
+	<input type="button" data-pui-uploaddialog='{"type":"excel","defUrl":$("#url").val(),"after":function(url,title){$("#url").val(url)}}' value="选择EXCEL" />
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<input type="text" id="url1" value="" /> 
+	<input type="button" id="testbtn1" value="上传图片" />
+	<input type="button" id="testbtn2" value="上传视频" />
+	<input type="button" id="testbtn3" value="上传FLASH" />
+	<input type="button" id="testbtn4" value="上传文件" />
+	<input type="button" id="testbtn5" value="上传EXCEL" />
+	<script language="javascript">
+	pui.use(['jquery','pui/uploaddialog'],function($,U){
+		/*
+		type : 'image', // 上传文件类型  image or file or flash or media
+		showLocal : true, // 图片上传时是否显示本地上传
+		showRemote : true, // 图片上传时是否显示网络图片
+		defUrl : '/default/value', // 默认地址
+		width : 500, // FLASH和视频时的宽度
+		height : 400,  // FLASH和视频时的高度
+		autostart : true, // 视频时是否自动播放
+		after : function(url){} // 上传成功后回调
+		*/
+		$('#testbtn1').click(function(){
+			U({
+				after : function(url){
+					$("#url1").val(url);
+				}
+			});
+		});
+		$('#testbtn2').click(function(){
+			U({
+				type : 'media',
+				after : function(url){
+					$("#url1").val(url);
+				}
+			});
+		});
+		$('#testbtn3').click(function(){
+			U({
+				type : 'flash',
+				after : function(url){
+					$("#url1").val(url);
+				}
+			});
+		});
+		$('#testbtn4').click(function(){
+			U({
+				type : 'file',
+				after : function(url){
+					$("#url1").val(url);
+				}
+			});
+		});
+		$('#testbtn5').click(function(){
+			U({
+				type : 'excel',
+				after : function(url){
+					$("#url1").val(url);
+				}
+			});
+		});
+	});
+	</script>
+</div>
+</body>
+</html> 

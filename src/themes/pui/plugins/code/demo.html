@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>code</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<pre data-pui-code='{"title":"HTML调用","height":"150","copyRight":"作者：统一"}'>
+$access = ($this->module !== null ? $this->module->id . '@' : "") . $this->id .':'. $this->action->id;
+$title = SysLdItem::dd('shop_authority',$access,true);
+$title && $this->setPageTitle($title); // 写入标题
+
+if($title!==null){ // 判断用户 是否有权限
+	$result = $this->checkAuth();
+	if($result===false){
+		$this->error('您没有权限执行['.$title.']');
+	}
+}else{ // 未定义权限的页面一律放行
+	$result = true;
+}      
+	</pre>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<pre id="testcode">
+$access = ($this->module !== null ? $this->module->id . '@' : "") . $this->id .':'. $this->action->id;
+$title = SysLdItem::dd('shop_authority',$access,true);
+$title && $this->setPageTitle($title); // 写入标题
+
+if($title!==null){ // 判断用户 是否有权限
+	$result = $this->checkAuth();
+	if($result===false){
+		$this->error('您没有权限执行['.$title.']');
+	}
+}else{ // 未定义权限的页面一律放行
+	$result = true;
+}      
+	</pre>
+	<script language="javascript">
+	pui.use(['jquery','pui/code'],function($,U){
+		/*
+		height: 'auto', //高度
+		title: '我的代码', //标题
+		copyRight: '' //小标题（显示在容器右上角）
+		*/
+		$('#testcode').code({"title":"JAVASCRIPT调用","copyRight":"作者：统一"});
+	});
+	</script>
+</div>
+</body>
+</html>

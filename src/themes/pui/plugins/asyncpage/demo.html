@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>asyncpage</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body style="margin:0;">
+<div style="padding:10px 100px;width:400px;" data-pui-asyncpage=''>
+	<h3>HTML调用</h3>
+	<div>
+		<a href="file.php?type=这是一个测试的页面1">链接地址1</a>
+		<a href="file.php?type=这是一个测试的页面2">链接地址2</a>
+		<a href="file.php?type=这是一个测试的页面3">链接地址3</a>
+		<a href="file.php?type=这是一个测试的页面4">链接地址4</a>
+	</div>
+	<form method="post" action="file.php" id="testform">
+		<div style="margin-top:10px;"><label>用户名：</label><input type="text" name="username" value="张三"></div>
+		<div style="margin-top:10px;"><label>密 码 ：</label><input type="text" name="password" value="111111"></div>
+		<div style="margin-top:10px;"><label>性 别 ：</label><input type="radio" name="sex" value="男" checked>男 <input type="radio" name="sex" value="女">女</div>
+		<div style="margin-top:10px;"><label>爱 好 ：</label><input type="checkbox" name="aihao[]" checked value="看书">看书 
+			<input type="checkbox" name="aihao[]" value="写字">写字
+			<input type="checkbox" name="aihao[]" checked value="读报">读报
+			<input type="checkbox" name="aihao[]" value="游戏">游戏
+			<input type="checkbox" name="aihao[]" value="逛街">逛街
+		</div>
+		<div style="margin-top:10px;"><label>成 员 ：</label><select name="ismember"><option value="">请选择</option><option value="是" selected>是</option><option value="否">否</option></select></div>
+		<div style="margin-top:10px;"><label>文 件 ：</label><input type="file" name="upfile"></div>
+		<div style="margin-top:10px;"><input type="submit" value="提交"></div>
+	</form>
+</div>
+
+<div style="padding:10px 100px;" id="testpage">
+	<h3>JAVASCRIPT调用</h3>
+	<div>
+		<a href="file.php?type=这是一个测试的页面1">链接地址1</a>
+		<a href="file.php?type=这是一个测试的页面2">链接地址2</a>
+		<a href="file.php?type=这是一个测试的页面3">链接地址3</a>
+		<a href="file.php?type=这是一个测试的页面4">链接地址4</a>
+	</div>
+	<form method="post" action="file.php">
+		<div style="margin-top:10px;"><label>用户名：</label><input type="text" name="username" value="张三"></div>
+		<div style="margin-top:10px;"><label>密 码 ：</label><input type="text" name="password" value="111111"></div>
+		<div style="margin-top:10px;"><label>性 别 ：</label><input type="radio" name="sex" value="男" checked>男 <input type="radio" name="sex" value="女">女</div>
+		<div style="margin-top:10px;"><label>爱 好 ：</label><input type="checkbox" name="aihao[]" checked value="看书">看书 
+			<input type="checkbox" name="aihao[]" value="写字">写字
+			<input type="checkbox" name="aihao[]" checked value="读报">读报
+			<input type="checkbox" name="aihao[]" value="游戏">游戏
+			<input type="checkbox" name="aihao[]" value="逛街">逛街
+		</div>
+		<div style="margin-top:10px;"><label>成 员 ：</label><select name="ismember"><option value="">请选择</option><option value="是" selected>是</option><option value="否">否</option></select></div>
+		<div style="margin-top:10px;"><label>文 件 ：</label><input type="file" name="upfile"></div>
+		<div style="margin-top:10px;"><input type="submit" value="提交"></div>
+	</form>
+	<h3>结果</h3>
+	<div id="test1" style="border:1px solid #eeeeee;padding:0 10px;"></div>
+	<script language="javascript">
+	pui.use(['jquery','pui/asyncpage'],function($,U){		
+		$('#testpage').asyncpage({
+			callback : function(html){ // 
+				alert(html);
+			}
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

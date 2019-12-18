@@ -1,0 +1,14 @@
+/**
+ @Name：autocomplete V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-5-29
+ */
+.autocomplete_input{border:1px solid #C6C6C6;padding:3px 17px 3px 0;outline:0;padding-right:17px !important;}
+body div input.autocomplete_input{background-image:url(./finder.png);background-position:right center;background-repeat:no-repeat;}
+.autocomplete_box{position:absolute;display:block;z-index:999;font-size:14px;margin-left:-8px;min-width:150px;_width:150px;}
+.autocomplete_box ul{margin:0;padding:0;border:1px solid #eeeeee;border-radius:4px;background-color:#fff;}
+.autocomplete_box li{margin:0;padding:0 10px 0 8px;line-height:25px;cursor: pointer;white-space:nowrap;list-style:none;overflow:hidden;}
+.autocomplete_box li.trbg{background-color:#FAFAFA;}/* 偶数行 */
+.autocomplete_box li.hover{background-color:#F3F9FD;}/* 移动到 */
+.autocomplete_box li.selected {background-color:#e4f5ff;font-weight:bold;} /* 选中 */
+.autocomplete_box li.loading{background:url(./loading.gif) no-repeat 5px center #FAFAFA;padding-left:24px;}

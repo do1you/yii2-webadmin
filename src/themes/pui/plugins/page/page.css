@@ -1,0 +1,24 @@
+/**
+ @Name：page V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-5-11 
+ */
+div.page_box{clear:both;color:#666;font-size:14px;zoom:1;}
+div.page_box *{outline:none;}
+div.page_box:after{visibility:hidden;display:block;font-size:0;content:".";clear:both;height:0;}
+div.page_box .pages{float:left;padding:0 5px;line-height:31px;display:inline;}
+div.page_box span{float:left;padding:0 6px;}
+div.page_box .pages select{margin:0;}
+div.page_box .pagination{float:right; padding-left:7px; background-position:0 -199px;display:inline;}
+div.page_box .pagination ul{margin:0;padding:0;_display:inline-block;float:right;}
+div.page_box .pagination li{list-style:none;padding:0;float:left;margin:0 2px;display:inline;zoom:1;height:31px;border:0px;}
+div.page_box .pagination li a,div.page_box .pagination li a:link{text-decoration:none;cursor:pointer;border:1px solid #efefef;border-radius:3px;display:inline-block;zoom:1;*display:inline;height:29px;line-height:29px;text-align:center;padding:0 10px;color:#666666;background:#fff;}
+div.page_box .pagination li a:hover{color:#ff6600;border:1px solid #ff6600;}
+div.page_box .pagination li.num a{width:29px;padding:0;}
+div.page_box .pagination li.selected a,div.page_box .pagination li.selected a:hover{border:1px solid #ff6600;font-weight:bold;color:#ff6600;cursor:default;}
+div.page_box .pagination li.disabled a,div.page_box .pagination li.disabled a:hover{border:1px solid #efefef;color:#efefef;cursor:default;}
+div.page_box .pagination li.goto{background:#dddddd;border-radius: 4px;margin-left:15px;display:inline;}
+div.page_box .pagination li.goto input{float:left;display:inline;height:29px;line-height:29px;width:40px;padding:0;margin:1px;border:0;text-align:center;border-radius:4px 0 0 4px;background:#fbfbfb;}
+div.page_box .pagination li.goto button{float:left;overflow:visible;display:inline;height:29px;line-height:29px;margin:1px 1px 1px 0;padding:0 12px;border:0;background:#efefef;border-radius:0 4px 4px 0;background:url(inputbg.png) repeat-x 0 0 #eeeeee;}
+div.page_box .pagination li.goto button:hover{background-position:0 -29px;}
+div.page_box .pagination li.goto button:active{background-position:0 -58px;}

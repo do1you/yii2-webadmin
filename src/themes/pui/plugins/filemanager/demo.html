@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>filemanager</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;">
+	<h3>HTML调用</h3>
+	<input type="text" id="url" value="" /> 
+	<input type="button" data-pui-filemanager='{"clickFn":function(url,title){$("#url").val(url);}}' value="浏览服务器" />
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<input type="text" id="url1" value="" /> 
+	<input type="button" id="testbtn" value="浏览服务器" />
+	<script language="javascript">
+	pui.use('jquery',function($){
+		$('#testbtn').click(function(){
+			pui.use('pui/filemanager',function(U){
+				U({
+					clickFn : function(url,title){
+						$("#url1").val(url);
+					}
+				});
+			});
+		});
+	});
+	</script>
+</div>
+</body>
+</html> 

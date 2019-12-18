@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>tooltip</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<p>记者从中国海洋石油总公司（下称<span data-pui-tooltip="中国海油是中国三大石油公司之一">中国海油</span>）获悉，公司自主研发的旋转导向系统Welleader?、随钻测井系统Drilog?近期联袂完成渤海某井的海上作业。这标志着我国在油气田定向钻井、随钻测井技术领域打破了国际<span data-pui-tooltip="垄断就是行业流氓">垄断</span>，可自主完成海上“<span data-pui-tooltip='{"ajax":"./ajax.title.html"}'>丛式井</span>”和复杂油气层的开采需求，有望大幅降低国内油气田开发综合成本。</p>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<p id="testbox">5月3日，记者从中国海洋石油总公司（下称<span title="中国海油是中国三大石油公司之一">中国海油</span>）获悉，公司自主研发的旋转导向系统Welleader?、随钻测井系统Drilog?近期联袂完成渤海某井的海上作业。这标志着我国在油气田定向钻井、随钻测井技术领域打破了国际<span title="垄断就是行业流氓">垄断</span>，可自主完成海上“<span>丛式井</span>”和复杂油气层的开采需求，有望大幅降低国内油气田开发综合成本。</p>
+	<script language="javascript">
+	pui.use(['jquery','pui/tooltip'],function($,U){
+		$('#testbox span[title]').tooltip();
+		$('#testbox span:not([title])').tooltip({
+			ajax : './ajax.title.html', // AJAX加载提示
+			align : 'mr', // 位置
+			color : '#ff6600' // 文字颜色
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

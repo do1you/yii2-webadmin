@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>validate</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body style="margin:0;">
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<form data-pui-validate='' method="post" action="">
+		<div style="margin-top:10px;"><label>必填项：</label><input type="text" class="required" name="text1" value=""></div>
+		<div style="margin-top:10px;"><label>整 型 ：</label><input type="text" class="digits" name="text2" value=""></div>
+		<div style="margin-top:10px;"><label>浮点型：</label><input type="text" class="number" name="text3" value=""></div>
+		<div style="margin-top:10px;"><label>最小值：</label><input type="text" min="5" name="text4" value=""></div>
+		<div style="margin-top:10px;"><label>最大值：</label><input type="text" max="10" name="text5" value=""></div>
+		<div style="margin-top:10px;"><label>邮 箱 ：</label><input type="text" class="email" name="text6" value=""></div>
+		<div style="margin-top:10px;"><label>网 址 ：</label><input type="text" class="url" name="text7" value=""></div>
+		<div style="margin-top:10px;"><label>最小长：</label><input type="text" minlength="5" name="text9" value=""></div>
+		<div style="margin-top:10px;"><label>最大长：</label><input type="text" maxlength="10" name="text10" value=""></div>
+		<div style="margin-top:10px;"><label>日 期 ：</label><input type="text" class="date" name="text11" value=""></div>
+		<div style="margin-top:10px;"><label>格式化日期：</label><input type="text" class="dateISO" name="text12" value=""></div>
+		<div style="margin-top:10px;"><label>无验证：</label><input type="text" id="defaultbox" name="text13" value=""></div>
+		<div style="margin-top:10px;"><label>重复值：</label><input type="text" equalTo="#defaultbox" name="text14" value=""></div>
+		<div style="margin-top:10px;"><label>服务器验证：</label><input type="text" remote="file.php" name="text15" value=""></div>
+		<div style="margin-top:10px;"><input type="submit" value="提交"></div>
+	</form>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<form method="post" action="" id="testform">
+		<div style="margin-top:10px;"><label>必填项：</label><input type="text" name="text1" value=""></div>
+		<div style="margin-top:10px;"><label>整 型 ：</label><input type="text" name="text2" value=""></div>
+		<div style="margin-top:10px;"><label>浮点型：</label><input type="text" name="text3" value=""></div>
+		<div style="margin-top:10px;"><label>最小值：</label><input type="text" name="text4" value=""></div>
+		<div style="margin-top:10px;"><label>最大值：</label><input type="text" name="text5" value=""></div>
+		<div style="margin-top:10px;"><label>邮 箱 ：</label><input type="text" name="text6" value=""></div>
+		<div style="margin-top:10px;"><label>网 址 ：</label><input type="text" name="text7" value=""></div>
+		<div style="margin-top:10px;"><label>最小长：</label><input type="text" name="text9" value=""></div>
+		<div style="margin-top:10px;"><label>最大长：</label><input type="text" name="text10" value=""></div>
+		<div style="margin-top:10px;"><label>日 期 ：</label><input type="text" name="text11" value=""></div>
+		<div style="margin-top:10px;"><label>格式化日期：</label><input type="text" name="text12" value=""></div>
+		<div style="margin-top:10px;"><label>无验证：</label><input type="text" id="defaultbox1" name="text13" value=""></div>
+		<div style="margin-top:10px;"><label>重复值：</label><input type="text" name="text14" value=""></div>
+		<div style="margin-top:10px;"><label>服务器验证：</label><input type="text" name="text15" value=""></div>
+		<div style="margin-top:10px;"><input type="submit" value="提交"></div>
+	</form>
+	<script language="javascript">
+	pui.use(['jquery','pui/validate'],function($,U){		
+		$('#testform').validate({
+			rules: {
+				text1: "required",
+				text2: {
+					digits: true
+				},
+				text3: {
+					number: true
+				},
+				text4: {
+					min: true
+				},
+				text5: {
+					max: true
+				},
+				text6: {
+					email: true
+				},
+				text7: {
+					url: true
+				},
+				text9: {
+					minlength: 5
+				},
+				text10: {
+					maxlength: true
+				},
+				text11: {
+					date: true
+				},
+				text12: {
+					dateISO: true
+				},
+				text14: {
+					equalTo: '#defaultbox1'
+				},
+				text15: {
+					remote: 'file.php'
+				}
+			},
+			messages: {
+				text14: {
+					equalTo: '确认值不正确哦！'
+				}
+			}
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

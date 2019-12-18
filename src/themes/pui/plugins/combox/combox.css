@@ -1,0 +1,18 @@
+/**
+ @Name：combox V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-1-13 
+ */
+div.combox_box{display:inline-block;position:relative;*zoom:1;*display:inline;border:1px solid #dddddd; font-size:14px;color:#999; vertical-align:middle;border-radius:4px;z-index:1;}
+div.combox_box.expanded{border-radius:4px 4px 0 0;}
+div.combox_box .combox_select{padding:0 18px 0 8px;text-align:left;color:#999;cursor:pointer;}
+div.combox_box .combox_select i{ position:absolute;top:50%;margin-top:-3px;right:5px;width:0;height:0;border:5px dashed transparent;border-top:5px solid #999;font-size:0px;line-height:0px;}
+div.combox_box.expanded .combox_select i{border:5px dashed transparent;border-bottom:5px solid #999;margin-top:-8px;}
+div.combox_box ul{display:none;list-style:none;margin:0;padding:0;position:absolute;width:100%;position:absolute;top:100%;left:-1px;border:1px solid #dddddd;border-top-width:0px;border-radius:0 0 4px 4px;}
+div.combox_box ul li{list-style:none;margin:0;padding:0 5px 0 8px;text-align:left;cursor:pointer;border:0px;border-top:1px solid #dddddd;}
+
+/* color config */
+div.combox_box,div.combox_box ul{background:#fcfcfc;}/* 容器背景 */
+div.combox_box.expanded{background:#eeeeee;}
+div.combox_box ul li:hover{background:#f7fbff;} /* 移动到容器背景 */
+div.combox_box ul li:active{background:#e4e4e4;} /* 点击后和打开后容器背景 */

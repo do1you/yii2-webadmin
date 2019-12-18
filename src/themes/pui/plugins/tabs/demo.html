@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>tabs</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<div data-pui-tabs="">
+		<ul>
+			<li><a href="">标签一</a></li>
+			<li><a href="">标签二</a></li>
+			<li class="tabs_link"><a href="http://www.baidu.com">外部链接</a></li>
+			<li><a href="">标签三</a></li>
+		</ul>
+		<div><div class="p10">内容一<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+		<div><div class="p10">内容二<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+		<div><div class="p10">内容三<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<div id="tabsbox">
+		<ul>
+			<li><a href="">标签一</a></li>
+			<li><a href="">标签二</a></li>
+			<li class="tabs_link"><a href="http://www.baidu.com">外部链接</a></li>
+			<li><a href="">标签三</a></li>
+		</ul>
+		<div><div class="p10">内容一<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+		<div><div class="p10">内容二<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+		<div><div class="p10">内容三<br>内容<br>内容<br>内容<br>内容<br>内容<br>内容</div></div>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/tabs'],function($,U){
+		/*
+		tabDom : '>ul>li:not(.tabs_link)', // 寻找标签元素
+		divDom : '>div', // 寻找内容元素
+		eventType : 'click', // 事件 click or mouseenter / mouseover
+		tabClass : 'on' // 标签焦点样式
+		*/
+		$('#tabsbox').tabs();
+	});
+	</script>
+</div>
+</body>
+</html>

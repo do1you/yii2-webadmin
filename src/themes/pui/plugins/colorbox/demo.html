@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-/W3C/DTD XHTML 1.0 Transitional/EN" "http:/www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http:/www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>colorbox</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body style="margin:0;">
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<p><a data-pui-colorbox='' href="./images/ohoopee1.jpg" rel="group0" title="链接切换1">链接切换1</a></p>
+	<p><a data-pui-colorbox='' href="./images/ohoopee2.jpg" rel="group0" title="链接切换1">链接切换2</a></p>
+	<p><a data-pui-colorbox='' href="./images/ohoopee3.jpg" rel="group0" title="链接切换1">链接切换3</a></p>
+	<div>
+		<img data-pui-colorbox='' src="./images/ohoopee1.jpg" rel="group100" title="图片切换1" height="100" width="100">
+		<img data-pui-colorbox='' src="./images/ohoopee2.jpg" rel="group100" title="图片切换2" height="100" width="100">
+		<img data-pui-colorbox='' src="./images/ohoopee3.jpg" rel="group100" title="图片切换3" height="100" width="100">
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<h2>Elastic 过渡效果</h2>
+	<p><a class="group1" href="./images/ohoopee1.jpg" title="过渡效果1">过渡效果 1</a></p>
+	<p><a class="group1" href="./images/ohoopee2.jpg" title="过渡效果2">过渡效果 2</a></p>
+	<p><a class="group1" href="./images/ohoopee3.jpg" title="过渡效果3">过渡效果 3</a></p>
+	
+	<h2>Fade 过渡效果</h2>
+	<p><a class="group2" href="./images/ohoopee1.jpg" title="过渡效果1">过渡效果 1</a></p>
+	<p><a class="group2" href="./images/ohoopee2.jpg" title="过渡效果2">过渡效果 2</a></p>
+	<p><a class="group2" href="./images/ohoopee3.jpg" title="过渡效果3">过渡效果 3</a></p>
+	
+	<h2>固定宽高</h2>
+	<p><a class="group3" href="./images/ohoopee1.jpg" title="固定宽高1">固定宽高1</a></p>
+	<p><a class="group3" href="./images/ohoopee2.jpg" title="固定宽高2">固定宽高2</a></p>
+	<p><a class="group3" href="./images/ohoopee3.jpg" title="固定宽高3">固定宽高3</a></p>
+	
+	<h2>幻灯片播放</h2>
+	<p><a class="group4"  href="./images/ohoopee1.jpg" title="幻灯片1">幻灯片1</a></p>
+	<p><a class="group4"  href="./images/ohoopee2.jpg" title="幻灯片2">幻灯片2</a></p>
+	<p><a class="group4"  href="./images/ohoopee3.jpg" title="幻灯片3">幻灯片3</a></p>
+	
+	<h2>其它内容</h2>
+	<p><a class='ajax' href="./images/ajax.html" title="AJAX加载页面">异步页面</a></p>
+	<p><a class='youtube' href="http:/player.youku.com/embed/XMTI1MzYzMzk5Ng==" title="优酷视频">视频或FLASH</a></p>
+	<p><a class='iframe' href="http:/www.baidu.com">框架页面</a></p>
+	<p><a class='inline' href="#inline_content">页面元素</a></p>
+	
+	<h2>事件回调</h2>
+	<p><a class='callbacks' href="./images/marylou.jpg" title="这是包含事件的元素">事件调用</a></p>
+	
+	<div style='display:none'>
+		<div id='inline_content' style='padding:10px; background:#fff;'>
+			<p>这个是隐藏的元素，通过浮动层调用展示</p>
+			<p>如果想了解更多的参数信息，请阅读api文档</p>
+			<p>更新元素内容:<br />
+			<a class="ajax" href="./images/ajax.html">点这里异步加载</a></p>
+		</div>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/colorbox'],function($,U){
+		$(".group1").colorbox({rel:'group1'});
+		$(".group2").colorbox({rel:'group2', transition:"fade"});
+		$(".group3").colorbox({rel:'group3', transition:"none", width:"75%", height:"75%"});
+		$(".group4").colorbox({rel:'group4', slideshow:true});
+		$(".ajax").colorbox();
+		$(".youtube").colorbox({iframe:true, innerWidth:640, innerHeight:390});
+		$(".iframe").colorbox({iframe:true, width:"80%", height:"80%"});
+		$(".inline").colorbox({inline:true, width:"50%"});
+		$(".callbacks").colorbox({
+			onOpen:function(){ alert('onOpen: colorbox is about to open'); },
+			onLoad:function(){ alert('onLoad: colorbox has started to load the targeted content'); },
+			onComplete:function(){ alert('onComplete: colorbox has displayed the loaded content'); },
+			onCleanup:function(){ alert('onCleanup: colorbox has begun the close process'); },
+			onClosed:function(){ alert('onClosed: colorbox has completely closed'); }
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

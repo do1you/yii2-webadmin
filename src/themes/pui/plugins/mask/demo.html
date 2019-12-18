@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>mask</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body style="margin:0;">
+<div style="padding:10px;width:400px;height:500px;background:red;" data-pui-mask="加载数据..." id="maskbox">
+	<h3>HTML调用</h3>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<button id="testbtn1">显示</button>
+	<button id="testbtn2">隐藏</button>
+	<button id="testbtn3">全屏显示</button>
+	<script language="javascript">
+	pui.use(['jquery','pui/mask'],function($,U){
+		$('#testbtn1').click(function(){
+			U('#maskbox','加载中...');
+		});
+		$('#testbtn2').click(function(){
+			U.unmask('#maskbox');
+		});
+		$('#testbtn3').click(function(){
+			var maskDiv = U('body','全屏加载中...');
+			$(maskDiv).click(function(){
+				U.unmask('body');
+			});
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

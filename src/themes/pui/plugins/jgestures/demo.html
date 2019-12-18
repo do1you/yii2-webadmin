@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jgestures</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<ul id="log2" style="position: absolute; right: 0; z-index:20000;" >
+ 		</ul>
+		<ul id="logger" >
+			<li>Description</li>
+		</ul>
+
+			<ul>
+				<li id="tap" class="tap">
+					<code>
+$('#tap').bind('tapone',log);
+$('#tap').bind('taptwo',log);
+$('#tap').bind('tapthree',log);
+$('#tap').bind('tapfour',log);
+ 					</code>
+				</li>
+				<li id="swipe" class="swipe">
+					<code>
+$('#swipe').bind('swipeone',log);
+$('#swipe').bind('swipetwo',log);
+$('#swipe').bind('swipethree',log);
+$('#swipe').bind('swipefour',log);
+ 					</code>
+					<code>
+$('#swipe').bind('swipeup',log);
+$('#swipe').bind('swiperightup',log);
+$('#swipe').bind('swiperight',log);
+$('#swipe').bind('swiperightdown',log);
+ 					</code>
+					<code>
+$('#swipe').bind('swipedown',log);
+$('#swipe').bind('swipeleftdown',log);
+$('#swipe').bind('swipeleft',log);
+$('#swipe').bind('swipeleftup',log);
+ 					</code>
+				</li>
+				<li id="change" class="gestureend">
+					<code>
+$('#change').bind('pinchopen',manipulate);
+$('#change').bind('pinchclose',manipulate);
+$('#change').bind('rotatecw',manipulate);
+$('#change').bind('rotateccw',manipulate);
+$('#change').bind('swipeone',manipulate);
+ 					</code>
+				</li>
+				<li id="livechange" class="gesturechange">
+					<code>
+$('#livechange').bind('swipemove',manipulate);
+$('#livechange').bind('pinch',manipulate);
+$('#livechange').bind('rotate',manipulate);
+$('#livechange').bind('swipeone',manipulate);
+ 					</code>
+				</li>
+
+			</ul>
+
+<div style="padding:10px;position: absolute;top:550px;">
+	<h3>触屏事件列表</h3>
+	<pre>
+
+orientationchange
+代表设备顺时针或者逆时针旋转.此事件可以被设备触发,可能使用的是重力传感器.
+
+pinch
+缩放手势(两个手指在屏幕上的相对运动)
+
+rotate
+旋转手势(两个手指顺时针或者逆时针旋转)
+
+swipemove
+在正在滑动时触发(在设备屏幕上移动手指,比如:拖动)
+
+swipeone
+单点滑动手势,滑动完成后触发(一个手指在屏幕上移动)
+
+swipetwo
+两点滑动(两个手指在屏幕上方向一致的滑动)
+
+swipethree
+三点滑动(三个手指在屏幕上方向一致的滑动)
+
+swipefour
+四点滑动(四个手指在屏幕上方向一致的滑动)
+
+swipeup
+向上滑动,在严格的向上滑动手势完成后触发
+
+swiperightup
+向右上角滑动,在向右且向上的滑动手势完成后触发
+
+swiperight
+向右滑动,在严格的向右滑动手势完成后触发
+
+swiperightdown
+向右下角滑动,在向右且向下的滑动手势完成后触发
+
+swipedown
+向下滑动,在严格的向下滑动手势完成后触发
+
+swipeleftdown
+向左下角滑动,在向左且向下的滑动手势完成后触发
+
+swipeleft
+向左滑动,在严格的向左滑动手势完成后触发
+
+swipeleftup
+向左上角滑动,在向左且向上的滑动手势完成后触发
+
+tapone
+在单个手指轻点的手势后触发
+
+taptwo
+在两个手指一起轻点的手势后触发
+
+tapthree
+在三个手指一起轻点的手势后触发
+
+tapfour
+在四个手指一起轻点的手势后触发
+
+pinchopen
+撑开手势,当两个手指撑大并离开设备时触发.
+
+pinchclose
+捏紧手势,当两个手指捏紧并离开设备时触发.
+
+rotatecw
+两个手指顺时针旋转并且离开屏幕时触发(two fingers rotating clockwise)
+
+rotateccw
+两个手指逆时针旋转并且离开屏幕时触发 (two fingers rotating counterclockwise)
+
+shake
+当检测到设备正在摇晃时触发
+
+shakefrontback
+当检测到摇晃动作，且可以被解读为前后移动之时触发.
+
+shakeleftright
+当检测到摇晃动作，且可以被解读为左右移动之时触发.
+
+shakeupdown
+当检测到摇晃动作，且可以被解读为上下移动之时触发.</pre>
+</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/jgestures'],function($){
+		function log(event_, obj) {
+			// ignore bubbled handlers
+			// if ( obj.originalEvent.currentTarget !== obj.originalEvent.target ) { return; }
+			obj.originalEvent.preventDefault();
+			$('#logger')
+				.find('li')
+					.slice(1,$('#logger').find('li').size()-8)
+						.animate({'opacity':'0', 'height':'0'},function(){$(this).remove()})
+					.end()
+				.end()
+				.append('<li><b>'+$(obj.originalEvent.currentTarget).attr('id')+'</b>: '+obj.description+ ' : '+obj.type +'</li>')
+
+		}
+
+		function manipulate(event_, obj) {
+			//if ( obj.originalEvent.currentTarget !== obj.originalEvent.target ) { return; }
+			event_.preventDefault();
+			obj.originalEvent.preventDefault();
+			log(event_, obj)
+
+			var _a = obj.description.split(':');
+
+			$(obj.originalEvent.currentTarget).css('zIndex','1000')
+			switch(_a[0]) {
+				case 'pinch':
+					$(obj.originalEvent.currentTarget).css('-webkit-transform','scale('+ ( obj.direction * obj.delta[0].moved ) +')');
+				break;
+				case  'rotate':
+					$(obj.originalEvent.currentTarget).css('-webkit-transform','rotate('+ (  obj.delta[0].moved ) +'deg)');
+				break;
+
+				case  'swipemove':
+					if(_a[1] != 1) {break;}
+					$(obj.originalEvent.currentTarget).css('-webkit-transition','');
+					$(obj.originalEvent.currentTarget).css('left', parseInt($(obj.originalEvent.currentTarget).css('left')) + obj.delta[0].startX );
+					$(obj.originalEvent.currentTarget).css('top', parseInt($(obj.originalEvent.currentTarget).css('top')) + obj.delta[0].startY );
+					//$(obj.originalEvent.currentTarget).data('moving',true)
+				break;
+
+				case 'swipe' :
+					//if(_a[1] != 1 || $(obj.originalEvent.currentTarget).data('moving') } {break;}
+					$(obj.originalEvent.currentTarget).css('-webkit-transition','all 1s ease-out').css('left', parseInt($(obj.originalEvent.currentTarget).css('left')) + obj.delta[0].startX );
+					$(obj.originalEvent.currentTarget).css('-webkit-transition','all 1s ease-out').css('top', parseInt($(obj.originalEvent.currentTarget).css('top')) + obj.delta[0].startY );
+				break;
+			  }
+			  $(obj.originalEvent.currentTarget).css('zIndex','')
+		}
+
+		$('#tap').bind('tapone',log);
+		$('#tap').bind('taptwo',log);
+		$('#tap').bind('tapthree',log);
+		$('#tap').bind('tapfour',log);
+
+
+		$('#swipe').bind('swipeone',log);
+		$('#swipe').bind('swipetwo',log);
+		$('#swipe').bind('swipethree',log);
+		$('#swipe').bind('swipefour',log);
+
+		$('#swipe').bind('swipeup',log);
+		$('#swipe').bind('swiperightup',log);
+		$('#swipe').bind('swiperight',log);
+		$('#swipe').bind('swiperightdown',log);
+
+		$('#swipe').bind('swipedown',log);
+		$('#swipe').bind('swipeleftdown',log);
+		$('#swipe').bind('swipeleft',log);
+		$('#swipe').bind('swipeleftup',log);
+
+		$('#change').bind('pinchopen',manipulate);
+		$('#change').bind('pinchclose',manipulate);
+		$('#change').bind('rotatecw',manipulate);
+		$('#change').bind('rotateccw',manipulate);
+		$('#change').bind('swipeone',manipulate);
+
+		$('#livechange').bind('swipeone',manipulate);
+		$('#livechange').bind('swipemove',manipulate);
+		$('#livechange').bind('pinch',manipulate);
+		$('#livechange').bind('rotate',manipulate);
+
+		$(window).bind('shake',function(event_,data_){
+			alert('shake: '+ data_.description)
+		});
+	});
+	</script>
+		<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			font: arial normal 11px/1.5;
+
+		}
+		li {
+			list-style: none;
+		}
+
+		#logger {
+			position: absolute;
+			opacity: 0.75;
+			bottom:0;
+			right:0;
+			z-index:1;
+			background: #eee;
+			width: 200px;
+			padding: 5px;
+			-moz-box-shadow: 2px 2px 5px #000;
+			-webkit-box-shadow: 2px 2px 5px #000;
+
+		}
+
+		.gesturechange {
+			background: #eee;
+			border: 1px solid #ccc;
+			padding: 5px 2%;
+			width: 44%;
+			height: 175px;
+			position: absolute;
+			margin: 0 2% 0 1%;
+			left: 0%;
+			top:10px;
+			overflow: hidden;
+			-webkit-transition: all;
+		}
+
+		.gestureend {
+			background: #eee;
+			border: 1px solid #ccc;
+			padding: 5px 2%;
+			width: 44%;
+			height: 175px;
+			position: absolute;
+			margin: 0 2% 0 1%;
+			left: 50%;
+			top:10px;
+			-webkit-transition: all 1s ease-out;
+			overflow: hidden;
+
+		}
+		.swipe {
+			clear: left;
+			background: #ccc;
+			border: 1px solid #eee;
+			padding: 5px 2%; ;
+			width: 94%;
+			height: 150px;
+			position: absolute;
+			margin: 0 2% 0 1%;
+			left: 0%;
+			top:210px;
+
+		}
+		.tap {
+			clear: left;
+			background: #ccc;
+			border: 1px solid #eee;
+			padding: 5px 2%;
+			width: 94%;
+			height: 150px;
+			position: absolute;
+			margin: 0 2% 0 1%;
+			left: 0%;
+			top:390px;
+		}
+
+		code {
+			white-space: pre;
+			margin:0;
+			padding:0;
+			float: left;
+			width: 25%;
+		}
+		</style>
+	</body>
+</html>

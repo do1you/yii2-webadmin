@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-title" content="linkage"/>
+    <meta name="author" content="jierChou, jier#zhoujier.com, FuZhou">
+    <meta name="date" content="2016-06-29 17:59:58">
+    <meta name="copyright" content="Copyright (c) 2016 yalalat.com.">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="MobileOptimized" content="320">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linkage</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:20px 20px;">
+	<h3>HTML调用</h3>
+	<div data-pui-linkage="">
+		<button type="button">选择区域</button>
+		<select name="s">
+			<option value="1">安徽省</option>
+			<option value="2">福建省</option>
+			<option value="3">江西省</option>
+		</select>
+		<select name="c">
+			<option value="1">福州市</option>
+			<option value="2" selected>厦门市</option>
+			<option value="3">泉州市</option>
+		</select>
+		<select name="a">
+			<option value="1">鼓楼区</option>
+			<option value="2">仓山区</option>
+			<option value="3">台江区</option>
+			<option value="4"selected>晋安区</option>
+			<option value="5">马尾区</option>
+		</select>
+	</div>
+</div>
+
+<div style="padding:20px 20px;">
+	<h3>JAVASCRIPT调用</h3>
+	<div id="area_box">
+		<button type="button">选择区域</button>
+		<select name="s">
+			<option value="1">安徽省</option>
+			<option value="2">福建省</option>
+			<option value="3">江西省</option>
+		</select>
+		<select name="c">
+			<option value="1">福州市</option>
+			<option value="2" selected>厦门市</option>
+			<option value="3">泉州市</option>
+		</select>
+		<select name="a">
+			<option value="1">鼓楼区</option>
+			<option value="2">仓山区</option>
+			<option value="3">台江区</option>
+			<option value="4"selected>晋安区</option>
+			<option value="5">马尾区</option>
+		</select>
+	</div>
+	<br>
+	<button type="button" id="resetcity">更换城市</button>
+	<script language="javascript">
+	pui.use(['jquery','pui/linkage'],function($,U){
+		$('#area_box').linkage(); // 触发选择区域
+
+		// 切换城市
+		$('#resetcity').on('click',function(){
+			$('select[name=c]').eq(1).empty().html('<option value="1">北京市</option><option value="2">上海市</option><option value="3">广州市</option><option value="4">深圳市</option><option value="5">珠海市</option>').trigger('reset');
+			$('#area_box').click();
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

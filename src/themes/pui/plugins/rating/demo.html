@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>rating</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<span data-pui-rating='{"split":2}'>
+		<input value="1" type="radio" name="rating1" />
+		<input value="2" type="radio" name="rating1" />
+		<input value="3" type="radio" name="rating1" checked="checked" />
+		<input value="4" type="radio" name="rating1" />
+		<input value="5" type="radio" name="rating1" />
+		<input value="6" type="radio" name="rating1" />
+		<input value="7" type="radio" name="rating1" />
+		<input value="8" type="radio" name="rating1" />
+		<input value="9" type="radio" name="rating1" />
+		<input value="10" type="radio" name="rating1" />
+	</span>
+</div>
+
+<div style="clear:both;"></div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<span id='ratingbox'>
+		<input value="1" type="radio" name="rating" />
+		<input value="2" type="radio" name="rating" />
+		<input value="3" type="radio" name="rating" checked="checked" />
+		<input value="4" type="radio" name="rating" />
+		<input value="5" type="radio" name="rating" />
+		<input value="6" type="radio" name="rating" />
+		<input value="7" type="radio" name="rating" />
+		<input value="8" type="radio" name="rating" />
+		<input value="9" type="radio" name="rating" />
+		<input value="10" type="radio" name="rating" />
+	</span>
+	<script language="javascript">
+	pui.use(['jquery','pui/rating'],function($,U){
+		/*
+		cancel: 'Cancel Rating',   // 取消的图标移动到文字
+		cancelValue: '',           // 取消评分的值
+		split: 0,                  // 星星图标切分
+		starWidth: 16,				// 星星图标的宽度
+		half:     false,         // 是否半颗星评价
+		required: false,         // 是否必填
+		readOnly: false,         // 是否只读
+		blur:     function(){},  // 失去焦点后回调
+		callback: function(){}  // 选择分数后回调
+		*/
+		$('#ratingbox>input').rating(); // 也可以直接使用父元素选择器“#ratingbox”
+		// 设置为不可编辑
+		//$('#ratingbox>input').rating('disable');
+	});
+	</script>
+</div>
+</body>
+</html>

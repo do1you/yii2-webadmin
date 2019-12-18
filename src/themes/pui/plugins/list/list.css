@@ -1,0 +1,22 @@
+/**
+ @Name：list V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-5-11 
+ */
+table.list_box{width:100%;border-collapse:collapse;border:1px solid #eeeeee; border-spacing:0; padding:0; margin:0; font-size:14px; line-height:100%; font-family:Arial, sans-serif;color:#888888;}
+table.list_box thead{background:#f8f8f8;}
+table.list_box tbody,table.list_box tfoot{background-color:#fff;}
+table.list_box th{padding:5px 5px; line-height:28px; border-bottom:1px solid #eeeeee; font-weight:bold; white-space:nowrap;}
+table.list_box td{padding:3px 5px; line-height:24px; border-bottom:1px solid #eeeeee;overflow:hidden;}
+table.list_box tfoot td{overflow:visible !important;line-height:34px;}
+table.list_box td div.tdcon{overflow:hidden;word-break:break-all;word-wrap:break-word;max-width:400px;max-height:66px;}
+table.list_box th.right,table.list_box td.right {text-align:right;}
+table.list_box th.left,table.list_box td.left {text-align:left;}
+table.list_box th.center,table.list_box td.center {text-align:center;}
+table.list_box tbody .trbg {background-color:#FAFAFA;}/* 偶数行 */
+table.list_box tbody .hot {background-color:#fff5c0;font-weight:bold;}/* 强调 */
+table.list_box tbody .hover {background-color:#F3F9FD;}/* 移动到 */
+table.list_box tbody .selected {background-color:#e4f5ff;font-weight:bold;} /* 选中 */
+.nowrap th,.nowrap td,.nowrap{white-space:nowrap;}/*禁止换行*/
+table.list_box tbody a,table.list_box tbody a:link{color:#3C7FB1;padding:0 3px;text-decoration:none;}
+table.list_box tbody a:hover{text-decoration:underline;color:#ff6600;}

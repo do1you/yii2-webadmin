@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>region</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;width:600px;z-index:2;position: relative;">
+	<h3>HTML调用</h3>
+	<div>
+		<select data-pui-region='350104'></select>
+	</div>
+</div>
+
+<div style="padding:10px 100px;z-index:1;position: relative;">
+	<h3>JAVASCRIPT调用</h3>
+	<div>
+		<select id='test1'></select>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/region'],function($,U){
+		/*
+		level : 3, // 地区选择级别，123=>省市县
+		filter : [], // 要过滤掉的地区
+		allow : [], // 仅允许的地区
+		value : '' // 默认值
+		*/
+		$('#test1').region({
+			filter : ['710000','810000','820000'], // 过滤港澳台
+			level : '2', // 仅选择城市
+			value : '350100'
+		});
+	});
+	</script>
+</div>
+</body>
+</html>

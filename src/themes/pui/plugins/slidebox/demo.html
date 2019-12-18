@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh_cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>slidebox</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <meta name="format-detection" content="telephone=no" />
+  <script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px 0 20px;width:400px;">
+	<h3>HTML调用</h3>
+	请往右滑动体验
+	<div style="background:#f2f2f2;width:220px;" data-pui-slidebox="isleft">
+		<h3>左侧菜单内容</h3>
+		<ul>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+		</ul>
+	</div>
+</div>
+
+<div style="padding:10px 100px 0 20px;">
+	<h3>JAVASCRIPT调用</h3>
+	请往下滑动体验
+	<div style="background:#f2f2f2;height:220px;" id="test1">
+		<h3>顶侧菜单内容</h3>
+		<ul>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+			<li><a href="http://www.baidu.com">这是链接</a>
+		</ul>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/slidebox'],function($,U){
+		$('#test1').slidebox('istop');
+	});
+	</script>
+</div>
+</body>
+</html>

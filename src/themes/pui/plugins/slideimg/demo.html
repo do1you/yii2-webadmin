@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>slideimg</title>
+<script type="text/javascript" src="../../boot.js"></script>
+<style>.item{height:300px;line-height:300px;width:220px;border:1px solid #ddd;text-align:center;}</style>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<ul style="margin:0;padding:0;width:500px;height:200px;overflow:hidden;list-style:none;" data-pui-slideimg="">
+		<li><a href="http://www.17sucai.com/"><img src="./01.jpg" alt="这是标题一"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./02.jpg" alt="这是标题二"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./03.jpg" alt="这是标题三"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./04.jpg" alt="这是标题四"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./05.jpg" alt="这是标题五"></a></li>
+	</ul>
+	<h3>上下滑动</h3>
+	<ul style="margin:0;padding:0;width:400px;height:160px;overflow:hidden;list-style:none;" data-pui-slideimg="{anime:2,time:3000}">
+		<li><a href="http://www.17sucai.com/"><img src="./01.jpg" alt="这是标题一"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./02.jpg" alt="这是标题二"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./03.jpg" alt="这是标题三"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./04.jpg" alt="这是标题四"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./05.jpg" alt="这是标题五"></a></li>
+	</ul>
+	<h3>淡入淡出</h3>
+	<ul style="margin:0;padding:0;width:600px;height:260px;overflow:hidden;list-style:none;" data-pui-slideimg="{anime:3}">
+		<li><a href="http://www.17sucai.com/"><img src="./01.jpg" alt="这是标题一"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./02.jpg" alt="这是标题二"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./03.jpg" alt="这是标题三"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./04.jpg" alt="这是标题四"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./05.jpg" alt="这是标题五"></a></li>
+	</ul>
+	<h3>内容切换</h3>
+	<div id="testbox5">
+		<div data-pui-slideimg="{'subs':'.item','anime':'2','showText':false,'showLabel':false,'showBtn':false,'isImg':false,'skip':3}" style="width:222px;height:906px;overflow:hidden;">
+			<div class="item">这是一个容器1</div>
+			<div class="item">这是一个容器2</div>
+			<div class="item">这是一个容器3</div>
+			<div class="item">这是一个容器4</div>
+			<div class="item">这是一个容器5</div>
+			<div class="item">这是一个容器6</div>
+			<div class="item">这是一个容器7</div>
+			<div class="item">这是一个容器8</div>
+		</div>
+	</div>
+	<div style="padding:15px;">
+		<a href="javascript:void(0)" onclick="$('#testbox5 .slideimg_pre').click()">上一项</a>
+		<a href="javascript:void(0)" onclick="$('#testbox5 .slideimg_next').click()">下一项</a>
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<ul style="margin:0;padding:0;width:800px;height:280px;overflow:hidden;list-style:none;" id="testbox">
+		<li><a href="http://www.17sucai.com/"><img src="./01.jpg" alt="这是标题一"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./02.jpg" alt="这是标题二"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./03.jpg" alt="这是标题三"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./04.jpg" alt="这是标题四"></a></li>
+		<li><a href="http://www.17sucai.com/"><img src="./05.jpg" alt="这是标题五"></a></li>
+	</ul>
+	<script language="javascript">
+	pui.use(['jquery','pui/slideimg'],function($,U){
+		$('#testbox').slideimg();
+	});
+	</script>
+</div>
+</body>
+</html>

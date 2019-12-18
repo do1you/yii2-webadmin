@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>uploadbtn</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;">
+	<h3>HTML调用</h3>
+	<input type="text" id="url" value="" /> 
+	<input type="button" data-pui-uploadbtn='{"after":function(url){$("#url").val(url);}}' value="上传图片" />
+	<input type="button" data-pui-uploadbtn='{"type":"media","after":function(url){$("#url").val(url);}}' value="上传视频" />
+	<input type="button" data-pui-uploadbtn='{"type":"flash","after":function(url){$("#url").val(url);}}' value="上传FLASH" />
+	<input type="button" data-pui-uploadbtn='{"type":"file","after":function(url){$("#url").val(url);}}' value="上传文件" />
+	<input type="button" data-pui-uploadbtn='{"type":"excel","after":function(url){$("#url").val(url);}}' value="上传EXCEL" />
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<input type="text" id="url1" value="" /> 
+	<input type="button" id="testbtn1" value="上传图片" />
+	<input type="button" id="testbtn2" value="上传视频" />
+	<input type="button" id="testbtn3" value="上传FLASH" />
+	<input type="button" id="testbtn4" value="上传文件" />
+	<input type="button" id="testbtn5" value="上传EXCEL" />
+	<script language="javascript">
+	pui.use(['jquery','pui/uploadbtn'],function($,U){
+		U({
+			dom : '#testbtn1',
+			after : function(url){
+				$("#url1").val(url);
+			}
+		});
+		U({
+			dom : '#testbtn2',
+			type : 'media',
+			after : function(url){
+				$("#url1").val(url);
+			}
+		});
+		U({
+			dom : '#testbtn3',
+			type : 'flash',
+			after : function(url){
+				$("#url1").val(url);
+			}
+		});
+		U({
+			dom : '#testbtn4',
+			type : 'file',
+			after : function(url){
+				$("#url1").val(url);
+			}
+		});
+		U({
+			dom : '#testbtn5',
+			type : 'excel',
+			after : function(url){
+				$("#url1").val(url);
+			}
+		});
+	});
+	</script>
+</div>
+</body>
+</html> 

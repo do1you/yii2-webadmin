@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>date</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:100px 10px 20px;">
+	<h3>HTML调用</h3>
+	<div style="float:left;">
+		<label>日期和时间表单</label>
+		<input type="text" data-pui-date='{"type":"datetime"}' name="" value="2014-12-12 12:12:12" />
+    </div>
+	<div style="float:left;margin-left:15px;">
+		<label>仅日期时间表单</label>
+		<input type="text" data-pui-date='{"type":"date"}' name="" value="2014-12-12" />
+	</div>
+    <div style="float:left;margin-left:15px;">
+		<label>仅时间表单</label>
+		<input type="text" data-pui-date='{"type":"time"}' name="" value="12:12:12" />
+	</div>
+</div>
+
+<div style="padding:30px 10px;clear:both;" id="testbox">
+	<h3>JAVASCRIPT调用</h3>
+	<div style="float:left;">
+		<label>日期和时间表单</label>
+		<input type="text" name="datetime" value="2014-12-12 12:12:12" />
+    </div>
+	<div style="float:left;margin-left:15px;">
+		<label>仅日期时间表单</label>
+		<input type="text" name="date" value="2014-12-12" />
+	</div>
+    <div style="float:left;margin-left:15px;">
+		<label>仅时间表单</label>
+		<input type="text" name="time" value="12:12:12" />
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/date'],function($,U){
+		$('#testbox input[name=datetime]').date({"type":"datetime"});
+		$('#testbox input[name=date]').date({"type":"date"});
+		$('#testbox input[name=time]').date({"type":"time"});
+	});
+	</script>
+</div>
+</body>
+</html>

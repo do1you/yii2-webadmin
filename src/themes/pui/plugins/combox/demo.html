@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>combox</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:100px 10px 20px;">
+	<h3>HTML调用</h3>
+	无参数：<select data-pui-combox="">
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+    
+    自定义大小：<select data-pui-combox='{"height":"40","width":"200"}'>
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+    
+    包含带事件：<select data-pui-combox="" onchange="alert(this.value)">
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+</div>
+
+<div style="padding:30px 10px;clear:both;" id="testbox">
+	<h3>JAVASCRIPT调用</h3>
+	无参数：<select>
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+    
+    自定义大小：<select class="setsize">
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+    
+    包含带事件：<select onchange="alert(this.value)">
+    	<option value="">请选择</option>
+        <option value="选项一">选项一</option>
+        <option value="选项二">选项二</option>
+        <option value="选项三">选项三</option>
+    </select>
+	<script language="javascript">
+	pui.use(['jquery','pui/combox'],function($,U){
+		$('#testbox select:not(.setsize)').combox();
+		$('#testbox select.setsize').combox({"height":"40","width":"200"});
+	});
+	</script>
+</div>
+</body>
+</html>

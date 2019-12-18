@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>keycode</title>
+<script type="text/javascript" src="../../boot.js"></script>
+</head>
+<body>
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<input type="text" value="1" id="testvalue">
+	<input type="button" id="testbtn1" value="BASE64加密" />
+	<input type="button" id="testbtn2" value="BASE64解密" />
+	<input type="button" id="testbtn3" value="MD5加密" />
+	<script language="javascript">
+	pui.use(['pui/keycode','jquery'],function(U,$){
+		$('#testbtn1').click(function(){ // BASE64加密
+			var value = $('#testvalue').val();
+			$('#testvalue').val(U.encode(value));
+		});
+		$('#testbtn2').click(function(){ // BASE64解密
+			var value = $('#testvalue').val();
+			$('#testvalue').val(U.decode(value));
+		});
+		$('#testbtn3').click(function(){ // MD5加密
+			var value = $('#testvalue').val();
+			$('#testvalue').val(U.md5(value));
+		});
+	});
+	</script>
+</div>
+</body>
+</html> 
+<body>

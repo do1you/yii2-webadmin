@@ -1,0 +1,144 @@
+/**
+ @Name：form V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-5-15 
+ */
+form.jqtransformdone{font-size:14px;line-height:34px;zoom:1;}
+form.jqtransformdone:after{content:".";display:block;height:0;line-height:0px;font-size:0px;clear:both;visibility:hidden;}
+form.jqtransformdone div.row:after{content:".";display:block;height:0;line-height:0px;font-size:0px;clear:both;visibility:hidden;}
+form.jqtransformdone div.row{display:block;zoom:1;clear:both;padding:10px 0 0;}
+form.jqtransformdone div.col{float:left;display:inline;margin:12px 5px 0;padding-bottom:12px;zoom:1;position:relative;}
+form.jqtransformdone label{margin:0 8px 0 4px;display:block;float:left;font-weight:bold;}
+form.jqtransformdone label.label{width:90px;text-align:right;white-space:nowrap;}
+
+/* auto or column */
+form.jqtransformdone div.row.auto div.col{width:280px;margin-top:0px;padding-bottom:0px;}
+form.jqtransformdone div.row.column div.col{width:auto;float:none;display:block;zoom:1;}
+form.jqtransformdone div.row.column div.col:after{content:".";display:block;height:0;line-height:0px;font-size:0px;clear:both;visibility:hidden;}
+form.jqtransformdone div.row.column label.label{width:20%;text-align:right;}
+form.jqtransformdone div.row.columnText{padding-left:20%;}
+
+/* button */
+button.jqTransformButton {margin:0px;padding:0px;border:0;background-color:transparent;cursor:pointer;overflow:visible;outline: none;height:34px;position:relative;vertical-align: top;}
+*:first-child+html button.jqTransformButton[type]{width:1;} /* IE7 */
+button.jqTransformButton span {background:transparent url(img/btn_right.gif) no-repeat right top;display:block;float:left;padding:0px 4px 0px 0px; 	margin:0px;height:34px;}
+button.jqTransformButton span span {background:transparent url(img/btn_left.gif) no-repeat top left;color:#333;padding:0 11px 0px 15px;font-weight:normal;font-size:14px;display:block;text-decoration:none;height:34px;line-height:34px;white-space:nowrap}
+button.jqTransformButton div{display:none;}
+/* hover */
+button.jqTransformButton_hover span span { background-position:left -34px ; }
+button.jqTransformButton_hover span { background-position:right -34px ; }
+/* clicked */
+button.jqTransformButton_click span span { background-position:left -68px ; }
+button.jqTransformButton_click span { background-position:right -68px ; }
+/* readonly or disabled */
+button.jqTransformButton.readonly span span,button.jqTransformButton.disabled span span{ background-position:left -102px ; }
+button.jqTransformButton.readonly span,button.jqTransformButton.disabled span{ background-position:right -102px ; }
+
+/* input */
+.jqTransformInputWrapper {background:transparent url(img/input/input_text_right.gif) no-repeat right top;height:34px;padding:0 4px 0 0;float:left;}
+.jqTransformInputInner {background:transparent url(img/input/input_text_left.gif) no-repeat left top;padding:0;margin:0px;position:relative;}
+.jqTransformInputInner div {height:34px;margin:0px 4px 0px 8px;}
+.jqTransformInputInner div input {float:left;font-size:14px;line-height:34px;vertical-align:middle;height:34px;color:#404040;border:0;padding:0;margin:0px;background:transparent;outline: none;}
+.jqTransformInputInner div input{ [;line-height: 52px;] }
+* html .jqTransformInputInner div input {margin:0 0 0 -8px;} /*  IE6 */
+*+ html .jqTransformInputInner div input {margin-left:-10px;} /* Ie7 */
+/* hover */
+.jqTransformInputWrapper_hover{ background-position:right -34px ;}
+.jqTransformInputWrapper_hover div.jqTransformInputInner{ background-position:left -34px ;}
+/* focus */
+.jqTransformInputWrapper_focus{ background-position:right -68px ;}
+.jqTransformInputWrapper_focus div.jqTransformInputInner{ background-position:left -68px ;}
+/* readonly or disabled */
+.jqTransformInputWrapper.readonly,.jqTransformInputWrapper.disabled{ background-position:right -102px ;}
+.jqTransformInputWrapper.readonly .jqTransformInputInner,.jqTransformInputWrapper.disabled .jqTransformInputInner{ background-position:left -102px ;}
+/* Safari */
+.jqTransformSafari .jqTransformInputInner div {position:relative;overflow:hidden;margin:0px 8px;}
+.jqTransformSafari .jqTransformInputInner div input {background-color:none;position:absolute;top:-10px;left:-2px;height:42px; 	padding-left:4px;}
+ 
+/* textarea */
+table.jqTransformTextarea td#jqTransformTextarea-mm textarea{font-size:14px;line-height:18px;outline: none;resize:none;}
+table.jqTransformTextarea td{font-size:0px;line-height:1px;width:5px;height:5px;margin:0;padding:0;}
+table.jqTransformTextarea textarea{margin:0;padding:3px;border:0;background:none;}
+table.jqTransformTextarea td#jqTransformTextarea-tl{background:url(img/textarea/textarea_tl.gif) no-repeat top left;}
+table.jqTransformTextarea td#jqTransformTextarea-tm{background:url(img/textarea/textarea_tm.gif) repeat-x top left;}
+table.jqTransformTextarea td#jqTransformTextarea-tr{background:url(img/textarea/textarea_tr.gif) no-repeat top left;}
+table.jqTransformTextarea td#jqTransformTextarea-ml{background:url(img/textarea/textarea_ml.gif) repeat-y top left;}
+table.jqTransformTextarea td#jqTransformTextarea-mm{background:url(img/textarea/textarea-mm.gif) repeat;}
+table.jqTransformTextarea td#jqTransformTextarea-mr{background:url(img/textarea/textarea_mr.gif) repeat-y top left;}
+table.jqTransformTextarea td#jqTransformTextarea-bl{background:url(img/textarea/textarea_bl.gif) no-repeat top left;}
+table.jqTransformTextarea td#jqTransformTextarea-bm{background:url(img/textarea/textarea_bm.gif) repeat-x top left;}
+table.jqTransformTextarea td#jqTransformTextarea-br{background:url(img/textarea/textarea_br.gif) no-repeat top left;}
+/* hover */
+table.jqTransformTextarea-hover td#jqTransformTextarea-tl{background-position:0px -5px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-tm{background-position:0px -5px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-tr{background-position:0px -5px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-ml{background-position:-5px 0px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-mm{background-image:url(img/textarea/textarea-mm-hover.gif);}
+table.jqTransformTextarea-hover td#jqTransformTextarea-mr{background-position:-5px 0px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-bl{background-position:0px -5px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-bm{background-position:0px -5px;}
+table.jqTransformTextarea-hover td#jqTransformTextarea-br{background-position:0px -5px;}
+/* focus */
+table.jqTransformTextarea-focus td#jqTransformTextarea-tl{background-position:0px -10px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-tm{background-position:0px -10px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-tr{background-position:0px -10px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-ml{background-position:-10px 0px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-mm{background-image:url(img/textarea/textarea-mm-focus.gif);}
+table.jqTransformTextarea-focus td#jqTransformTextarea-mr{background-position:-10px 0px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-bl{background-position:0px -10px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-bm{background-position:0px -10px;}
+table.jqTransformTextarea-focus td#jqTransformTextarea-br{background-position:0px -10px;}
+/* readonly or disabled */
+table.jqTransformTextarea.readonly td#jqTransformTextarea-tl,table.jqTransformTextarea.disabled td#jqTransformTextarea-tl{background-position:0px -15px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-tm,table.jqTransformTextarea.disabled td#jqTransformTextarea-tm{background-position:0px -15px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-tr,table.jqTransformTextarea.disabled td#jqTransformTextarea-tr{background-position:0px -15px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-ml,table.jqTransformTextarea.disabled td#jqTransformTextarea-ml{background-position:-15px 0px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-mm,table.jqTransformTextarea.disabled td#jqTransformTextarea-mm{background-image:url(img/textarea/textarea-mm-disabled.gif);}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-mr,table.jqTransformTextarea.disabled td#jqTransformTextarea-mr{background-position:-15px 0px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-bl,table.jqTransformTextarea.disabled td#jqTransformTextarea-bl{background-position:0px -15px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-bm,table.jqTransformTextarea.disabled td#jqTransformTextarea-bm{background-position:0px -15px;}
+table.jqTransformTextarea.readonly td#jqTransformTextarea-br,table.jqTransformTextarea.disabled td#jqTransformTextarea-br{background-position:0px -15px;}
+/* Safari */
+table.jqTransformTextarea .jqTransformSafariTextarea div {position:relative;overflow:hidden;border:0px solid red;}
+table.jqTransformTextarea .jqTransformSafariTextarea textarea{background:none;position:absolute;top:-10px;left:-10px;padding:10px 10px 10px 10px;resize:none;}
+
+/* radio */
+.jqTransformRadioWrapper {float:left;display:block;margin:7px 4px 0px;}
+table td .jqTransformRadioWrapper{margin-top:0px;}
+.jqTransformRadio {background:transparent url(img/radio.gif) no-repeat center 0;vertical-align:middle;height:19px;width:18px;display:block;}
+
+/* checkbox */
+span.jqTransformCheckboxWrapper{display:block;float:left;margin-top:8px;}
+label span.jqTransformCheckboxWrapper{margin:8px 8px 0 0;}
+table td span.jqTransformCheckboxWrapper{margin-top:0px;}
+a.jqTransformCheckbox{background:transparent url(img/checkbox.gif) no-repeat center 0;vertical-align:middle;height:19px;width:18px;display:block;}
+a.jqTransformChecked{background-position:center -19px;}
+a.jqTransformCheckbox:hover,.jqTransformRadio:hover{background-position:center -38px;}
+a.jqTransformChecked:hover{background-position:center -57px;}
+a.jqTransformCheckbox.readonly,a.jqTransformCheckbox.disabled,.jqTransformRadio.readonly,.jqTransformRadio.disabled{background-position:center -76px;}/* readonly or disabled */
+a.jqTransformChecked.readonly,a.jqTransformChecked.disabled{background-position:center -95px;}
+
+/* select */
+div.jqTransformSelectWrapper {width:120px;position:relative;height:34px;float:left;}
+div.jqTransformSelectWrapper div span {background:url(img/select_left.gif) no-repeat 0px 0px;font-size:14px;float:none;position:absolute;white-space:nowrap;height:34px;line-height:34px;padding:0px 0 0 8px;overflow:hidden;cursor:pointer;}
+div.jqTransformSelectWrapper a.jqTransformSelectOpen {display:block;position:absolute;right:0px;width:34px;height:34px;background:url(img/select_right.gif) no-repeat 0px 0px;}
+div.jqTransformSelectWrapper ul {position:absolute;width:118px;top:36px;left:0px;list-style:none;background-color:#FFF;border:solid 1px #CCC;display:none;margin:0px;padding: 5px 0;height:280px;overflow:auto;overflow-y:auto;z-index:10;border-radius: 4px;-webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.175);box-shadow: 0 3px 8px rgba(0, 0, 0, 0.175);background-clip: padding-box;}
+div.jqTransformSelectWrapper ul.upbox{bottom:36px;top:auto;}
+div.jqTransformSelectWrapper ul a {display:block;padding:0 5px;text-decoration:none;color:#333;background-color:#FFF;font-size:14px;line-height:34px;}
+div.jqTransformSelectWrapper ul a:hover {background:#F5F5F5;color:#333333;}
+div.jqTransformSelectWrapper ul a.selected {background:#3582c4;color:#ffffff;}
+/* hover */
+div.jqTransformSelectWrapper_hover div span{background-position:0px -34px;}
+div.jqTransformSelectWrapper_hover a.jqTransformSelectOpen{background-position:0px -34px;}
+/* focus */
+div.jqTransformSelectWrapper_focus div span{background-position:0px -68px;}
+div.jqTransformSelectWrapper_focus a.jqTransformSelectOpen{background-position:0px -68px;}
+/* readonly or disabled */
+div.jqTransformSelectWrapper.readonly div span,div.jqTransformSelectWrapper.disabled div span{background-position:0px -102px;}
+div.jqTransformSelectWrapper.readonly a.jqTransformSelectOpen,div.jqTransformSelectWrapper.disabled a.jqTransformSelectOpen{background-position:0px -102px;}
+
+/* hidden */
+.jqTransformHidden,body select.jqTransformHidden,body .jqTransformHidden {display:none;}
+
+/* fix */
+.jqTransformSelectWrapper .errorMessage{left:0;padding-left:0px;margin-left:0px;}

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>share</title>
+<script type="text/javascript" src="../../boot.js"></script>
+<style>
+html,body{height:100%;margin:0;padding:0;}
+</style>
+</head>
+<body>
+<div style="padding:10px 100px;width:400px;">
+	<h3>HTML调用</h3>
+	<div style="width:600px;">
+		<h4>分享按纽：</h4>
+		<div data-pui-share="{type:'share',bdText:'测试分享标题11111111','bdDesc':'内容111111111111'}">
+			<a data-cmd="more">更多</a>
+			<a data-cmd="sqq">QQ好友</a>
+			<a data-cmd="qzone">QQ空间</a>
+			<a data-cmd="tqf">朋友网</a>
+			<a data-cmd="tqq">腾讯微博</a>
+			<a data-cmd="weixin">微信</a>
+			<a data-cmd="tsina">新浪微博</a>
+			<a data-cmd="douban">豆瓣</a>
+		</div>
+		<h4 data-pui-share="{type:'slide',bdText:'测试分享标题222222222','bdDesc':'内容222222222222222'}">右侧浮窗分享-----------------------请看右侧</h4>
+		<h4 data-pui-share="{type:'slide',bdPos:'left',bdText:'测试分享标题3333333333333333','bdDesc':'内容33333333333333'}">左侧浮窗分享-----------------------请看左侧</h4>
+		<h4 class="containerClass" data-pui-share="{type:'selectShare',bdContainerClass:'containerClass',bdText:'测试分享标题444444444444444444444','bdDesc':'内容444444444444444444'}">这是划词分词，不信划一下词试试。至少要选中五个字哦</h4>
+		<h4>图片分享：</h4>
+		<img src="./113746_912.jpg" width="320" data-pui-share="{type:'image',bdText:'测试分享标题555555555555555555','bdDesc':'内容55555555555555555555555555'}">
+		<h4>自定义分享按纽：</h4>
+		<div>
+			<button data-pui-share="{type:'btn',target:'#shareList',bdText:'测试分享标题66666666666','bdDesc':'内容66666666666666666'}">立即分享</button>
+			<div id="shareList" style="display:none;">
+				<a data-cmd="more">更多</a>
+				<a data-cmd="sqq">QQ好友</a>
+				<a data-cmd="qzone">QQ空间</a>
+				<a data-cmd="tqf">朋友网</a>
+				<a data-cmd="tqq">腾讯微博</a>
+				<a data-cmd="weixin">微信</a>
+				<a data-cmd="tsina">新浪微博</a>
+				<a data-cmd="douban">豆瓣</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div style="padding:10px 100px;">
+	<h3>JAVASCRIPT调用</h3>
+	<div style="width:320px;height:568px;" id="textbox">
+		<a data-cmd="more">更多</a>
+		<a data-cmd="sqq">QQ好友</a>
+		<a data-cmd="qzone">QQ空间</a>
+		<a data-cmd="tqf">朋友网</a>
+		<a data-cmd="tqq">腾讯微博</a>
+		<a data-cmd="weixin">微信</a>
+		<a data-cmd="tsina">新浪微博</a>
+		<a data-cmd="douban">豆瓣</a>
+	</div>
+	<script language="javascript">
+	pui.use(['jquery','pui/share'],function($,U){
+		$('#textbox').share();
+	});
+	</script>
+</div>
+</body>
+</html>

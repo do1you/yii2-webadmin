@@ -1,0 +1,16 @@
+/**
+ @Name：tabs V0.1
+ @Author：统一 54901801@qq.com
+ @Date：2015-9-17 
+ */
+.tabs_box{font-size:14px;}
+.tabs_box ul{margin:0;padding:0;zoom:1;list-style:none;}
+.tabs_box ul:after{content:".";display:block;height:0;line-height:0px;font-size:0px;clear:both;visibility:hidden;}
+.tabs_header,.tabs_link{float:left;padding:0;margin:0 10px 0 0;}
+.tabs_header a,.tabs_link a{position: relative;margin:6px 0 -1px 0;padding:7px 20px;border:1px solid #dddddd;background:#f5f5f5;display:block;text-decoration:none;}
+.tabs_header a:link,.tabs_header a:active,.tabs_header a:visited,.tabs_link a:link,.tabs_link a:active,.tabs_link a:visited{color:#999999;outline:0;star:expression(this.onFocus=this.blur());}
+.tabs_header a:hover,.tabs_link a:hover{background:#eeeeee;color:#666666;}
+.tabs_header.on{border-top:2px solid #337ab7;}
+.tabs_header.on a,.tabs_header.on a:link,.tabs_header.on a:hover,.tabs_header.on a:visited{border-bottom-color:#ffffff;cursor: default;background-color: #ffffff;padding:10px 20px;margin-top:0px;border-width:0px 1px 0px 1px;color:#337ab7;}
+.tabs_content{border:1px solid #dddddd;line-height:160%;}
+.p5{padding:5px 8px;}.p10{padding:10px 15px;}
