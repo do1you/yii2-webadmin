@@ -38,23 +38,25 @@ class Module extends \webadmin\Module
 
 		// 脚手架
 		if (!YII_ENV_PROD) {
-			Yii::$app->setModule('gii', [
-				'class' => 'yii\gii\Module',
-				'generators' => [
-					'model' => [
-						'class' => '\webadmin\generators\model\Generator',
-						'templates'=> [],
+			if(Yii::$app->hasModule('gii')){
+				Yii::$app->setModule('gii', [
+					'class' => 'yii\gii\Module',
+					'generators' => [
+						'model' => [
+							'class' => '\webadmin\generators\model\Generator',
+							'templates'=> [],
+						],
+						'crud' => [
+							'class' => '\webadmin\generators\crud\Generator',
+							'templates'=> [],
+						],
+						'module' => [
+							'class' => '\webadmin\generators\module\Generator',
+							'templates'=> [],
+						],
 					],
-					'crud' => [
-						'class' => '\webadmin\generators\crud\Generator',
-						'templates'=> [],
-					],
-					'module' => [
-						'class' => '\webadmin\generators\module\Generator',
-						'templates'=> [],
-					],
-				],
-			]);
+				]);
+			}
 		}
 
 		// 用户组件
