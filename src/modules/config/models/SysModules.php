@@ -71,7 +71,7 @@ class SysModules extends \webadmin\ModelCAR
 	{
 	    $cachekey = 'common/modulesList';
 	    $result = Yii::$app->cache->get($cachekey);
-	    if($result===false || $result===null || true){
+	    if($result===false || $result===null){
 			$result = \yii\helpers\ArrayHelper::map(self::find()->andWhere(['state' => '1'])->all(), 'code', 'code');
 	        Yii::$app->cache->set($cachekey,$result,86400);
 	    }

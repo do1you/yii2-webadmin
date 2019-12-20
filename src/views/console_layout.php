@@ -17,7 +17,7 @@ use yii\helpers\Url;
                 <!-- Navbar Barnd -->
                 <div class="navbar-header pull-left">
                     <a href="<?php echo Url::toRoute('/authority/user/index')?>" class="navbar-brand">
-                        <small><img src="<?php echo Url::to('@web/assets/images/logo.png')?>" alt="" /></small>
+                        <small><img src="<?php echo Url::to('@assetUrl/images/logo.png')?>" alt="" /></small>
                     </a>
                 </div>
                 <!-- /Navbar Barnd -->

@@ -32,6 +32,11 @@ class Module extends \webadmin\Module
 			'logs' => 'webadmin\modules\logs\Module',
 			'daemon' => 'webadmin\modules\daemon\Module',
 		]);
+		
+		// 判断是否安装
+		if(!file_exists(Yii::getAlias('@runtime/webadmin-install.lock'))){
+		    Yii::$app->getResponse()->redirect(\yii\helpers\Url::toRoute('/config/install'));
+		}
         
 		// 初始化模块
         \webadmin\modules\config\models\SysModules::initModule();

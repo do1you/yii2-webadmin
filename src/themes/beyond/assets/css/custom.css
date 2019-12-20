@@ -3,20 +3,20 @@
 .page-header.page-header-fixed{top:45px;}
 .page-header.page-header-fixed+.page-body{margin-top:40px;}
 /*.login-container{position:absolute;top:50%;margin-top:-210px;left:50%;margin-left:-250px;}*/
-body.login_box:before{background:url(../../../wall_page/1.jpg) no-repeat center center #eee;background-size:100% 100%;}
-body.login_box.bg1:before{background-image:url(../../../wall_page/1.jpg);}
-body.login_box.bg2:before{background-image:url(../../../wall_page/2.jpg);}
-body.login_box.bg3:before{background-image:url(../../../wall_page/3.jpg);}
-body.login_box.bg4:before{background-image:url(../../../wall_page/4.jpg);}
-body.login_box.bg5:before{background-image:url(../../../wall_page/5.jpg);}
-body.login_box.bg6:before{background-image:url(../../../wall_page/6.jpg);}
-body.login_box.bg7:before{background-image:url(../../../wall_page/7.jpg);}
-body.login_box.bg8:before{background-image:url(../../../wall_page/8.jpg);}
-body.login_box.bg9:before{background-image:url(../../../wall_page/9.jpg);}
-body.login_box.bg10:before{background-image:url(../../../wall_page/10.jpg);}
-body.login_box.bg11:before{background-image:url(../../../wall_page/11.jpg);}
-body.login_box.bg12:before{background-image:url(../../../wall_page/2.jpg);}
-body.login_box.bg13:before{background-image:url(../../../wall_page/13.jpg);}
+body.login_box:before{background:url(../img/wall_page/1.jpg) no-repeat center center #eee;background-size:100% 100%;}
+body.login_box.bg1:before{background-image:url(../img/wall_page/1.jpg);}
+body.login_box.bg2:before{background-image:url(../img/wall_page/2.jpg);}
+body.login_box.bg3:before{background-image:url(../img/wall_page/3.jpg);}
+body.login_box.bg4:before{background-image:url(../img/wall_page/4.jpg);}
+body.login_box.bg5:before{background-image:url(../img/wall_page/5.jpg);}
+body.login_box.bg6:before{background-image:url(../img/wall_page/6.jpg);}
+body.login_box.bg7:before{background-image:url(../img/wall_page/7.jpg);}
+body.login_box.bg8:before{background-image:url(../img/wall_page/8.jpg);}
+body.login_box.bg9:before{background-image:url(../img/wall_page/9.jpg);}
+body.login_box.bg10:before{background-image:url(../img/wall_page/10.jpg);}
+body.login_box.bg11:before{background-image:url(../img/wall_page/11.jpg);}
+body.login_box.bg12:before{background-image:url(../img/wall_page/2.jpg);}
+body.login_box.bg13:before{background-image:url(../img/wall_page/13.jpg);}
 .row div.dataTables_length{left:15px;right:auto;top:5px;}
 .margin-pageing{margin-left:125px;padding-top:2px;}
 .has-success .text-danger{color:#8cc474;}

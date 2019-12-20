@@ -379,6 +379,7 @@ class ActiveField extends \yii\widgets\ActiveField
     
     // 获取异步下拉的默认值
     private function _ajax_options($url='',$value=[]){
+        if(empty($value)) return [];
         $mainConfig = require Yii::getAlias('@app/config/main.php');
         $class = isset($mainConfig['components']['request']) ? $mainConfig['components']['request'] : [];
         $class['class'] = '\yii\web\Request';
