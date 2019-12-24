@@ -5,7 +5,7 @@ use yii\helpers\Url;
 // 注册前端资源
 \webadmin\WebAdminAsset::register($this);
 ?>
-<?php $this->beginContent('@common/views/layouts/html5.php'); ?>
+<?php $this->beginContent('@webadmin/views/html5.php'); ?>
     <div class="loading-container">
         <div class="loader"></div>
     </div>
