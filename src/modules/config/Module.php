@@ -43,21 +43,28 @@ class Module extends \webadmin\Module
 
 		// 脚手架
 		if (!YII_ENV_PROD) {
-			if(Yii::$app->hasModule('gii')){
+		    if(Yii::$app->hasModule('gii')){
+		        $modules = Yii::$app->getModules();
 				Yii::$app->setModule('gii', [
 					'class' => 'yii\gii\Module',
 					'generators' => [
 						'model' => [
 							'class' => '\webadmin\generators\model\Generator',
-							'templates'=> [],
+						    'templates'=> (isset($modules['gii']['generators']['model']['templates'])
+						        ? $modules['gii']['generators']['model']['templates'] 
+						        : []),
 						],
 						'crud' => [
 							'class' => '\webadmin\generators\crud\Generator',
-							'templates'=> [],
+						    'templates'=> (isset($modules['gii']['generators']['crud']['templates'])
+						        ? $modules['gii']['generators']['crud']['templates']
+						        : []),
 						],
 						'module' => [
 							'class' => '\webadmin\generators\module\Generator',
-							'templates'=> [],
+						    'templates'=> (isset($modules['gii']['generators']['module']['templates'])
+						        ? $modules['gii']['generators']['module']['templates']
+						        : []),
 						],
 					],
 				]);
