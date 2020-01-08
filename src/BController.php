@@ -177,8 +177,8 @@ abstract class BController extends \yii\web\Controller
                     
                     $let = self::intToChr($index++);
                     
-                    if(preg_match("/^\d{8,50}$/",$value)){
-                        $sheet->setCellValueExplicit($let.$row, number_format($value,2,'.',''), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // setCellValueExplicit
+                    if(preg_match("/^\d{8,50}$/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0')){
+                        $sheet->setCellValueExplicit($let.$row, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // setCellValueExplicit
                     }else{
                         $sheet->setCellValue($let.$row, $value);
                     }
@@ -196,7 +196,8 @@ abstract class BController extends \yii\web\Controller
                 $attribute = $attribute ? $attribute : $tkey;
                 $let = self::intToChr($index++);
                 if(isset($totalRow[$attribute])){
-                    $sheet->setCellValueExplicit($let.$row, number_format($totalRow[$attribute],2,'.',''), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    $totalRow[$attribute] = round($totalRow[$attribute]*1000)/1000;
+                    $sheet->setCellValueExplicit($let.$row, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     //echo $let.$row."=>".$totalRow[$attribute]."\r\n";
                 }
             }
