@@ -58,7 +58,7 @@ class WebAuthFilter extends \yii\base\Behavior
         }
         
         // 用户权限判断
-        $auths = Yii::$app->user->identity->getCache('getAuthorithUrl',[Yii::$app->user->id]);
+        $auths = Yii::$app->user->identity ? Yii::$app->user->identity->getCache('getAuthorithUrl',[Yii::$app->user->id]) : [];
         $auths = is_array($auths) ? $auths : [];
         if(in_array($pathInfo,$auths) || in_array($controller,$auths) || in_array($moduleAct,$auths) || in_array($module,$auths)){
             return true;
