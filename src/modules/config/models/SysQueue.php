@@ -61,6 +61,17 @@ class SysQueue extends \webadmin\ModelCAR
     }
     
     /**
+     * 加入队列
+     */
+    public static function addQueue($data=[]){
+        if($data){
+            $data = is_string($data) ? array('taskphp'=>$data) : $data;
+            return self::queue($data['taskphp'],(isset($data['params']) ? $data['params'] : []));
+        }
+        return false;
+    }
+    
+    /**
      * 插入队列，执行方法，参数，其他参数
      */
     public static function queue($route = '', $params = [], $data = [])

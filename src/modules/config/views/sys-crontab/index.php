@@ -65,7 +65,9 @@ use yii\helpers\Url;
                 	     ],
                 	     [
                 	         'attribute' => 'last_time',
-                	         'format' => ['date', 'Y-m-d H:i:s'],
+                	         'value' => function ($model) {
+                	           return date('Y-m-d H:i:s', $model->last_time);
+            	             },
                 	         'filter' => false,
                 	         'enableSorting' => false,
                 	     ],

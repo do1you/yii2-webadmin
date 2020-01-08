@@ -8,7 +8,7 @@ use \webadmin\modules\config\models\SysQueue;
 use webadmin\modules\config\models\SysConfig;
 
 class DefaultController extends \webadmin\console\CController
-{    
+{
     /**
      * 缓存任务执行信息
      */
@@ -123,7 +123,7 @@ class DefaultController extends \webadmin\console\CController
                     $this->_run('daemon/default/run-crontab');
                 }
             }
-
+            
             sleep(3);
         }
         return 0;
@@ -240,8 +240,8 @@ class DefaultController extends \webadmin\console\CController
     private function _run($cmd = '')
     {
         $cmd = $this->isWindows
-            ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >nul' // >nul
-            : 'nohup '.$this->processPath.'yii '.$cmd.' 2>&1 &';
+        ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >nul' // >nul
+        : 'nohup '.$this->processPath.'yii '.$cmd.' 2>&1 &';
         @pclose(popen($cmd, 'r'));
     }
     
@@ -256,10 +256,32 @@ class DefaultController extends \webadmin\console\CController
             }
         }elseif($pid){
             $cmd = $this->isWindows
-                ? "taskkill /f /t /pid {$pid} >nul"
-                : "kill -9 {$pid}";
+            ? "taskkill /f /t /pid {$pid} >nul"
+            : "kill -9 {$pid}";
             @pclose(popen($cmd, 'r'));
         }
+    }
+    
+    /**
+     * 查询进程
+     */
+    private function _find($pid=null)
+    {
+        if($pid){
+            if($this->isWindows){
+                $cmd = 'tasklist /fi "pid eq '.$pid.'"';
+                exec($cmd,$result,$code);
+                foreach($result as $line=>$str){
+                    if(strstr($str,$pid)!==false){
+                        return true;
+                    }
+                }
+            }elseif(file_exists('/proc/'.$pid)){
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -287,20 +309,17 @@ class DefaultController extends \webadmin\console\CController
             $tasks = SysCrontab::find()->where("
                 state = 0 and run_state != 1
                 and (
-                (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
+                    (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
                     or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24
                         and timing_time>='{$startSec}' and timing_time<='{$endSec}')
                 )
-                order by id asc limit 1
-            ")->all();
-
+                    order by id asc limit 50
+                ")->all();
+            
             if($tasks){
                 foreach($tasks as $task){
-                    try{
-                        $result = $task->run();
-                        if(is_string($result)) echo $result."\n";
-                    }catch(\Exception $e) {
-                    }
+                    $result = $task->run();
+                    if(is_string($result)) echo $result."\n";
                 }
             }
             
@@ -323,16 +342,12 @@ class DefaultController extends \webadmin\console\CController
         while(($num = $this->_increase())<=$this->maxProcessNum){
             $time = time();
             
-            $tasks = SysQueue::find()->where("state=0 order by id asc limit 1")->all();
+            $tasks = SysQueue::find()->where("state=0 order by id asc limit 50")->all();
             
             if($tasks){
                 foreach($tasks as $task){
-                    try{
-                        $result = $task->run();
-                        if(is_string($result)) echo $result."\n";
-                    }catch(\Exception $e) {
-                    }
-                    
+                    $result = $task->run();
+                    if(is_string($result)) echo $result."\n";
                 }
             }
             
@@ -362,7 +377,14 @@ class DefaultController extends \webadmin\console\CController
             if(file_exists($dir)){
                 $files = \yii\helpers\FileHelper::findFiles($dir);
                 foreach($files as $file){
-                    $pid[] = file_get_contents($file);
+                    $fid = file_get_contents($file);
+                    
+                    // 判断进程是否存在
+                    if($this->_find($fid)){
+                        $pid[] = $fid;
+                    }else{
+                        unlink($file);
+                    }
                 }
             }
         }elseif($pid){ // 删除pid
@@ -376,7 +398,7 @@ class DefaultController extends \webadmin\console\CController
         
         return $pid;
     }
-   
+    
     /**
      * 记录当前脚本执行次数
      */
