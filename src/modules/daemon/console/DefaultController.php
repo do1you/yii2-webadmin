@@ -239,9 +239,12 @@ class DefaultController extends \webadmin\console\CController
      */
     private function _run($cmd = '')
     {
+        $dir = dirname($this->pidFile).DIRECTORY_SEPARATOR.'logs';
+        \yii\helpers\FileHelper::createDirectory($dir);
+        $path = $dir . DIRECTORY_SEPARATOR . date('Ym').'.log';
         $cmd = $this->isWindows
-        ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >nul' // >nul
-        : 'nohup '.$this->processPath.'yii '.$cmd.' 2>&1 &';
+        ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >> ' . $path // >nul
+        : 'nohup '.$this->processPath.'yii '.$cmd.' >> '. $path .' &'; // 2>&1
         @pclose(popen($cmd, 'r'));
     }
     
