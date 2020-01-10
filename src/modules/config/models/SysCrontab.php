@@ -78,27 +78,49 @@ class SysCrontab extends \webadmin\ModelCAR
     public function run()
     {
         $app = Yii::$app;
-        if(($application = static::getConsoleApp())){
-            $this->run_state = 1;
-            $this->save(false);
-            
-            ob_start();
-            $result = $application->runAction($this->command);
-            $message = ob_get_contents();
-            ob_end_clean();
-            
-            if($result=='0'){
-                $resp = ($message ? $message : true);
-            }
+        $this->run_state = 1;
+        if($this->save(false)){
+            $result = SysCrontab::runCmd($this->command, true);
             
             $this->last_time = time();
-            $this->run_state = $result=='0' ? 2 : 3;
+            $this->run_state = $result===false ? 3 : 2;
             $this->save(false);
             
             Yii::$app = $app;
         }
         
-        return (isset($resp) ? $resp : false);
+        return (isset($result) ? $result : false);
+    }
+    
+    /**
+     * 运行内置命令
+     */
+    public static function runCmd($command = '', $isCmd = false)
+    {
+        if($isCmd){ // 命令行模式
+            $processPath = Yii::getAlias('@app/../');
+            $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
+            ? $processPath.'yii.bat '.$command
+            : $processPath.'yii '.$command;
+            exec($cmd,$result,$code);
+            
+            return $result && is_array($result) && print_r(implode("\r\n", $result));
+        }else{
+            $app = Yii::$app;
+            if(($application = static::getConsoleApp())){
+                ob_start();
+                $result = $application->runAction($command);
+                $message = ob_get_contents();
+                ob_end_clean();
+                
+                if($result=='0'){
+                    $resp = ($message ? $message : true);
+                }
+                
+                Yii::$app = $app;
+            }
+            return (isset($resp) ? $resp : false);
+        }
     }
     
     /**

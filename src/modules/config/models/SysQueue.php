@@ -92,34 +92,20 @@ class SysQueue extends \webadmin\ModelCAR
      */
     public function run()
     {
-        $app = Yii::$app;
-        if(($application = \webadmin\modules\config\models\SysCrontab::getConsoleApp())){
-            $this->state = 1;
-            $this->start_time = date('Y-m-d H:i:s');
-            $this->save(false);
-            
-            ob_start();
-            $params = $this->params ? json_decode($this->params,true) : [];
-            $result = $application->runAction($this->taskphp,$params);
-            $message = ob_get_contents();
-            ob_end_clean();
-            
-            if($result=='0'){
-                $resp = ($message ? $message : true);
-            }
+        $this->state = 1;
+        $this->start_time = date('Y-m-d H:i:s');
+        if($this->save(false)){
+            $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->command, true);
             
             $this->done_time = date('Y-m-d H:i:s');
-            $this->state = $result=='0' ? 2 : 3;
+            $this->state = $result===false ? 3 : 2;
             if($this->state=='2' && !$this->callback){ // 完成状态且不用回调的直接删除
                 $this->delete();
             }else{
                 $this->save(false);
             }
-            
-            Yii::$app = $app;
         }
-        
-        return (isset($resp) ? $resp : false);
+        return (isset($result) ? $result : false);
     }
     
     /**
