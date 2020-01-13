@@ -1,4 +1,4 @@
-<?php 
+<?php
 use webadmin\widgets\ActiveForm;
 
 $form = ActiveForm::begin(['enableClientScript'=>false]);
@@ -31,6 +31,7 @@ $model = new \webadmin\modules\authority\models\AuthUser();
         <div class="well with-header">
             <div class="header bordered-themeprimary">下拉框</div>
             <?= $form->field($model, 'name')->label('测试框')->dropDownList(\webadmin\modules\config\models\SysLdItem::dd('enum'),['prompt'=>'请选择']) ?>
+            <?= $form->field($model, 'access_token')->label('测试框')->select2(\webadmin\modules\config\models\SysLdItem::dd('enum'),[]) ?>
         </div>
         <div class="well with-header">
             <div class="header bordered-themeprimary">下拉多选框</div>
