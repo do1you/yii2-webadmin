@@ -80,7 +80,7 @@ class SysCrontab extends \webadmin\ModelCAR
         $app = Yii::$app;
         $this->run_state = 1;
         if($this->save(false)){
-            $result = SysCrontab::runCmd($this->command, true);
+            $result = SysCrontab::runCmd($this->command, [], true);
             
             $this->last_time = time();
             $this->run_state = $result===false ? 3 : 2;
@@ -95,13 +95,15 @@ class SysCrontab extends \webadmin\ModelCAR
     /**
      * 运行内置命令
      */
-    public static function runCmd($command = '', $isCmd = false)
+    public static function runCmd($command = '', $params = [], $isCmd = false)
     {
+        $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
         if($isCmd){ // 命令行模式
             $processPath = Yii::getAlias('@app/../');
             $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
-            ? $processPath.'yii.bat '.$command
-            : $processPath.'yii '.$command;
+                ? $processPath.'yii.bat '.$command
+                : $processPath.'yii '.$command;
+            if($params) $cmd .= ' "' . implode('" "',$params).'"';
             exec($cmd,$result,$code);
             
             return $result && is_array($result) && print_r(implode("\r\n", $result));
@@ -109,7 +111,7 @@ class SysCrontab extends \webadmin\ModelCAR
             $app = Yii::$app;
             if(($application = static::getConsoleApp())){
                 ob_start();
-                $result = $application->runAction($command);
+                $result = $application->runAction($command, $params);
                 $message = ob_get_contents();
                 ob_end_clean();
                 

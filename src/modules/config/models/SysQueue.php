@@ -60,6 +60,8 @@ class SysQueue extends \webadmin\ModelCAR
         ];
     }
     
+    
+    
     /**
      * 加入队列
      */
@@ -95,7 +97,7 @@ class SysQueue extends \webadmin\ModelCAR
         $this->state = 1;
         $this->start_time = date('Y-m-d H:i:s');
         if($this->save(false)){
-            $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->command, true);
+            $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
             
             $this->done_time = date('Y-m-d H:i:s');
             $this->state = $result===false ? 3 : 2;
