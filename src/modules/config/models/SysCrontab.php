@@ -106,7 +106,13 @@ class SysCrontab extends \webadmin\ModelCAR
             if($params) $cmd .= ' "' . implode('" "',$params).'"';
             exec($cmd,$result,$code);
             
-            return $result && is_array($result) && print_r(implode("\r\n", $result));
+            if(strlen($code)>0 && $code!='0') return false;
+            if($result){
+                return is_array($result) ? implode("\r\n", $result) : $result;
+            }else{
+                // 没有输出默认成功
+                return true;
+            }
         }else{
             $app = Yii::$app;
             if(($application = static::getConsoleApp())){
