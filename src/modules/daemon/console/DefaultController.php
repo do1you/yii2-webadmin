@@ -69,7 +69,9 @@ class DefaultController extends \webadmin\console\CController
     {
         switch($act)
         {
-            case 'restart': // 重启
+            case 'rstart': // 计划任务启动
+                $this->actionRstart();
+			case 'restart': // 重启
                 $this->actionRestart();
                 break;
             case 'start': // 启动
@@ -140,7 +142,7 @@ class DefaultController extends \webadmin\console\CController
         $pid = $this->_processes();
         if(empty($pid)){
             $this->_run($this->processCmd);
-            usleep(150000);
+            usleep(250000);
             if(($pid = $this->_processes())){
                 $state = $this->ansiFormat('startup success', Console::FG_GREEN);
                 Console::output("processes {$this->processName} {$state}({$pid}).");
@@ -223,6 +225,21 @@ class DefaultController extends \webadmin\console\CController
     {
         $this->actionStop();
         $this->actionStart();
+        return 0;
+    }
+
+	/**
+     * 判断进程是否在存，不存在则启动
+     * yii daemon/default/rstart
+	 * if [ "$(ps aux | grep yii | grep daemon/default/daemon)" == '' ]; then /home/wwwroot/pay.yalalat.com/yii daemon restart;  fi
+     */
+    public function actionRstart()
+    {
+		$cmd = 'ps aux | grep yii | grep '.$this->processCmd;
+		exec($cmd,$result,$code);
+		if(!empty($result)){
+			$this->actionRestart();
+		}
         return 0;
     }
     
