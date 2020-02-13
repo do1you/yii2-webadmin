@@ -237,7 +237,7 @@ class DefaultController extends \webadmin\console\CController
     {
 		$cmd = 'ps aux | grep yii | grep '.$this->processCmd;
 		exec($cmd,$result,$code);
-		if(!empty($result)){
+		if(empty($result)){
 			$this->actionRestart();
 		}
         return 0;
