@@ -38,7 +38,7 @@ class SearchBehaviors extends \yii\base\Behavior
         $result = Yii::$app->cache->get($cacheKey);
         if($result && is_array($result)){
             unset($result['is_export']); // 导出操作不缓存
-            $_GET = \yii\helpers\ArrayHelper::merge(
+            $_GET = array_merge(
                 $result,
                 $_GET
             );
