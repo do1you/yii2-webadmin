@@ -197,7 +197,7 @@ abstract class BController extends \yii\web\Controller
                 $let = self::intToChr($index++);
                 if(isset($totalRow[$attribute])){
                     $totalRow[$attribute] = round($totalRow[$attribute]*1000)/1000;
-                    $sheet->setCellValueExplicit($let.$row, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    $sheet->setCellValueExplicit($let.$row, $totalRow[$attribute], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     //echo $let.$row."=>".$totalRow[$attribute]."\r\n";
                 }
             }
