@@ -112,6 +112,100 @@ abstract class BController extends \yii\web\Controller
     }
     
     /**
+     * 读取excel
+     */
+    protected function importExecl($file = '', $sheet = 0, $columnCnt = 0, &$options = [])
+    {
+        try {
+            /* 转码 */
+            //$file = iconv("utf-8", "gbk", $file);
+            
+            if (empty($file) || !file_exists($file)) {
+                throw new \yii\web\HttpException(200,Yii::t('common','文件不存在!'));
+            }
+            
+            $objRead = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+            
+            if (!$objRead->canRead($file)) {
+                $objRead = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xls');
+                
+                if (!$objRead->canRead($file)) {
+                    throw new \yii\web\HttpException(200,Yii::t('common','只支持导入Excel文件！'));
+                }
+            }
+            
+            /* 如果不需要获取特殊操作，则只读内容，可以大幅度提升读取Excel效率 */
+            empty($options) && $objRead->setReadDataOnly(true);
+
+            $obj = $objRead->load($file);
+            $currSheet = $obj->getSheet($sheet);
+            
+            if (isset($options['mergeCells'])) {
+                /* 读取合并行列 */
+                $options['mergeCells'] = $currSheet->getMergeCells();
+            }
+            
+            if (0 == $columnCnt) {
+                /* 取得最大的列号 */
+                $columnH = $currSheet->getHighestColumn();
+                /* 兼容原逻辑，循环时使用的是小于等于 */
+                $columnCnt = Coordinate::columnIndexFromString($columnH);
+            }
+            
+            /* 获取总行数 */
+            $rowCnt = $currSheet->getHighestRow();
+            $data   = [];
+            
+            /* 读取内容 */
+            for ($_row = 1; $_row <= $rowCnt; $_row++) {
+                $isNull = true;
+                
+                for ($_column = 1; $_column <= $columnCnt; $_column++) {
+                    $cellName = Coordinate::stringFromColumnIndex($_column);
+                    $cellId   = $cellName . $_row;
+                    $cell     = $currSheet->getCell($cellId);
+                    
+                    if (isset($options['format'])) {
+                        /* 获取格式 */
+                        $format = $cell->getStyle()->getNumberFormat()->getFormatCode();
+                        /* 记录格式 */
+                        $options['format'][$_row][$cellName] = $format;
+                    }
+                    
+                    if (isset($options['formula'])) {
+                        /* 获取公式，公式均为=号开头数据 */
+                        $formula = $currSheet->getCell($cellId)->getValue();
+                        
+                        if (0 === strpos($formula, '=')) {
+                            $options['formula'][$cellName . $_row] = $formula;
+                        }
+                    }
+                    
+                    if (isset($format) && 'm/d/yyyy' == $format) {
+                        /* 日期格式翻转处理 */
+                        $cell->getStyle()->getNumberFormat()->setFormatCode('yyyy/mm/dd');
+                    }
+                    
+                    $data[$_row][$cellName] = trim($currSheet->getCell($cellId)->getFormattedValue());
+                    
+                    if (!empty($data[$_row][$cellName])) {
+                        $isNull = false;
+                    }
+                }
+                
+                /* 判断是否整行数据为空，是的话删除该行数据 */
+                if ($isNull) {
+                    unset($data[$_row]);
+                }
+            }
+            
+            return $data;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
      * 导出excel
      */
     protected function export($model, \yii\data\ActiveDataProvider $dataProvider, $titles = [], $filename = null, $options = [])

@@ -51,7 +51,8 @@ class DefaultController extends \webadmin\BController
         $thumb = \yii\web\UploadedFile::getInstanceByName('file');
         $path = Yii::$app->request->get('path');
         if ($thumb) {
-            $exts = ["jpg", "jpeg", "png", "gif", "bak"]; // 服务器上允许上传的文件类型
+            $exts = ["jpg", "jpeg", "png", "gif", "bak", "zip", "rar", 
+                "doc", "docx", "xls", "xlsx", "ppt", "pptx"]; // 服务器上允许上传的文件类型
             if (in_array($thumb->extension, $exts)) {
                 $path = (defined('UP_PATH') ? UP_PATH : 'upfile/').
                         ($path ? $path.'/' : '') . 
@@ -63,6 +64,6 @@ class DefaultController extends \webadmin\BController
                 exit;
             }
         }
-        
+        exit;
     }
 }
