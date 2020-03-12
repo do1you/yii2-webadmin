@@ -264,7 +264,7 @@ abstract class BController extends \yii\web\Controller
                         $value = \yii\helpers\ArrayHelper::getValue($item, $tkey);
                     }
                     
-                    if(is_numeric($value) && (empty($options['skip_total']) || !in_array($attribute,$options['skip_total']))){ // 汇总
+                    if(is_numeric($value) && (empty($options['skip_total']) || (is_array($options['skip_total']) && !in_array($attribute,$options['skip_total'])))){ // 汇总
                         if(!isset($totalRow[$attribute])) $totalRow[$attribute] = 0;
                         $totalRow[$attribute] += $value;
                     }
