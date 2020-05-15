@@ -149,7 +149,7 @@ abstract class BController extends \yii\web\Controller
                 /* 取得最大的列号 */
                 $columnH = $currSheet->getHighestColumn();
                 /* 兼容原逻辑，循环时使用的是小于等于 */
-                $columnCnt = Coordinate::columnIndexFromString($columnH);
+                $columnCnt = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($columnH);
             }
             
             /* 获取总行数 */
@@ -161,7 +161,7 @@ abstract class BController extends \yii\web\Controller
                 $isNull = true;
                 
                 for ($_column = 1; $_column <= $columnCnt; $_column++) {
-                    $cellName = Coordinate::stringFromColumnIndex($_column);
+                    $cellName = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($_column);
                     $cellId   = $cellName . $_row;
                     $cell     = $currSheet->getCell($cellId);
                     
