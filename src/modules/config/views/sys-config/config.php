@@ -4,8 +4,10 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use webadmin\widgets\ActiveForm;
 
+$objList = $model->getV_group_obj();
+$childs = \yii\helpers\ArrayHelper::map($objList,'value','childs');
 $group_id = $model->group_id;
-$groupList = strlen($group_id) ? array($group_id=>$model->v_group_id) : $model->getV_group_id(false);
+$groupList = strlen($group_id) ? array($group_id=>$model->v_group_id) : \yii\helpers\ArrayHelper::map($objList,'value','name');
 $script = '';
 ?>
 <?php Pjax::begin(); ?>
@@ -48,28 +50,71 @@ $script = '';
 					    <div class="tab-content tabs-flat">
 						    <?php $num=0;foreach($groupList as $key=>$value):?>
 					    		<div id="tab_<?php echo $key?>" class="tab-pane<?php echo ($num++ == 0 ? ' active' : '')?>">
-									<div class="row">
-									
-										<div class="col-sm-6 col-xs-12">
-											<?php if(!empty($list[$key])):$num=0;foreach($list[$key] as $k=>$item):if($num++ % 2==0):?>
-												<?php echo $this->render('_config',[
-												    'item' => $item,
-												    'k' => $k,
-												    'form' => $form,
-												])?>
-											<?php endif;endforeach;endif;?>
-										</div>
-
-										<div class="col-sm-6 col-xs-12">
-											<?php if(!empty($list[$key])):$num=0;foreach($list[$key] as $k=>$item):if($num++ % 2!=0):?>
-												<?php echo $this->render('_config',[
-												    'item' => $item,
-												    'k' => $k,
-												    'form' => $form,
-												])?>
-											<?php endif;endforeach;endif;?>
-										</div>
-									</div>
+									<?php if(!empty($list[$key])):?>
+    									<div class="row">
+    										<div class="col-sm-6 col-xs-12">
+    											<?php if(!empty($list[$key])):$num2=0;foreach($list[$key] as $k=>$item):if($num2++ % 2==0):?>
+    												<?php echo $this->render('_config',[
+    												    'item' => $item,
+    												    'k' => $k,
+    												    'form' => $form,
+    												])?>
+    											<?php endif;endforeach;endif;?>
+    										</div>
+    
+    										<div class="col-sm-6 col-xs-12">
+    											<?php if(!empty($list[$key])):$num2=0;foreach($list[$key] as $k=>$item):if($num2++ % 2!=0):?>
+    												<?php echo $this->render('_config',[
+    												    'item' => $item,
+    												    'k' => $k,
+    												    'form' => $form,
+    												])?>
+    											<?php endif;endforeach;endif;?>
+    										</div>
+    									</div>
+									<?php endif;?>
+					    			
+					    			<!-- child -->
+					    			<?php if(!empty($childs[$key]) && is_array($childs[$key])): $clist = \yii\helpers\ArrayHelper::map($childs[$key],'value','name');?>
+					    				<div class="tabbable">
+                    					    <ul class="nav nav-tabs tabs-flat">
+                    					    	<?php $num1=0;foreach($clist as $key1=>$value1):?>
+                    					    		<?php if($num1++ == 0):?>
+                    					    			<li class="active"><a data-toggle="tab" href="#tab_<?php echo $key1?>" aria-expanded="true"><?php echo $value1?></a></li>
+                    					    		<?php else:?>
+                    					    			<li class=""><a data-toggle="tab" href="#tab_<?php echo $key1?>" aria-expanded="false"><?php echo $value1?></a></li>
+                    					    		<?php endif;?>
+                    							<?php endforeach;?>
+                    					    </ul>
+                    					    <div class="tab-content tabs-flat">
+                    						    <?php $num1=0;foreach($clist as $key1=>$value1):?>
+                    					    		<div id="tab_<?php echo $key1?>" class="tab-pane<?php echo ($num1++ == 0 ? ' active' : '')?>">
+                    									<div class="row">
+                    										<div class="col-sm-6 col-xs-12">
+                    											<?php if(!empty($list[$key1])):$num2=0;foreach($list[$key1] as $k=>$item):if($num2++ % 2==0):?>
+                    												<?php echo $this->render('_config',[
+                    												    'item' => $item,
+                    												    'k' => $k,
+                    												    'form' => $form,
+                    												])?>
+                    											<?php endif;endforeach;endif;?>
+                    										</div>
+                    
+                    										<div class="col-sm-6 col-xs-12">
+                    											<?php if(!empty($list[$key1])):$num2=0;foreach($list[$key1] as $k=>$item):if($num2++ % 2!=0):?>
+                    												<?php echo $this->render('_config',[
+                    												    'item' => $item,
+                    												    'k' => $k,
+                    												    'form' => $form,
+                    												])?>
+                    											<?php endif;endforeach;endif;?>
+                    										</div>
+                    									</div>
+                    								</div>
+                    							<?php endforeach;?>
+                    					    </div>
+                    					</div>
+					    			<?php endif;?>
 								</div>
 							<?php endforeach;?>
 							<?php if(Yii::$app->controller->action->id!='config'):?>

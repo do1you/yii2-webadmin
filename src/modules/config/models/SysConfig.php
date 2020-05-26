@@ -128,6 +128,32 @@ class SysConfig extends \webadmin\ModelCAR
         return \webadmin\modules\config\models\SysLdItem::dd('config_group',($val!==null ? $val : $this->group_id));
     }
     
+    // 获取分组对象
+    public function getV_group_obj()
+    {
+        $list = [];
+        $model = \webadmin\modules\config\models\SysLdItem::model()->findOne(['ident'=>'config_group']);
+        if($model){
+            $list = \webadmin\modules\config\models\SysLdItem::treeMenu($model['id'],['state'=>'0']);
+        }
+        return $list;
+    }
+    
+    // 获取分组所有子对象
+    public function getV_group_obj_child()
+    {
+        $result = [];
+        $objList = $this->getV_group_obj();
+        $childs = \yii\helpers\ArrayHelper::map($objList,'value','childs');
+        if(isset($childs[$this->group_id])){
+            $result = \yii\helpers\ArrayHelper::map($childs[$this->group_id],'value','value');
+        }
+        if($this->group_id){
+            $result[$this->group_id] = $this->group_id;
+        }
+        return ($result ? $result : null);
+    }
+    
     // 获取配置类型
     public function getV_config_type($val = null)
     {

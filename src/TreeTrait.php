@@ -47,7 +47,7 @@ trait TreeTrait
                 : self::find()->where($wheres)
                     ->andWhere([$model->col_parent=>$parentId])
                     ->orderBy($model->col_sort ? "{$model->col_sort} desc" : "")
-                    ->with($wheres ? "" : "childs.childs.childs.childs")
+                    ->with("childs.childs.childs.childs")
                     ->all();
             $result = [];
             foreach($list as $item){
@@ -75,7 +75,7 @@ trait TreeTrait
                 : self::find()->where($wheres)
                     ->andWhere([$model->col_parent=>$parentId])
                     ->orderBy($model->col_sort ? "{$model->col_sort} desc" : "")
-                    ->with($wheres ? "" : "childs.childs.childs.childs")
+                    ->with("childs.childs.childs.childs")
                     ->all();
             $result = [];
             foreach($list as $item){
@@ -84,10 +84,12 @@ trait TreeTrait
                 $data['name'] = $item[$model->col_name];
                 if($wheres){
                     $childs = $item->getChilds()->andWhere($wheres)->all();
-                    if($childs) $data['children'] = $childs;
                 }else{
-                    if($item['childs']) $data['children'] = self::treeData($item['childs'],$wheres,$selectIds,$reload);
+                    $childs = $item['childs'];
                 }
+                    
+                if($childs) $data['children'] = self::treeData($childs,$wheres,$selectIds,$reload);
+                
                 $data['type'] = !empty($data['children']) ? 'folder' : 'item';
                 if($selectIds && in_array($data[$model->col_id],$selectIds)) $data['selected'] = true;
                 $result[] = $data;
@@ -111,17 +113,19 @@ trait TreeTrait
                 : self::find()->where($wheres)
                     ->andWhere([$model->col_parent=>$parentId])
                     ->orderBy($model->col_sort ? "{$model->col_sort} desc" : "")
-                    ->with($wheres ? "" : "childs.childs.childs.childs")
+                    ->with("childs.childs.childs.childs")
                     ->all();
             $result = [];
             foreach($list as $item){
                 $data = $item['attributes'];
                 if($wheres){
                     $childs = $item->getChilds()->andWhere($wheres)->all();
-                    if($childs) $data['childs'] = $childs;
                 }else{
-                    if($item['childs']) $data['childs'] = self::treeMenu($item['childs'],$wheres,$reload);
+                    $childs = $item['childs'];
                 }
+                    
+                if($childs) $data['childs'] = self::treeMenu($childs,$wheres,$reload);
+                
                 $result[] = $data;
             }
             Yii::$app->cache->set($cachekey,$result,86400);

@@ -30,7 +30,7 @@ class SysConfigController extends \webadmin\BController
         if($model->group_id) $this->currUrl = 'config/sys-config/config?group_id='.$model->group_id;
         $configList = SysConfig::find()
                     ->orderBy("reorder desc,label_name desc")
-                    ->andFilterWhere(['state'=>'0','group_id'=>$model->group_id])
+                    ->andFilterWhere(['state'=>'0','group_id'=>$model->v_group_obj_child])
                     ->all();
         $groupList = \yii\helpers\ArrayHelper::map($configList,'key','v_self','group_id');
 
