@@ -127,8 +127,12 @@ class ModelCAR extends \yii\db\ActiveRecord
 	                        $query->andFilterWhere([$key=>$value]);
 	                        break;
 	                    default:
-	                        $likeKeyword = static::getDb()->driverName === 'pgsql' ? 'ilike' : 'like';
-	                        $query->andFilterWhere([$likeKeyword,static::tableName().'.'.$key,$value]);
+	                        if(is_array($value)){
+	                            $query->andFilterWhere([$key=>$value]);
+	                        }else{
+	                            $likeKeyword = static::getDb()->driverName === 'pgsql' ? 'ilike' : 'like';
+	                            $query->andFilterWhere([$likeKeyword,static::tableName().'.'.$key,$value]);
+	                        }
 	                        break;
 	                }
 	            }
