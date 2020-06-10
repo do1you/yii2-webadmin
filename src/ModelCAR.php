@@ -124,11 +124,11 @@ class ModelCAR extends \yii\db\ActiveRecord
 	                    case Schema::TYPE_TIME:
 	                    case Schema::TYPE_DATETIME:
 	                    case Schema::TYPE_TIMESTAMP:
-	                        $query->andFilterWhere([$key=>$value]);
+	                        $query->andFilterWhere([static::tableName().'.'.$key=>$value]);
 	                        break;
 	                    default:
 	                        if(is_array($value)){
-	                            $query->andFilterWhere([$key=>$value]);
+	                            $query->andFilterWhere([static::tableName().'.'.$key=>$value]);
 	                        }else{
 	                            $likeKeyword = static::getDb()->driverName === 'pgsql' ? 'ilike' : 'like';
 	                            $query->andFilterWhere([$likeKeyword,static::tableName().'.'.$key,$value]);
