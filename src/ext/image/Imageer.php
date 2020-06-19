@@ -1,5 +1,5 @@
 <?php
-namespace ext\image;
+namespace webadmin\ext\image;
 
 require_once __DIR__.'/Image.php';
 use Image;

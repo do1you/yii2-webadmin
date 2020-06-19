@@ -1,7 +1,7 @@
 <?php $controller = \Yii::$app->controller;?>
 <?php $this->beginPage() ?>
 <!doctype html>
-<?php if(\common\models\Helpfn::is_mobile()):?><html lang="<?php echo Yii::$app->charset?>"><?php else:?><html xmlns="http://www.w3.org/1999/xhtml"><?php endif;?>
+<?php if(\webadmin\ext\Helpfn::is_mobile()):?><html lang="<?php echo Yii::$app->charset?>"><?php else:?><html xmlns="http://www.w3.org/1999/xhtml"><?php endif;?>
 <head>
 	<meta charset="<?php echo Yii::$app->charset?>">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +10,7 @@
 	<?php if(property_exists($controller,'description')):?><meta name="description" content="<?php echo $controller->description?>" /><?php endif;?>
 	<title><?php echo (property_exists($controller,'pageTitle')&&$controller->pageTitle ? $controller->pageTitle : Yii::$app->name)?></title>
 	<?= \yii\helpers\Html::csrfMetaTags() ?>
-	<?php if(\common\models\Helpfn::is_mobile()):?>
+	<?php if(\webadmin\ext\Helpfn::is_mobile()):?>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta content="telephone=no, address=no" name="format-detection">
 		<meta name="apple-mobile-web-app-capable" content="yes">

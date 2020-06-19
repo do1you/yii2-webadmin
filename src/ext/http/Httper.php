@@ -2,9 +2,9 @@
 /**
  * HTTP封装类
  *
- * 调用示例代码：Yii::createObject('ext\http\Httper')->getHttp('1')->post($url,$data)
+ * 调用示例代码：Yii::createObject('webadmin\ext\http\Httper')->getHttp('1')->post($url,$data)
  */
-namespace ext\http;
+namespace webadmin\ext\http;
  
 require_once __DIR__.'/Http.php';
 use Http;
@@ -96,8 +96,8 @@ class Httper{
 	/**
 	 * 返回HTTP请求对象,支持302页面跳转爬取，但不支持JAVASCRIPT的跳转
 	 * 示例:
-	 * Yii::createObject('ext\http\Httper')->get('http://10.1.3.143/idc/portal.php')
-	 * Yii::createObject('ext\http\Httper')->post('http://10.1.3.143/idc/portal.php',array('a'=>1))
+	 * Yii::createObject('webadmin\ext\http\Httper')->get('http://10.1.3.143/idc/portal.php')
+	 * Yii::createObject('webadmin\ext\http\Httper')->post('http://10.1.3.143/idc/portal.php',array('a'=>1))
 	 */
 	public function getHttp($httpType=null){
 		$httpType = $httpType===null ? $this->httpType : $httpType;
