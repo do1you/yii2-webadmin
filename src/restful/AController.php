@@ -14,6 +14,11 @@ use yii\base\ErrorException;
 class AController extends ActiveController
 {
     /**
+     * 默认模板
+     */
+    public $layout = '@webadmin/views/html5';
+    
+    /**
      * 当前授制器是否需要认证口令
      */
     public $isAccessToken = false;

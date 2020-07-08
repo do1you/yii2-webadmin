@@ -330,7 +330,7 @@ class DefaultController extends \webadmin\console\CController
                 state = 0 and run_state != 1
                 and (
                     (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
-                    or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24
+                    or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24-3600
                         and timing_time>='{$startSec}' and timing_time<='{$endSec}')
                 )
                     order by id asc limit 50
