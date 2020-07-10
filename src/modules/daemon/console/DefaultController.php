@@ -331,7 +331,8 @@ class DefaultController extends \webadmin\console\CController
                 and (
                     (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
                     or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24-3600
-                        and timing_time>='{$startSec}' and timing_time<='{$endSec}')
+                        and time_to_sec(timing_time)<=time_to_sec('{$startSec}') and time_to_sec(timing_time)+3600>=time_to_sec('{$startSec}')
+                       )
                 )
                     order by id asc limit 50
                 ")->all();
