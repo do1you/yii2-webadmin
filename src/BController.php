@@ -60,7 +60,7 @@ abstract class BController extends \yii\web\Controller
         
         // 定义别名路径
 		list($assetPath, $assetUrl) = Yii::$app->getAssetManager()->publish('@webadmin/themes/beyond/assets');
-        Yii::setAlias('@assetPath', $assetUrl);  
+		Yii::setAlias('@assetPath', $assetPath);  
 		Yii::setAlias('@assetUrl', $assetUrl);  
         
         // AJAX请求页面忽略布局文件
