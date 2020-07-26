@@ -97,37 +97,44 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public static function runCmd($command = '', $params = [], $isCmd = false)
     {
-        $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
-        if($isCmd){ // 命令行模式
-            $processPath = Yii::getAlias('@app/../');
-            $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
-                ? $processPath.'yii.bat '.$command
-                : $processPath.'yii '.$command;
-            if($params) $cmd .= ' "' . implode('" "',$params).'"';
-            exec($cmd,$result,$code);
+        try{
+            set_time_limit(3600);
+            ini_set('memory_limit', '-1');
             
-            if(strlen($code)>0 && $code!='0') return false;
-            if($result){
-                return is_array($result) ? implode("\r\n", $result) : $result;
-            }else{
-                // 没有输出默认成功
-                return true;
-            }
-        }else{
-            $app = Yii::$app;
-            if(($application = static::getConsoleApp())){
-                ob_start();
-                $result = $application->runAction($command, $params);
-                $message = ob_get_contents();
-                ob_end_clean();
+            $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
+            if($isCmd){ // 命令行模式
+                $processPath = Yii::getAlias('@app/../');
+                $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
+                    ? $processPath.'yii.bat '.$command
+                    : $processPath.'yii '.$command;
+                if($params) $cmd .= ' "' . implode('" "',$params).'"';
+                exec($cmd,$result,$code);
                 
-                if($result=='0'){
-                    $resp = ($message ? $message : true);
+                if(strlen($code)>0 && $code!='0') return false;
+                if($result){
+                    return is_array($result) ? implode("\r\n", $result) : $result;
+                }else{
+                    // 没有输出默认成功
+                    return true;
                 }
-                
-                Yii::$app = $app;
+            }else{
+                $app = Yii::$app;
+                if(($application = static::getConsoleApp())){
+                    ob_start();
+                    $result = $application->runAction($command, $params);
+                    $message = ob_get_contents();
+                    ob_end_clean();
+                    
+                    if($result=='0'){
+                        $resp = ($message ? $message : true);
+                    }
+                    
+                    Yii::$app = $app;
+                }
+                return (isset($resp) ? $resp : false);
             }
-            return (isset($resp) ? $resp : false);
+        }catch(\Exception $e){
+            return false;
         }
     }
     
