@@ -77,16 +77,24 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function run()
     {
-        $app = Yii::$app;
-        $this->run_state = 1;
-        if($this->save(false)){
-            $result = SysCrontab::runCmd($this->command, [], true);
-            
-            $this->last_time = time();
-            $this->run_state = $result===false ? 3 : 2;
-            $this->save(false);
-            
+        try{
+            $app = Yii::$app;
+            $this->run_state = 1;
+            if($this->save(false)){
+                $result = SysCrontab::runCmd($this->command, [], true);
+                
+                $this->last_time = time();
+                $this->run_state = $result===false ? 3 : 2;
+                $this->save(false);
+            }
             Yii::$app = $app;
+        }catch(\Exception $e){
+            $model = SysCrontab::findOne($this->id);
+            if($model){
+                $model->last_time = time();
+                $model->run_state = 3;
+                $model->save(false);
+            }
         }
         
         return (isset($result) ? $result : false);
@@ -97,44 +105,40 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public static function runCmd($command = '', $params = [], $isCmd = false)
     {
-        try{
-            set_time_limit(3600);
-            ini_set('memory_limit', '-1');
+        set_time_limit(3600);
+        ini_set('memory_limit', '-1');
+        
+        $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
+        if($isCmd){ // 命令行模式
+            $processPath = Yii::getAlias('@app/../');
+            $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
+                ? $processPath.'yii.bat '.$command
+                : $processPath.'yii '.$command;
+            if($params) $cmd .= ' "' . implode('" "',$params).'"';
+            exec($cmd,$result,$code);
             
-            $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
-            if($isCmd){ // 命令行模式
-                $processPath = Yii::getAlias('@app/../');
-                $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
-                    ? $processPath.'yii.bat '.$command
-                    : $processPath.'yii '.$command;
-                if($params) $cmd .= ' "' . implode('" "',$params).'"';
-                exec($cmd,$result,$code);
-                
-                if(strlen($code)>0 && $code!='0') return false;
-                if($result){
-                    return is_array($result) ? implode("\r\n", $result) : $result;
-                }else{
-                    // 没有输出默认成功
-                    return true;
-                }
+            if(strlen($code)>0 && $code!='0') return false;
+            if($result){
+                return is_array($result) ? implode("\r\n", $result) : $result;
             }else{
-                $app = Yii::$app;
-                if(($application = static::getConsoleApp())){
-                    ob_start();
-                    $result = $application->runAction($command, $params);
-                    $message = ob_get_contents();
-                    ob_end_clean();
-                    
-                    if($result=='0'){
-                        $resp = ($message ? $message : true);
-                    }
-                    
-                    Yii::$app = $app;
-                }
-                return (isset($resp) ? $resp : false);
+                // 没有输出默认成功
+                return true;
             }
-        }catch(\Exception $e){
-            return false;
+        }else{
+            $app = Yii::$app;
+            if(($application = static::getConsoleApp())){
+                ob_start();
+                $result = $application->runAction($command, $params);
+                $message = ob_get_contents();
+                ob_end_clean();
+                
+                if($result=='0'){
+                    $resp = ($message ? $message : true);
+                }
+                
+                Yii::$app = $app;
+            }
+            return (isset($resp) ? $resp : false);
         }
     }
     

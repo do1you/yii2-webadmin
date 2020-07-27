@@ -36,7 +36,7 @@ class LogCrontab extends \webadmin\ModelCAR
             [['exit_code', 'user_id'], 'integer'],
             [['starttime', 'endtime'], 'safe'],
             [['command', 'action'], 'string', 'max' => 50],
-            [['args', 'message'], 'string', 'max' => 255],
+            [['args'], 'string', 'max' => 255],
         ];
     }
 
