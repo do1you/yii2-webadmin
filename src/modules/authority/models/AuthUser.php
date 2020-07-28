@@ -18,6 +18,9 @@ use Yii;
 class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
 {
     public $password_confirm,$old_password,$password_curr,$roleList,$role_id;
+    
+    //是否记录数据库日志
+    protected $isSaveLog = true;
 
     /**
      * 数据表名称

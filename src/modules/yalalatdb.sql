@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `log_crontab` (
   `action` varchar(50) NOT NULL COMMENT '动作',
   `args` varchar(255) NOT NULL COMMENT '参数',
   `exit_code` int(11) NOT NULL DEFAULT '0' COMMENT '结果',
-  `message` varchar(255) NOT NULL COMMENT '描述',
+  `message` text NOT NULL COMMENT '描述',
   `starttime` datetime NOT NULL COMMENT '开始时间',
   `endtime` datetime NOT NULL COMMENT '结束时间',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '触发用户',

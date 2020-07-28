@@ -327,7 +327,9 @@ class DefaultController extends \webadmin\console\CController
             $endSec = date('H:i:s',$time+3600);
             
             $tasks = SysCrontab::find()->where("
-                state = 0 and run_state != 1
+                state = 0 and (
+                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=60)
+                )
                 and (
                     (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
                     or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24-3600*23

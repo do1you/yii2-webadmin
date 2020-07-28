@@ -19,6 +19,9 @@ class SysLdItem extends \webadmin\ModelCAR
 {
     use \webadmin\TreeTrait;
     
+    //是否记录数据库日志
+    protected $isSaveLog = true;
+    
     public function init()
     {
         $this->col_sort = 'reorder desc, name';

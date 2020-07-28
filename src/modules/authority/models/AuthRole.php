@@ -16,6 +16,10 @@ use yii\helpers\VarDumper;
 class AuthRole extends \webadmin\ModelCAR
 {
     public $authorityList;
+    
+    //是否记录数据库日志
+    protected $isSaveLog = true;
+    
     /**
      * 返回数据库表名称
      */
