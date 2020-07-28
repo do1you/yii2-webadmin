@@ -336,7 +336,7 @@ class DefaultController extends \webadmin\console\CController
                         and time_to_sec(timing_time)<=time_to_sec('{$startSec}') and time_to_sec(timing_time)+1200>=time_to_sec('{$startSec}')
                        )
                 )
-                    order by id asc limit 1
+                    order by id asc limit 30
                 ")->all();
             
             if($tasks){
@@ -365,7 +365,7 @@ class DefaultController extends \webadmin\console\CController
         while(($num = $this->_increase())<=$this->maxProcessNum){
             $time = time();
             
-            $tasks = SysQueue::find()->where("state=0 order by id asc limit 1")->all();
+            $tasks = SysQueue::find()->where("state=0 order by id asc limit 30")->all();
             
             if($tasks){
                 foreach($tasks as $task){
