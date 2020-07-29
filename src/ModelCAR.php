@@ -45,15 +45,18 @@ class ModelCAR extends \yii\db\ActiveRecord
 	public function getCache($key=null,$params=[])
 	{
 	    if(empty($key)) return null;
-	    if(!method_exists($this,$key) && !property_exists($this,$key)) return null;
+	    //if(!method_exists($this,$key) && !property_exists($this,$key)) return null;
 	    
 	    $cachekey = 'modelCacheData/'.get_called_class().'/'.$key.'/'.md5(serialize($params));
+	    $cachekey = 'modelCacheData/'.get_called_class().'/'.$key.'/'.md5(serialize($this)).'/'.md5(serialize($params));
 	    $result = Yii::$app->cache->get($cachekey);
 	    if($result===false){
 	        if(method_exists($this,$key)){
 	            $result = call_user_func_array([$this,$key],$params);
-	        }else{
+	        }elseif(isset($this[$key])){
 	            $result = $this[$key];
+	        }else{
+	            return null;
 	        }
 	        
 	        Yii::$app->cache->set($cachekey,$result,86400);

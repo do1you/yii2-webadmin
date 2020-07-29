@@ -80,25 +80,16 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function run()
     {
-        try{
-            $app = Yii::$app;
-            $this->run_state = 1;
-            if($this->save(false)){
-                $result = SysCrontab::runCmd($this->command, [], true);
-                
-                $this->last_time = time();
-                $this->run_state = $result===false ? 3 : 2;
-                $this->save(false);
-            }
-            Yii::$app = $app;
-        }catch(\Exception $e){
-            $model = SysCrontab::findOne($this->id);
-            if($model){
-                $model->last_time = time();
-                $model->run_state = 3;
-                $model->save(false);
-            }
+        $app = Yii::$app;
+        $this->run_state = 1;
+        if($this->save(false)){
+            $result = SysCrontab::runCmd($this->command, [], true);
+            
+            $this->last_time = time();
+            $this->run_state = $result===false ? 3 : 2;
+            $this->save(false);
         }
+        Yii::$app = $app;
         
         return (isset($result) ? $result : false);
     }

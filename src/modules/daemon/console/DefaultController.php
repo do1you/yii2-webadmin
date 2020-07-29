@@ -346,6 +346,9 @@ class DefaultController extends \webadmin\console\CController
                 }
             }
             
+            // 记录数据库操作日志
+            \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+            
             unset($time,$startSec,$endSec,$tasks,$result,$transaction);
             sleep(1);
         }
@@ -380,6 +383,9 @@ class DefaultController extends \webadmin\console\CController
                 $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
                 SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
             }
+            
+            // 记录数据库操作日志
+            \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
             
             sleep(1);
         }
