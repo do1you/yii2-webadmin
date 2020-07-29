@@ -19,10 +19,7 @@ namespace webadmin\modules\config\models;
 use Yii;
 
 class SysCrontab extends \webadmin\ModelCAR
-{
-    //是否记录数据库日志
-    protected $isSaveLog = true;
-    
+{    
     /**
      * 返回数据库表名称
      */
