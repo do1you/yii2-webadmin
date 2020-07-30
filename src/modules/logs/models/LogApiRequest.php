@@ -90,7 +90,7 @@ class LogApiRequest extends \webadmin\ModelCAR
             'result_msg' => (!empty($message) ? $message : $result),
             'params' => ($vars ? print_r($vars,true) : ""),
             'create_time' => date('Y-m-d H:i:s'),
-            'user_id' => ((Yii::$app instanceof \yii\web\Application) ? Yii::$app->user->id : '0'),
+            'user_id' => ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '0'),
         ]);
         
         return $result;

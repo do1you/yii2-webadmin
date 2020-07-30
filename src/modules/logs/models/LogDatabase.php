@@ -99,7 +99,7 @@ class LogDatabase extends \webadmin\ModelCAR
                             'old_value' => $value,
                             'operation' => $act,
                             'create_time' => $time,
-                            'user_id' => ((Yii::$app instanceof \yii\web\Application) ? Yii::$app->user->id : '0'),
+                            'user_id' => ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '0'),
                         ];
                         if(empty($parentId)){
                             $parentId = self::insertion($cols);

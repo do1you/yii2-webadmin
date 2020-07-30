@@ -152,7 +152,7 @@ class LogSms extends \webadmin\ModelCAR
             'result_code' => isset($code) ? $code : '-1',
             'result' => $result,
             'addtime' => date('Y-m-d H:i:s'),
-            'user_id' => ((Yii::$app instanceof \yii\web\Application) ? Yii::$app->user->id : '0'),
+            'user_id' => ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '0'),
         ]);
 
         return $re;
