@@ -96,8 +96,8 @@ class LogDatabase extends \webadmin\ModelCAR
                             'primary_key' => $primaryKey,
                             'parent_id' => $parentId,
                             'new_value' => (isset($atts[$key]) ? $atts[$key] : ''),
-                            'old_value' => $value,
-                            'operation' => $act,
+                            'old_value' => trim($value),
+                            'operation' => trim($act),
                             'create_time' => $time,
                             'user_id' => ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '0'),
                         ];
