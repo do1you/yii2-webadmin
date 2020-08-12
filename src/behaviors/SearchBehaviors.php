@@ -2,7 +2,7 @@
 /**
  * 缓存查询条件和页码
  */
-namespace webadmin;
+namespace webadmin\behaviors;
 
 use Yii;
 use yii\base\ActionEvent;
@@ -14,6 +14,11 @@ class SearchBehaviors extends \yii\base\Behavior
      * 需要缓存的控制器方法
      */
     public $searchCacheActions = ['index', 'list', 'tree'];
+    
+    /**
+     * 不进行缓存的主键值 导出等操作
+     */
+    public $searchNotKeys = ['is_export'];
     
     /**
      * 行为触发的事件
@@ -35,16 +40,17 @@ class SearchBehaviors extends \yii\base\Behavior
         if(!in_array($act,$this->searchCacheActions)) return true;
         
         // 存在旧的缓存查询数据进行合并
-        $result = Yii::$app->cache->get($cacheKey);
-        if($result && is_array($result)){
-            unset($result['is_export']); // 导出操作不缓存
-            $_GET = array_merge(
-                $result,
-                $_GET
-            );
+        foreach(['_GET','_POST'] as $key){
+            $result = Yii::$app->cache->get($cacheKey.'/'.$key);
+            if($result && is_array($result)){
+                foreach($this->searchNotKeys as $k) unset($result[$k]); // 不缓存
+                $$key = array_merge($result,$$key);
+                $_REQUEST = array_merge($result,$_REQUEST);
+            }
+            
+            Yii::$app->cache->set($cacheKey,$$key,7200);
         }
         
-        Yii::$app->cache->set($cacheKey,$_GET,7200);
     }
 }
 

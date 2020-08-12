@@ -2,7 +2,7 @@
 /**
  * 判断权限是否允许执行
  */
-namespace webadmin;
+namespace webadmin\behaviors;
 
 use Yii;
 use yii\base\ActionEvent;

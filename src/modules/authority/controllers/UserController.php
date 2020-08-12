@@ -90,7 +90,7 @@ class UserController extends \webadmin\BController
             Yii::$app->user->returnUrl = $_SERVER['HTTP_REFERER'];
         }
         
-        $this->layout='/html5';
+        $this->layout='@webadmin/views/html5';
         $this->body_class='login_box bg'.rand(1,13);
         return $this->render('login',array('model'=>$model));
     }

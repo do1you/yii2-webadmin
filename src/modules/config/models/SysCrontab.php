@@ -101,7 +101,7 @@ class SysCrontab extends \webadmin\ModelCAR
         
         $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
         if($isCmd){ // 命令行模式
-            $processPath = Yii::getAlias('@app/../');
+            $processPath = Yii::getAlias('@vendor/../');
             $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
                 ? $processPath.'yii.bat '.$command
                 : $processPath.'yii '.$command;

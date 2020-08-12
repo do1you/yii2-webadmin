@@ -51,7 +51,7 @@ class DefaultController extends \webadmin\console\CController
     {
         $this->isWindows = strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false;
         $this->pidFile = Yii::getAlias('@runtime').DIRECTORY_SEPARATOR.'process'.DIRECTORY_SEPARATOR.'tongyihenshuai.pid';
-        $this->processPath = Yii::getAlias('@app/../');
+        $this->processPath = Yii::getAlias('@vendor/../');
         \yii\helpers\FileHelper::createDirectory(dirname($this->pidFile));
     }
     
@@ -89,6 +89,7 @@ class DefaultController extends \webadmin\console\CController
             default: // 未知错误
                 $act = $act ? $act : 'empty';
                 Console::output("Unknown parameter {$act}.");
+                $this->actionHelp();
                 break;
         }
         return 0;
@@ -223,9 +224,7 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionRestart()
     {
-        $this->actionStop();
-        $this->actionStart();
-        return 0;
+        return $this->actionRstart();
     }
 
 	/**
@@ -238,7 +237,8 @@ class DefaultController extends \webadmin\console\CController
 		$cmd = 'ps aux | grep yii | grep '.$this->processCmd;
 		exec($cmd,$result,$code);
 		if(empty($result)){
-			$this->actionRestart();
+		    $this->actionStop();
+		    $this->actionStart();
 		}
         return 0;
     }
@@ -336,7 +336,7 @@ class DefaultController extends \webadmin\console\CController
                         and time_to_sec(timing_time)<=time_to_sec('{$startSec}') and time_to_sec(timing_time)+1200>=time_to_sec('{$startSec}')
                        )
                 )
-                    order by id asc limit 30
+                    order by id asc limit 1
                 ")->all();
             
             if($tasks){
@@ -368,7 +368,7 @@ class DefaultController extends \webadmin\console\CController
         while(($num = $this->_increase())<=$this->maxProcessNum){
             $time = time();
             
-            $tasks = SysQueue::find()->where("state=0 order by id asc limit 30")->all();
+            $tasks = SysQueue::find()->where("state=0 order by id asc limit 1")->all();
             
             if($tasks){
                 foreach($tasks as $task){

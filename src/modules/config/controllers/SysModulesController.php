@@ -19,6 +19,7 @@ class SysModulesController extends \webadmin\BController
         $list = \yii\helpers\ArrayHelper::map(SysModules::model()->find()->all(), 'code', 'v_self');
         foreach($dirs as $dir){
             $dir = basename($dir);
+            if($dir=='home') continue;
             if(!isset($list[$dir])){
                 $model = new SysModules;
                 $model->code = $model->name = $dir;

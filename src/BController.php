@@ -34,13 +34,7 @@ abstract class BController extends \yii\web\Controller
     
     // 初始化
     public function init()
-    {
-        // 输出事件监听
-        Yii::$app->response->off(Response::EVENT_BEFORE_SEND);
-        Yii::$app->response->off(Response::EVENT_AFTER_SEND);
-        Yii::$app->response->on(Response::EVENT_BEFORE_SEND, [$this, 'beforeSend']);
-        Yii::$app->response->on(Response::EVENT_AFTER_SEND, [$this, 'afterSend']);
-        
+    {        
         parent::init();
         
         // 定义组件
@@ -69,18 +63,6 @@ abstract class BController extends \yii\web\Controller
         $this->layout = $this->layout ? '@webadmin/views/'.$this->layout : false;
     }
     
-    // 执行前
-    public function beforeAction($action)
-    {
-        return parent::beforeAction($action);
-    }
-    
-    // 执行后
-    public function afterAction($action, $result)
-    {
-        return parent::afterAction($action, $result);
-    }    
-    
     /**
      * 定义默认行为
      * {@inheritDoc}
@@ -100,13 +82,17 @@ abstract class BController extends \yii\web\Controller
             ],
             // 权限判断
             'webAuthFilter' => [
-                'class' => \webadmin\WebAuthFilter::className(),
+                'class' => \webadmin\behaviors\WebAuthFilter::className(),
                 'isAccessToken' => $this->isAccessToken,
             ],
             // 缓存查询条件
             'searchBehaviors' => [
-                'class' => \webadmin\SearchBehaviors::className(),
+                'class' => \webadmin\behaviors\SearchBehaviors::className(),
                 'searchCacheActions' => $this->searchCacheActions,
+            ],
+            // 操作日志和数据库日志记录
+            'logBehaviors' => [
+                'class' => \webadmin\behaviors\LogBehaviors::className(),
             ],
         ];
     }
@@ -235,7 +221,7 @@ abstract class BController extends \yii\web\Controller
                 $attribute = is_array($tval) ? (isset($tval['attribute']) ? $tval['attribute'] : null) : $tval;
                 $attribute = $attribute ? $attribute : $tkey;
                 $label = $model ? $model->getAttributeLabel($attribute) : $attribute;
-                $let = self::intToChr($index++);
+                $let = \webadmin\ext\Helpfn::intToChr($index++);
                 $sheet->setCellValueExplicit($let.$row, $label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                 //$sheet->getColumnDimension($let)->setWidth(max(strlen($label)*2,20,$sheet->getColumnDimension($let)->getWidth()));
                 $sheet->getColumnDimension($let)->setAutoSize(true);
@@ -269,7 +255,7 @@ abstract class BController extends \yii\web\Controller
                         $totalRow[$attribute] += $value;
                     }
                     
-                    $let = self::intToChr($index++);
+                    $let = \webadmin\ext\Helpfn::intToChr($index++);
                     
                     if(preg_match("/^\d{8,50}$/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0')){
                         $sheet->setCellValueExplicit($let.$row, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // setCellValueExplicit
@@ -288,7 +274,7 @@ abstract class BController extends \yii\web\Controller
             foreach($titles as $tkey=>$tval){
                 $attribute = is_array($tval) ? (isset($tval['attribute']) ? $tval['attribute'] : null) : $tval;
                 $attribute = $attribute ? $attribute : $tkey;
-                $let = self::intToChr($index++);
+                $let = \webadmin\ext\Helpfn::intToChr($index++);
                 if(isset($totalRow[$attribute])){
                     $totalRow[$attribute] = round($totalRow[$attribute]*1000)/1000;
                     $sheet->setCellValueExplicit($let.$row, $totalRow[$attribute], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
@@ -323,44 +309,6 @@ abstract class BController extends \yii\web\Controller
         unset($spreadsheet);
         ob_end_flush();
         exit;
-    }
-    
-    /**
-     * 输出前处理
-     */
-    public function beforeSend($event)
-    {
-        $response = $event->sender;
-        if(Yii::$app->request->getHeaders()->get('X-Pjax') && $response->statusCode=='200'){
-            // Pjax模式下Widgets最大最小化修复
-            $response->content = $response->content . '<script>InitiateWidgets && InitiateWidgets();</script>';
-        }
-        
-        // 记录数据库操作日志
-        \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
-        
-        // 记录操作日志
-        if(Yii::$app->user->id){
-            $data = ['_GET'=>Yii::$app->request->get(),'_POST'=>Yii::$app->request->post()];
-            if(empty($data['_GET'])) unset($data['_GET']);
-            if(empty($data['_POST'])) unset($data['_POST']);
-            \webadmin\modules\logs\models\LogUserAction::insertion([
-                'remark' => ($this->currNav&&is_array($this->currNav) ? implode('-',$this->currNav) : ''),
-                'action' => (!($this->module instanceof \yii\base\Application) ? $this->module->id.'/' : '').$this->id.'/'.$this->action->id,
-                'request' => ($data ? print_r($data,true) : ""),
-                'addtime' => date('Y-m-d H:i:s'),
-                'ip' => Yii::$app->request->userIP,
-                'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : 0),
-            ]);
-        }
-    }
-    
-    /**
-     * 输出后处理
-     */
-    public function afterSend($event)
-    {
-        
     }
     
     /**
@@ -400,13 +348,5 @@ abstract class BController extends \yii\web\Controller
         return $array;
     }
 
-	// 字母递增
-	public static function intToChr($index, $start = 65)
-	{
-        $str = '';
-        if (floor($index / 26) > 0) {
-            $str .= self::intToChr(floor($index / 26)-1);
-        }
-        return $str . chr($index % 26 + $start);
-    }
+	
 }

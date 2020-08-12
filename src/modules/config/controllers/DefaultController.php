@@ -35,7 +35,7 @@ class DefaultController extends \webadmin\BController
         return [
             // 城市查询
             'sys-region' => [
-                'class' => '\webadmin\Select2Action',
+                'class' => '\webadmin\actions\Select2Action',
                 'className' => '\webadmin\modules\config\models\SysRegion',
                 'col_id' => 'id',
                 'col_text' => 'name',

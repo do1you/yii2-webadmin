@@ -2,7 +2,7 @@
 /**
  * 配置化select2的选择器
  */
-namespace webadmin;
+namespace webadmin\actions;
 
 use Yii;
 
