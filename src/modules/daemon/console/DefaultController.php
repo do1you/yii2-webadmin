@@ -127,7 +127,7 @@ class DefaultController extends \webadmin\console\CController
                 }
             }
             
-            sleep(3);
+            sleep(1);
         }
         return 0;
     }
