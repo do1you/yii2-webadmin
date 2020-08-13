@@ -25,8 +25,5 @@ class Module extends \webadmin\Module
         if(Yii::$app instanceof \yii\console\Application){
             $this->controllerNamespace = 'webadmin\modules\config\console';
         }
-		
-		// 初始化模块
-        \webadmin\modules\config\models\SysModules::initModule();
     }
 }

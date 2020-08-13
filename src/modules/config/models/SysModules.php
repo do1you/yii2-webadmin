@@ -66,7 +66,7 @@ class SysModules extends \webadmin\ModelCAR
     {
 		Yii::$app->setModules(self::validModules());
     }
-	
+
 	/**
      * 获取所有已安装的模块
      */ 
@@ -76,6 +76,9 @@ class SysModules extends \webadmin\ModelCAR
 	    $result = Yii::$app->cache->get($cachekey);
 	    if($result===false || $result===null){
 			$result = \yii\helpers\ArrayHelper::map(self::find()->andWhere(['state' => '1'])->all(), 'code', 'code');
+			foreach($result as $code=>$key){
+			    $result[$code] = "module\{$code}\Module";
+			}
 	        Yii::$app->cache->set($cachekey,$result,86400);
 	    }
 	    return $result;	    
