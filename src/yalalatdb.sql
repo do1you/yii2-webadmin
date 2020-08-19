@@ -273,6 +273,22 @@ CREATE TABLE `log_user_login` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='用户登录日志';
 
 -- ----------------------------
+-- Table structure for `log_imei`
+-- ----------------------------
+DROP TABLE IF EXISTS `log_imei`;
+CREATE TABLE `log_imei` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '流水号',
+  `platform` varchar(255) NOT NULL COMMENT '终端系统',
+  `imei` varchar(255) NOT NULL COMMENT '终端标识',
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '所属用户',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `create_time` (`create_time`),
+  KEY `user_id` (`user_id`),
+  KEY `imei` (`imei`(191))
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户终端标识记录表';
+
+-- ----------------------------
 -- Table structure for `sys_config`
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_config`;

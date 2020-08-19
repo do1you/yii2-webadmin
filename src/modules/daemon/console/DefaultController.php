@@ -238,8 +238,9 @@ class DefaultController extends \webadmin\console\CController
 		exec($cmd,$result,$code);
 		if(empty($result)){
 		    $this->actionStop();
-		    $this->actionStart();
 		}
+		
+		$this->actionStart();
         return 0;
     }
     
