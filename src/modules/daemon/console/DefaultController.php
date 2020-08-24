@@ -224,7 +224,9 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionRestart()
     {
-        return $this->actionRstart();
+        $this->actionStop();
+        $this->actionStart();
+        return 0;
     }
 
 	/**
@@ -234,13 +236,17 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionRstart()
     {
-		$cmd = 'ps aux | grep yii | grep '.$this->processCmd;
+        $cmd = 'ps aux | grep yii | grep '.$this->processCmd;
 		exec($cmd,$result,$code);
 		if(empty($result)){
 		    $this->actionStop();
+		    $this->actionStart();
+		}else{
+		    $pid = $this->_processes();
+		    $state = $this->ansiFormat('is started', Console::FG_RED);
+		    Console::output("processes {$this->processName} {$state}({$pid}).");
 		}
 		
-		$this->actionStart();
         return 0;
     }
     
@@ -329,7 +335,7 @@ class DefaultController extends \webadmin\console\CController
             
             $tasks = SysCrontab::find()->where("
                 state = 0 and (
-                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=60)
+                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=180)
                 )
                 and (
                     (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
@@ -342,7 +348,12 @@ class DefaultController extends \webadmin\console\CController
             
             if($tasks){
                 foreach($tasks as $task){
-                    $result = $task->run();
+                    try {
+                        $result = $task->run();
+                    } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
+                        continue;
+                    }
+                    
                     if(is_string($result)) echo $result."\n";
                 }
             }
@@ -373,7 +384,12 @@ class DefaultController extends \webadmin\console\CController
             
             if($tasks){
                 foreach($tasks as $task){
-                    $result = $task->run();
+                    
+                    try {
+                        $result = $task->run();
+                    } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
+                        continue;
+                    }
                     if(is_string($result)) echo $result."\n";
                 }
             }
