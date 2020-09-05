@@ -74,6 +74,7 @@ class Http {
             default:
                 throw new Exception("http access type $type not support");
         }
+        $obj->reset();
         return $obj;
     }
 
@@ -149,6 +150,16 @@ class Http_Curl {
      */
     private function __clone() {
 
+    }
+    
+    /**
+     * 重置参数，主要用于第二次重新请求
+     */
+    public function reset() {
+        $this->uri = $this->cookies = '';
+        $this->header = $this->vars = $this->recursive = array();
+        $this->maxNum = 10;
+        $this->currNum = 0;
     }
 
     /**
@@ -461,6 +472,16 @@ class Http_Sock {
      */
     private function __clone() {
 
+    }
+    
+    /**
+     * 重置参数，主要用于第二次重新请求
+     */
+    public function reset() {
+        $this->uri = $this->cookies = '';
+        $this->header = $this->vars = $this->recursive = array();
+        $this->maxNum = 10;
+        $this->currNum = 0;
     }
 
     /**
@@ -793,6 +814,16 @@ class Http_Stream {
      */
     private function __clone() {
 
+    }
+    
+    /**
+     * 重置参数，主要用于第二次重新请求
+     */
+    public function reset() {
+        $this->uri = $this->cookies = '';
+        $this->header = $this->vars = $this->recursive = array();
+        $this->maxNum = 10;
+        $this->currNum = 0;
     }
 
     /**

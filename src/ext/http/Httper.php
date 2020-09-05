@@ -103,6 +103,8 @@ class Httper{
 		$httpType = $httpType===null ? $this->httpType : $httpType;
 		if(!isset($this->_http[$httpType])){
 			$this->_http[$httpType] = Http::factory('', $httpType);
+		}else{
+		    $this->_http[$httpType]->reset();
 		}
 		return $this->_http[$httpType];
 	}
