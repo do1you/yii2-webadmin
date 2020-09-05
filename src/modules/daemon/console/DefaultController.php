@@ -265,7 +265,7 @@ class DefaultController extends \webadmin\console\CController
     {
         $dir = dirname($this->pidFile).DIRECTORY_SEPARATOR.'logs';
         \yii\helpers\FileHelper::createDirectory($dir);
-        $path = $dir . DIRECTORY_SEPARATOR . date('Ym').'.log';
+        $path = $dir . DIRECTORY_SEPARATOR . date('Ymd').'.log';
         $cmd = $this->isWindows
         ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >> ' . $path . ' >nul'// >nul
         : 'nohup '.$this->processPath.'yii '.$cmd.' >> '. $path .' 2>&1 &'; // 2>&1
@@ -350,11 +350,12 @@ class DefaultController extends \webadmin\console\CController
                 foreach($tasks as $task){
                     try {
                         $result = $task->run();
+                        if(is_string($result)){
+                            echo date('Y-m-d H:i:s')." Crontab:({$task['command']})".$result."\n";
+                        }
                     } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
                         continue;
                     }
-                    
-                    if(is_string($result)) echo $result."\n";
                 }
             }
             
@@ -387,10 +388,12 @@ class DefaultController extends \webadmin\console\CController
                     
                     try {
                         $result = $task->run();
+                        if(is_string($result)){
+                            echo date('Y-m-d H:i:s')." Queue:({$task['taskphp']} {$task['params']})".$result."\n";
+                        }
                     } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
                         continue;
                     }
-                    if(is_string($result)) echo $result."\n";
                 }
             }
             

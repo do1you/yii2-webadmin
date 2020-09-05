@@ -79,16 +79,35 @@ class SysCrontab extends \webadmin\ModelCAR
     {
         $app = Yii::$app;
         $this->run_state = 1;
-        if($this->save(false)){
+        if(SysCrontab::cacheLock('SysCrontab/'.$this->command) && $this->save(false)){
             $result = SysCrontab::runCmd($this->command, [], true);
             
             $this->last_time = time();
             $this->run_state = $result===false ? 3 : 2;
             $this->save(false);
+            
+            SysCrontab::cacheLock('SysCrontab/'.$this->command, true);
         }
         Yii::$app = $app;
         
         return (isset($result) ? $result : false);
+    }
+    
+    /**
+     * 增加锁限制，调用系统的cache
+     */
+    public static function cacheLock($cacheKey=null, $isUnLock=false, $lockTime=60)
+    {
+        if(empty($cacheKey)) return false;
+        if($isUnLock) Yii::$app->cache->delete($cacheKey);
+        $time = time();
+        $lastTime = Yii::$app->cache->get($cacheKey);
+        if(empty($lastTime) || $time-$lastTime>=$lockTime){
+            Yii::$app->cache->set($cacheKey,$time,$lockTime);
+            return true;
+        }else{
+            return false;
+        }
     }
     
     /**

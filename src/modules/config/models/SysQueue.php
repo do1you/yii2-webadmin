@@ -96,7 +96,7 @@ class SysQueue extends \webadmin\ModelCAR
     {
         $this->state = 1;
         $this->start_time = date('Y-m-d H:i:s');
-        if($this->save(false)){
+        if(SysCrontab::cacheLock('SysQueue/'.$this->taskphp.'/'.$this->params) && $this->save(false)){
             $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
             
             $this->done_time = date('Y-m-d H:i:s');
@@ -106,6 +106,7 @@ class SysQueue extends \webadmin\ModelCAR
             }else{
                 $this->save(false);
             }
+            SysCrontab::cacheLock('SysQueue/'.$this->taskphp.'/'.$this->params, true); // 释放锁
         }
         
         return (isset($result) ? $result : false);
