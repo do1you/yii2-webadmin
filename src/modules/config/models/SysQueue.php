@@ -94,22 +94,43 @@ class SysQueue extends \webadmin\ModelCAR
      */
     public function run()
     {
-        $this->state = 1;
-        $this->start_time = date('Y-m-d H:i:s');
-        if(SysCrontab::cacheLock('SysQueue/'.$this->taskphp.'/'.$this->params) && $this->save(false)){
-            $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
-            
-            $this->done_time = date('Y-m-d H:i:s');
-            $this->state = $result===false ? 3 : 2;
-            if($this->state=='2' && !$this->callback){ // 完成状态且不用回调的直接删除
-                $this->delete();
-            }else{
-                $this->save(false);
+        if($this->lock()){
+            try{
+                $this->state = 1;
+                $this->start_time = date('Y-m-d H:i:s');
+                if($this->save(false)){
+                    $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
+                    
+                    $this->done_time = date('Y-m-d H:i:s');
+                    $this->state = $result===false ? 3 : 2;
+                    if($this->state=='2' && !$this->callback){ // 完成状态且不用回调的直接删除
+                        $this->delete();
+                    }else{
+                        $this->save(false);
+                    }
+                }
+            }catch(\Exception $e) { //捕获异常
             }
-            SysCrontab::cacheLock('SysQueue/'.$this->taskphp.'/'.$this->params, true); // 释放锁
+            $this->unLock();
         }
         
         return (isset($result) ? $result : false);
+    }
+    
+    /**
+     * 队列脚本加锁
+     */
+    public function lock()
+    {
+        return SysCrontab::cacheLock('SysQueue/'.$this->id);
+    }
+    
+    /**
+     * 队列脚本解锁
+     */
+    public function unLock()
+    {
+        return SysCrontab::cacheLock('SysQueue/'.$this->id, true);
     }
     
     /**

@@ -67,7 +67,7 @@ class Helpfn
 	// 创建随机数
 	public static function create_order_sn()
 	{
-		return time() . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+	    return date('YmdHis') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
 	}
 
 	// emoji内容转义

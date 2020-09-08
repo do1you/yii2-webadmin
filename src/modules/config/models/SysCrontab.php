@@ -77,29 +77,47 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function run()
     {
-        $app = Yii::$app;
-        $this->run_state = 1;
-        if(SysCrontab::cacheLock('SysCrontab/'.$this->command) && $this->save(false)){
-            $result = SysCrontab::runCmd($this->command, [], true);
-            
-            $this->last_time = time();
-            $this->run_state = $result===false ? 3 : 2;
-            $this->save(false);
-            
-            SysCrontab::cacheLock('SysCrontab/'.$this->command, true);
+        if($this->lock()){
+            try{
+                $this->run_state = 1;
+                if($this->save(false)){
+                    $result = SysCrontab::runCmd($this->command, [], true);
+                    
+                    $this->last_time = time();
+                    $this->run_state = $result===false ? 3 : 2;
+                    $this->save(false);
+                }
+            }catch(\Exception $e) { //捕获异常
+            }
+            $this->unLock();
         }
-        Yii::$app = $app;
         
         return (isset($result) ? $result : false);
     }
     
     /**
+     * 计划任务脚本加锁
+     */
+    public function lock()
+    {
+        return SysCrontab::cacheLock('SysCrontab/'.$this->id);
+    }
+    
+    /**
+     * 计划任务脚本解锁
+     */
+    public function unLock()
+    {
+        return SysCrontab::cacheLock('SysCrontab/'.$this->id, true);
+    }
+    
+    /**
      * 增加锁限制，调用系统的cache
      */
-    public static function cacheLock($cacheKey=null, $isUnLock=false, $lockTime=60)
+    public static function cacheLock($cacheKey=null, $isUnLock=false, $lockTime=30)
     {
         if(empty($cacheKey)) return false;
-        if($isUnLock) Yii::$app->cache->delete($cacheKey);
+        if($isUnLock) return Yii::$app->cache->delete($cacheKey);
         $time = time();
         $lastTime = Yii::$app->cache->get($cacheKey);
         if(empty($lastTime) || $time-$lastTime>=$lockTime){

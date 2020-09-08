@@ -348,13 +348,9 @@ class DefaultController extends \webadmin\console\CController
             
             if($tasks){
                 foreach($tasks as $task){
-                    try {
-                        $result = $task->run();
-                        if(is_string($result)){
-                            echo "\r\n".date('Y-m-d H:i:s')." Crontab:({$task['command']})".$result."\r\n";
-                        }
-                    } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
-                        continue;
+                    $result = $task->run();
+                    if(is_string($result)){
+                        echo "\r\n".date('Y-m-d H:i:s')." Crontab:({$task['command']})".$result."\r\n";
                     }
                 }
             }
@@ -385,14 +381,9 @@ class DefaultController extends \webadmin\console\CController
             
             if($tasks){
                 foreach($tasks as $task){
-                    
-                    try {
-                        $result = $task->run();
-                        if(is_string($result)){
-                            echo "\r\n".date('Y-m-d H:i:s')." Queue:({$task['taskphp']} {$task['params']})".$result."\r\n";
-                        }
-                    } catch (\yii\db\StaleObjectException $e) { //捕获乐观锁异常，说明在异步并发出错
-                        continue;
+                    $result = $task->run();
+                    if(is_string($result)){
+                        echo "\r\n".date('Y-m-d H:i:s')." Queue:({$task['taskphp']} {$task['params']})".$result."\r\n";
                     }
                 }
             }

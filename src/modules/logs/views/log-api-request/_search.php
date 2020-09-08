@@ -29,6 +29,10 @@ use webadmin\widgets\ActiveForm;
 
 				<?= $form->field($model, 'url')->searchInput() ?>
 				
+				<?= $form->field($model, 'params')->searchInput() ?>
+				
+				<?= $form->field($model, 'result_msg')->searchInput() ?>
+				
                 <div class="form-group">
                     <?= Html::submitButton(Yii::t('common','查询'), ['class' => 'btn btn-primary']) ?>
                 </div>
