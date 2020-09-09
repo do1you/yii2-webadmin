@@ -35,20 +35,19 @@ class SearchBehaviors extends \yii\base\Behavior
     {
         $act = $event->action->id;
         $module = !(Yii::$app->controller->module instanceof \yii\base\Application) ? Yii::$app->controller->module->id.'/' : '';
-        $cacheKey = 'searchBehaviors/'.Yii::$app->session->id.'/'.$module.Yii::$app->controller->id.'/'.$act;
         
         if(!in_array($act,$this->searchCacheActions)) return true;
         
         // 存在旧的缓存查询数据进行合并
         foreach(['_GET','_POST'] as $key){
-            $result = Yii::$app->cache->get($cacheKey.'/'.$key);
+            $cacheKey = 'searchBehaviors/'.Yii::$app->session->id.'/'.$module.Yii::$app->controller->id.'/'.$act.'/'.$key;
+            $result = Yii::$app->cache->get($cacheKey);
             if($result && is_array($result)){
                 foreach($this->searchNotKeys as $k) unset($result[$k]); // 不缓存
-                $$key = array_merge($result,$$key);
+                $GLOBALS[$key] = array_merge($result,$GLOBALS[$key]);
                 $_REQUEST = array_merge($result,$_REQUEST);
             }
-            
-            Yii::$app->cache->set($cacheKey,$$key,7200);
+            Yii::$app->cache->set($cacheKey,$GLOBALS[$key],7200);
         }
         
     }

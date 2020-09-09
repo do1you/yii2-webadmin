@@ -160,25 +160,6 @@ class AController extends ActiveController
             $response->format = Response::FORMAT_JSONP;
             $response->data['callback'] = $_GET['callback'];
         }
-
-        // 定义输出格式
-        $types = Yii::$app->getRequest()->getAcceptableContentTypes();
-        foreach ($types as $type => $params) {
-            if (isset($this->formats[$type])) {
-                $response->format = $this->formats[$type];
-                $response->acceptMimeType = $type;
-                $response->acceptParams = $params;
-                return;
-            }
-        }
-        
-        // 没有匹配到取第一个返回格式
-        foreach ($this->formats as $type => $format) {
-            $response->format = $format;
-            $response->acceptMimeType = $type;
-            $response->acceptParams = [];
-            break;
-        }
     }
     
     /**
