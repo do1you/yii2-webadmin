@@ -39,7 +39,7 @@ class ActiveField extends \yii\widgets\ActiveField
     public function date($options = [])
     {
         $options['data-date-format'] = 'yyyy-mm-dd'; 
-        parent::textInput($options);
+        $this->textInput($options);
         if(!empty($this->parts['{input}'])){
             $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-calendar'></i></span>";
         }
@@ -56,7 +56,7 @@ class ActiveField extends \yii\widgets\ActiveField
     public function datetime($options = [])
     {
         $options['data-date-format'] = 'YYYY-MM-DD HH:mm:ss';
-        parent::textInput($options);
+        $this->textInput($options);
         if(!empty($this->parts['{input}'])){
             $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-clock-o'></i></span>";
         }
@@ -74,7 +74,7 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function time($options = [])
     {
-        parent::textInput($options);
+        $this->textInput($options);
         if(!empty($this->parts['{input}'])){
             $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-clock-o'></i></span>";
         }
@@ -90,7 +90,7 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function daterange($options = [])
     {
-        parent::textInput($options);
+        $this->textInput($options);
         if(!empty($this->parts['{input}'])){
             $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-calendar'></i></span>";
         }
@@ -119,7 +119,7 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function datetimerange($options = [])
     {
-        parent::textInput($options);
+        $this->textInput($options);
         if(!empty($this->parts['{input}'])){
             $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-calendar'></i></span>";
         }
@@ -149,7 +149,7 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function oneFile($acceptedFiles = "image/*", $options = [])
     {
-        parent::textInput($options);
+        $this->textInput($options);
         
         $id = $this->getInputId($options);
         $plid = str_replace(["-","_"],"",$id);
@@ -225,10 +225,10 @@ class ActiveField extends \yii\widgets\ActiveField
         $oldVal = $file = $this->model[$this->attribute];
         
         $this->model[$this->attribute] = null;
-        parent::textInput($options);
+        $this->textInput($options);
         
         $id = $this->getInputId($options);
-        $name = $name = Html::getInputName($this->model, $this->attribute);
+        $name = is_array($this->model) ? (isset($options['name']) ? $options['name'] : $this->attribute) : Html::getInputName($this->model, $this->attribute);
         $plid = str_replace(["-","_"],"",$id);
         $url = \yii\helpers\Url::toRoute('/config/default/dropzone-upload',[]);
         $this->parts['{input}'] = "<div id='{$plid}Many' action='{$url}' class='dropzone'></div>";
@@ -322,7 +322,7 @@ class ActiveField extends \yii\widgets\ActiveField
         $this->options = ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'];
         $this->labelOptions = ['class' => 'control-label padding-right-5'];
         
-        return parent::textInput($options);
+        return $this->textInput($options);
     }
     
     /**
@@ -463,7 +463,7 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function treeList($items, $options = [], $multiSelect=true){
         $id = $this->getInputId($options);
-        $name = Html::getInputName($this->model, $this->attribute);
+        $name = is_array($this->model) ? (isset($options['name']) ? $options['name'] : $this->attribute) : Html::getInputName($this->model, $this->attribute);
         $multiSelect = json_encode($multiSelect);
         $items = json_encode($items);
         $title = !isset($options['title'])?'&nbsp;':$options['title'];
@@ -629,7 +629,115 @@ class ActiveField extends \yii\widgets\ActiveField
         $options['data-mask'] = $mask;
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/inputmask/jasny-bootstrap.min.js',['depends' => \webadmin\WebAdminAsset::className()]);
-        return parent::textInput($options);
+        return $this->textInput($options);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \yii\widgets\ActiveField::textInput()
+     */
+    public function textInput($options = [])
+    {
+        if(!is_array($this->model)){
+            return parent::textInput($options);
+        }
+        
+        $options = array_merge($this->inputOptions, $options);
+        $name = (isset($options['name']) ? $options['name'] : $this->attribute);
+        $value = (isset($options['value']) ? $options['value'] : (isset($this->model[$this->attribute]) ? $this->model[$this->attribute] : ''));
+        
+        if(isset($options['label'])){
+            $this->labelOptions['label'] = $options['label'];
+        }
+        
+        $this->parts['{input}'] = Html::textInput($name, $value, $options);
+        
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \yii\widgets\ActiveField::label()
+     */
+    public function label($label = null, $options = [])
+    {
+        if(!is_array($this->model)){
+            return parent::label($label, $options);
+        }
+        
+        if ($label === false) {
+            $this->parts['{label}'] = '';
+            return $this;
+        }
+        
+        $options = array_merge($this->labelOptions, $options);
+        if ($label !== null) {
+            $options['label'] = $label;
+        }
+        
+        $label = (isset($options['label']) ? $options['label'] : $this->attribute);
+        $for = (isset($options['for']) ? $options['for'] : $this->attribute);
+        
+        $this->parts['{label}'] = Html::label($label, $for, $options);
+        
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \yii\widgets\ActiveField::error()
+     */
+    public function error($options = [])
+    {
+        if(!is_array($this->model)){
+            return parent::error($options);
+        }
+        
+        if ($options === false) {
+            $this->parts['{error}'] = '';
+            return $this;
+        }
+        $options = array_merge($this->errorOptions, $options);
+        
+        $tag = ArrayHelper::remove($options, 'tag', 'div');
+        $encode = ArrayHelper::remove($options, 'encode', true);
+        $error = ArrayHelper::remove($options, 'error', '');
+        
+        $this->parts['{error}'] = Html::tag($tag, $encode ? Html::encode($error) : $error, $options);
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \yii\widgets\ActiveField::hint()
+     */
+    public function hint($content, $options = [])
+    {
+        if(!is_array($this->model)){
+            return parent::hint($content, $options);
+        }
+        
+        if ($content === false) {
+            $this->parts['{hint}'] = '';
+            return $this;
+        }
+        
+        $options = array_merge($this->hintOptions, $options);
+        if ($content !== null) {
+            $options['hint'] = $content;
+        }
+        
+        $hint = isset($options['hint']) ? $options['hint'] : '';
+        if (empty($hint)) {
+            $this->parts['{hint}'] = '';
+            return $this;
+        }
+        $tag = ArrayHelper::remove($options, 'tag', 'div');
+        unset($options['hint']);
+
+        $this->parts['{hint}'] = Html::tag($tag, $hint, $options);
+        
+        return $this;
     }
     
     /**
@@ -638,7 +746,7 @@ class ActiveField extends \yii\widgets\ActiveField
     public function getInputClientOptions()
     {
         $attribute = Html::getAttributeName($this->attribute);
-        if (!in_array($attribute, $this->model->activeAttributes(), true)) {
+        if (is_array($this->model) || !in_array($attribute, $this->model->activeAttributes(), true)) {
             return [];
         }
         
@@ -768,11 +876,11 @@ class ActiveField extends \yii\widgets\ActiveField
         $options = $this->options;
         $class = isset($options['class']) ? (array) $options['class'] : [];
         $class[] = "field-$inputID";
-        if (($this->form->enableClientValidation || $this->form->enableAjaxValidation) && $this->model->isAttributeRequired($attribute)) {
+        if (($this->form->enableClientValidation || $this->form->enableAjaxValidation) && (!is_array($this->model) && $this->model->isAttributeRequired($attribute))) {
             $class[] = $this->form->requiredCssClass;
         }
         $options['class'] = implode(' ', $class);
-        if ($this->form->validationStateOn === ActiveForm::VALIDATION_STATE_ON_CONTAINER) {
+        if ($this->form->validationStateOn === ActiveForm::VALIDATION_STATE_ON_CONTAINER && !is_array($this->model)) {
             $this->addErrorClassIfNeeded($options);
         }
         $tag = ArrayHelper::remove($options, 'tag', 'div');
@@ -786,6 +894,7 @@ class ActiveField extends \yii\widgets\ActiveField
     protected function getInputId($options=[])
     {
         if(isset($options['id'])) $this->_inputId = $options['id'];
+        elseif(is_array($this->model)) $this->_inputId = (isset($options['name']) ? $options['name'] : $this->attribute);
         return $this->_inputId ? $this->_inputId : Html::getInputId($this->model, $this->attribute);
     }
 }

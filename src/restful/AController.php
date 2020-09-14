@@ -190,7 +190,7 @@ class AController extends ActiveController
             'imei' => $imei,
             'ip' => Yii::$app->request->userIP,
             'result_code' => $code,
-            'result_msg' => $msg,
+            'result_msg' => print_r($resp,true),
             'params' => ($data ? print_r($data,true) : ""),
             'create_time' => date('Y-m-d H:i:s'),
             'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : '0'),
