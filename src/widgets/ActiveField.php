@@ -650,7 +650,38 @@ class ActiveField extends \yii\widgets\ActiveField
             $this->labelOptions['label'] = $options['label'];
         }
         
+        if(!isset($options['id'])){
+            $options['id'] = $this->getInputId($options);
+        }
+        
         $this->parts['{input}'] = Html::textInput($name, $value, $options);
+        
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * @see \yii\widgets\ActiveField::dropDownList()
+     */
+    public function dropDownList($items, $options = [])
+    {
+        if(!is_array($this->model)){
+            return parent::dropDownList($items, $options);
+        }
+        
+        $options = array_merge($this->inputOptions, $options);
+        $name = (isset($options['name']) ? $options['name'] : $this->attribute);
+        $value = (isset($options['value']) ? $options['value'] : (isset($this->model[$this->attribute]) ? $this->model[$this->attribute] : ''));
+        
+        if(isset($options['label'])){
+            $this->labelOptions['label'] = $options['label'];
+        }
+        
+        if(!isset($options['id'])){
+            $options['id'] = $this->getInputId($options);
+        }
+        
+        $this->parts['{input}'] = Html::dropDownList($name, $value, $items, $options);
         
         return $this;
     }

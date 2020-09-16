@@ -41,15 +41,17 @@ abstract class BController extends \yii\web\Controller
         \webadmin\modules\config\models\SysModules::initModule();
         
         // 定义用户
-        Yii::$app->setComponents([
-            'user' => [
-                'class' => '\yii\web\User',
-                'identityClass' => '\webadmin\modules\authority\models\AuthUser',
-                'enableAutoLogin' => true,
-                'enableSession' => true,
-                'loginUrl'=>['/authority/user/login'],
-            ]
-        ]);
+        if(!Yii::$app->has('user')){
+            Yii::$app->setComponents([
+                'user' => [
+                    'class' => '\yii\web\User',
+                    'identityClass' => '\webadmin\modules\authority\models\AuthUser',
+                    'enableAutoLogin' => true,
+                    'enableSession' => true,
+                    'loginUrl'=>['/authority/user/login'],
+                ]
+            ]);
+        }
         
         // 定义组件
         Yii::$app->setComponents([
