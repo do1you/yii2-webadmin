@@ -69,6 +69,7 @@ class ModelCAR extends \yii\db\ActiveRecord
 	public static function insertion($data = [])
 	{
 	    $model = static::model();
+	    $model->loadDefaultValues();
 	    if($model->load($data,'') && $model->save(false)){
 	        return $model->primaryKey;
 	    }
