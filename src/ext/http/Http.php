@@ -336,9 +336,11 @@ class Http_Curl {
         }
         //处理POST请求数据
         if ($method == 'POST' && !empty($this->vars)) {
+            $data = (is_array($this->vars) ? Http::makeQuery($this->vars) : $this->vars);
             curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, (is_array($this->vars) ? Http::makeQuery($this->vars) : $this->vars));
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+			$this->setHeader('Content-Length: ' . strlen($data));
         }
         
         // 解析网址
