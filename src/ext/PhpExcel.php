@@ -150,7 +150,7 @@ class PhpExcel
                 foreach($titles as $tkey=>$tval){
                     $attribute = is_array($tval) ? (isset($tval['attribute']) ? $tval['attribute'] : null) : $tval;
                     $attribute = $attribute&&is_string($attribute) ? $attribute : $tkey;
-                    if(is_callable($tval)){
+                    if(!is_string($tval) && is_callable($tval)){
                         $value = call_user_func($tval->bindTo($item), $item, $index, $row);
                     }elseif(!empty($tval['value'])) {
                         if(is_string($tval['value'])) {
