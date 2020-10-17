@@ -36,7 +36,7 @@ class <?= $className ?> extends \yii\base\Module
         parent::init();
 
         // 控制台命令
-        if(Yii::$app instanceof \yii\console\Application){
+        if((Yii::$app instanceof \yii\console\Application) || (!empty($_GET['dev']) && $_GET['dev']=='console')){
             $this->controllerNamespace = '<?= str_replace("controllers","console",$generator->getControllerNamespace()) ?>';
         }
     }

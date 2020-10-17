@@ -31,7 +31,7 @@ switch($item['config_type'])
     case 'selectajax': // 下拉异步
     case 'selectajaxmult': // 下拉异步多选框
         echo $item['v_config_ajax']
-        ? $field->{$item['config_type']}($item['v_config_ajax'], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr)
+        ? $field->{$item['config_type']}($item['v_config_ajax'], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr+['style'=>'width:250px;'])
         : $field->dropDownList([], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]", 'prompt'=>'请选择']+$arr);
         break;
     case 'date': // 日期

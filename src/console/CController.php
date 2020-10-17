@@ -51,5 +51,14 @@ abstract class CController extends \yii\console\Controller
         ]);
         
         return parent::afterAction($action, $result);
-    }  
+    }
+    
+    // 命令行调试参数
+    protected $dev;
+    public function options($actionID)
+    {
+        $params = parent::options($actionID);
+        $params[] = 'dev';
+        return $params;
+    }
 }
