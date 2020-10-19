@@ -13,14 +13,14 @@ use yii\base\ErrorException;
 abstract class BController extends \yii\web\Controller
 {
     public $is_open_nav = true; // 是否开启左侧菜单
-    public $body_class; // BODY样式    
+    public $body_class; // BODY样式
     public $layout = 'console_layout'; // 布局文件
     public $currNav = []; // 当前导航位置
     public $currUrl = null; // 当前菜单位置
     
     public $pageTitle; // 页面标题
     public $keywords; // 页面关键字
-    public $description; // 页面描述    
+    public $description; // 页面描述
     
     /**
      * 当前授制器是否需要权限验证
@@ -32,9 +32,14 @@ abstract class BController extends \yii\web\Controller
      */
     public $searchCacheActions = ['index', 'list', 'tree'];
     
+    /**
+     * 格式化数据用
+     */
+    public $serializer = '\webadmin\restful\Serializer';
+    
     // 初始化
     public function init()
-    {        
+    {
         parent::init();
         
         // 初始化模块
@@ -69,9 +74,9 @@ abstract class BController extends \yii\web\Controller
         ]);
         
         // 定义别名路径
-		list($assetPath, $assetUrl) = Yii::$app->getAssetManager()->publish('@webadmin/themes/beyond/assets');
-		Yii::setAlias('@assetPath', $assetPath);  
-		Yii::setAlias('@assetUrl', $assetUrl);  
+        list($assetPath, $assetUrl) = Yii::$app->getAssetManager()->publish('@webadmin/themes/beyond/assets');
+        Yii::setAlias('@assetPath', $assetPath);
+        Yii::setAlias('@assetUrl', $assetUrl);
         
         // AJAX请求页面忽略布局文件
         Yii::$app->request->isAjax && ($this->layout = 'console_ajax');
@@ -111,6 +116,19 @@ abstract class BController extends \yii\web\Controller
                 'class' => \webadmin\behaviors\LogBehaviors::className(),
             ],
         ];
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function afterAction($action, $result)
+    {
+        $result = parent::afterAction($action, $result);
+        $result = Yii::createObject($this->serializer)->serialize($result);
+        if(is_array($result) && Yii::$app->getResponse()->format=='html'){
+            Yii::$app->getResponse()->format = Yii::$app->getRequest()->isAjax ? 'json' : 'xml';
+        }
+        return $result;
     }
     
     /**
@@ -165,6 +183,7 @@ abstract class BController extends \yii\web\Controller
         }
         return $array;
     }
-
-	
+    
+    
+    
 }
