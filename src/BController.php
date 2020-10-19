@@ -125,8 +125,10 @@ abstract class BController extends \yii\web\Controller
     {
         $result = parent::afterAction($action, $result);
         $result = Yii::createObject($this->serializer)->serialize($result);
-        if(is_array($result) && Yii::$app->getResponse()->format=='html'){
-            Yii::$app->getResponse()->format = Yii::$app->getRequest()->isAjax ? 'json' : 'xml';
+        if(Yii::$app->getResponse()->format=='html'){
+            if(is_array($result)) Yii::$app->getResponse()->format = Yii::$app->getRequest()->isAjax ? 'json' : 'xml';
+        }else{
+            if(is_string($result)) Yii::$app->getResponse()->format = 'html';
         }
         return $result;
     }
