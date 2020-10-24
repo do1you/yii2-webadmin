@@ -165,7 +165,7 @@
 
 	// 关闭提示窗口
 	setTimeout(function(){
-		$('.page-body>.alert').fadeOut();
+		$('.page-body>.alert:not(.exceldown)').fadeOut();
 	},3000);
 
 	$(document).ajaxError(function(event,xhr,options,exc){

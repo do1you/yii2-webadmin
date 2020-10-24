@@ -205,8 +205,10 @@ class PhpExcel
         else $filename = str_replace(array(":","-"),"_",$filename);
         if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
             $savePath = Yii::getAlias((isset($options['save_path']) ? trim($options['save_path'],'/').'/' : '@runtime/excels/').$filename.".xlsx");
-            $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
-            $savePath = iconv('UTF-8', $encode, $savePath); // 转码适应不同操作系统的编码规则
+            if(stristr(PHP_OS, 'WIN')){
+                $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
+                $savePath = iconv('UTF-8', $encode, $savePath); // 转码适应不同操作系统的编码规则
+            }
             \yii\helpers\FileHelper::createDirectory(dirname($savePath));
         }else{ // 正常模式
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -224,10 +226,175 @@ class PhpExcel
         $spreadsheet->disconnectWorksheets();
         unset($spreadsheet);
         ob_end_flush();
-        if(!empty($options['return'])){
+        if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
             return $savePath;
         }else{
             exit;
         }        
+    }
+    
+    /**
+     * 异步后台生成excel文档，控制器方法需要返回生成的文档路径
+     * 路由，SESSION数据，GET数据，POST数据
+     */
+    public static function consoleExport($route='',$session='',$get='',$post='')
+    {
+        // 解析WEB基础参数
+        $get && (is_string($get) ? parse_str($get,$_GET) : ($_GET = array_merge($_GET,$get)));
+        $post && (is_string($post) ? parse_str($post,$_POST) : ($_POST = array_merge($_POST,$post)));
+        $session && (is_string($session) ? parse_str($session,$_SESSION) : ($_SESSION = array_merge($_SESSION,$session)));
+        $_GET['is_export'] = '1';
+        
+        // SERVER参数
+        $_SERVER['REMOTE_ADDR'] = $_SERVER['SERVER_ADDR'] = $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'] = '127.0.0.1';
+        $_SERVER['QUERY_STRING'] = $_SERVER['REDIRECT_QUERY_STRING'] = $get;
+        $_SERVER['REQUEST_URI'] = '/'.$route.'?'.$get;
+        defined('DEBUG_USER') or define('DEBUG_USER', true);
+        
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+        
+        // 运行
+        $config = yii\helpers\ArrayHelper::merge(
+            require Yii::getAlias('@app/config/main.php'),
+            require Yii::getAlias('@app/config/main-local.php')
+            );
+        $app = Yii::$app;
+        new \yii\web\Application($config);
+        Yii::setAlias('@webroot', Yii::getAlias('@app/web'));
+        //Yii::setAlias('@web', '/');
+        Yii::$app->request->pathInfo = strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '-$1', Yii::$app->request->pathInfo)); // 兼容大写路由地址
+        $idParam = Yii::$app->user->idParam;
+        if(($uid = (isset($_SESSION[$idParam]) ? $_SESSION[$idParam] : ''))){
+            $nModel = \webadmin\modules\authority\models\AuthUser::findIdentity($uid);
+            Yii::$app->user->login($nModel,86400);
+        }
+        $path = Yii::$app->runAction($route);
+        Yii::$app = $app;
+        
+        if(!$path || !file_exists($path)) return false;
+        $cacheName = self::exportCacheName($route,$session,$get,$post);
+        Yii::$app->cache->set($cacheName,$path);
+        
+        return $path;
+    }
+    
+    /**
+     * 异步生成EXCEL入口
+     * 加入缓存的条件参数，如选中的门店等; 跳回的URL地址，默认上一个页面
+     */
+    public static function beginExport($url='')
+    {
+        $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
+        if(preg_match("/cli/i", php_sapi_name()) || !($is_export = Yii::$app->request->get('is_export'))){ // cli模式  || (defined('YII_DEBUG')&&YII_DEBUG)
+            if(empty($is_export) && $uid){
+                // 提醒有多少个EXCEL文档正在下载
+                $list = \yii\helpers\ArrayHelper::map(\webadmin\modules\config\models\SysQueue::find()->where(['user_id' => $uid, 'callback' => 'excel'])->all(), 'id', 'v_self', 'state');
+                if(!empty($list['2']) && is_array($list['2'])){
+                    foreach($list['2'] as $item){
+                        $params = is_array($item['params']) ? $item['params'] : json_decode($item['params'],true);
+                        if(!empty($params[0])){
+                            $downUrl = \yii\helpers\Url::to(['/'.$params[0]]).'?'.(!empty($params[2]) ? $params[2].'&' : '').'is_export=2';
+                            $message = "您于{$item['create_time']}下载的文档已经生成，请 <a href='{$downUrl}' class='orange'>点击这里下载</a>。";
+                            Yii::$app->session->setFlash('info exceldown',$message);
+                        }else{
+                            $item->delete();
+                        }
+                    }
+                }
+                if(!empty($list['3']) && is_array($list['3'])){
+                    foreach($list['3'] as $item) $item->delete();
+                    $message = "您有".count($list['3'])."个文档已经生成失败，请您进入对应的菜单重新进行下载。";
+                    Yii::$app->session->setFlash('warning exceldown', $message);
+                }
+                if(!empty($list['0']) || !empty($list['1'])){
+                    $message = "您有".count($list['0'])."个文档正在排队中，".count($list['1'])."个文档正在后台生成中，请喝杯咖啡耐心等待。";
+                    Yii::$app->session->setFlash('info exceldown', $message);
+                    $url = \yii\helpers\Url::to(['/config/default/down','uid'=>$uid]);
+                    $script = <<<eot
+                    	var timeobj,fn = function(){
+                    		$.ajax({
+                    			url: '{$url}',
+                    			dataType: 'json',
+                    			success : function(json) {
+                    				if(json && json.msg && json.url){
+                    					bootbox.confirm(json.msg, function(result) {
+                    						if(result) {
+                    							location.href = json.url;
+                    						}
+                    					});
+                    					timeobj && clearInterval(timeobj);
+                    				}
+                    			}
+                    		});
+                    	};
+                    	fn();
+                    	timeobj = setInterval(fn,5000);
+eot;
+                    Yii::$app->controller->view && Yii::$app->controller->view->registerJs($script);
+                }
+                    
+            }
+            return true;
+        }
+        
+        // 组装参数
+        $url = $url ? $url : $_SERVER['HTTP_REFERER'];
+        $route = trim(Yii::$app->request->pathInfo,".html");
+        unset($_GET['is_export']);
+        $get = http_build_query($_GET);
+        $post = http_build_query($_POST);
+        $session = http_build_query($_SESSION);
+        $cacheName = self::exportCacheName($route,$session,$get,$post);
+        $filePath = Yii::$app->cache->get($cacheName);
+
+        if($filePath && file_exists($filePath)){ // 文件已存在
+            $cacheFile = preg_replace('/^.+[\\\\\\/]/', '', $filePath);
+            if(stristr(PHP_OS, 'WIN')){
+                $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
+                $cacheFile = iconv($encode, 'UTF-8', $cacheFile); // 转码适应不同操作系统的编码规则
+            }
+            if($is_export=='3'){ // 重新下载
+                unlink($filePath);
+                Yii::$app->cache->delete($cacheName);
+            }elseif($is_export=='2'){ // 直接下载
+                $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state='2' and taskphp='daemon/excel/export' and (params like :params or params like :params1)",[
+                    ':params' => '%'.addcslashes(addcslashes($route,'/'),'/').'%',
+                    ':params1' => '%'.addcslashes($route,'/').'%',
+                ]);
+                header("Content-Type: application/octet-stream");
+                header('Content-Disposition:inline;filename="'.$cacheFile.'"');
+                header("Content-Transfer-Encoding: binary");
+                header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                header("Pragma: no-cache");
+                echo file_get_contents($filePath);
+                exit;
+            }else{ // 询问下载
+                $time = filectime($filePath);
+                $time = $time ? date('Y-m-d H:i:s',$time) : "";
+                $reurl = Yii::$app->request->url;
+                $downUrl = $reurl.(strstr($reurl,'?')===false ? '?' : '&')."is_export=2";
+                $reloadUrl = $reurl.(strstr($reurl,'?')===false ? '?' : '&')."is_export=3";
+                $message = "【{$cacheFile}】文件已".($time ? "于{$time}" : "经")."生成，您可以 <a href='{$downUrl}' class='red'><strong>直接下载</strong></a> 或者 <a href='{$reloadUrl}' class='yellow'><strong>重新下载</strong></a>";
+                Yii::$app->session->setFlash('info exceldown',$message);
+                Yii::$app->response->redirect($url);
+                Yii::$app->end();
+            }
+        }
+
+        \webadmin\modules\config\models\SysQueue::queue('daemon/excel/export', [ $route, $session, $get, $post ], [ 'callback' => 'excel' ]);
+        
+        Yii::$app->response->redirect($url);
+        Yii::$app->end();
+    }
+    
+    /**
+     * 异步生成EXCEL缓存名
+     */
+    public static $identParams = '';
+    public static function exportCacheName($route='',$session='',$get='',$post='')
+    {
+        return $route.'/'.(md5($get)).(self::$identParams ? '/'.md5(self::$identParams) : '');
     }
 }

@@ -21,8 +21,8 @@ class Module extends \webadmin\Module
     {
         parent::init();
 
-		// 控制台命令
-        if(Yii::$app instanceof \yii\console\Application){
+        // 控制台命令
+        if((\Yii::$app instanceof \yii\console\Application) || (!empty($_GET['dev']) && $_GET['dev']=='console')){
             $this->controllerNamespace = 'webadmin\modules\daemon\console';
         }
     }

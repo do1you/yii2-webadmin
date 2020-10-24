@@ -37,6 +37,8 @@ class UserController extends \webadmin\BController
         Yii::$app->cache->flush();
         
         unset(Yii::$app->session['pageNumArr'],Yii::$app->session['searchWhereArr'],Yii::$app->session['searchQuestUrl']);
+        $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
+        $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state!='2' and create_time<='".date('Y-m-d H:i:s',(time()-180))."'"); // 清空这个人超过三分钟的队列
         
         Yii::$app->session->setFlash('success',Yii::t('authority', '缓存更新成功'));
         if(!empty($_SERVER['HTTP_REFERER'])){

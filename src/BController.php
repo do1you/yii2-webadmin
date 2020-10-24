@@ -115,6 +115,10 @@ abstract class BController extends \yii\web\Controller
             'logBehaviors' => [
                 'class' => \webadmin\behaviors\LogBehaviors::className(),
             ],
+            // 异步下载EXCEL
+            'excelBehaviors' => [
+                'class' => \webadmin\behaviors\ExcelBehaviors::className(),
+            ],
         ];
     }
     

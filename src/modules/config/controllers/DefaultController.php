@@ -28,6 +28,35 @@ class DefaultController extends \webadmin\BController
     }
     
     /**
+     * 获取文件下载成功了没
+     */
+    public function actionDown()
+    {
+        $result = [];
+        
+        $user_id = Yii::$app->request->get('uid');
+        $excelDownCache = $user_id ? \webadmin\modules\config\models\SysQueue::find()->where("user_id='{$user_id}' and (state='2' or state='3') and callback='excel' order by id asc")->all() : [];
+        
+        foreach($excelDownCache as $item){
+            $params = json_decode($item['params'],true);
+            $cacheName = $params ? \webadmin\ext\PhpExcel::exportCacheName($params[0],$params[1],$params[2],$params[3]) : '';
+            $path = $cacheName ? Yii::$app->cache->get($cacheName) : '';
+            if($path && file_exists($path)){
+                if(stristr(PHP_OS, 'WIN')){
+                    $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
+                    $path = iconv($encode, 'UTF-8', $path); // 转码适应不同操作系统的编码规则
+                }
+                $shoFileName = preg_replace('/^.+[\\\\\\/]/', '', $path);
+                $downUrl = \yii\helpers\Url::to(['/'.$params[0]]).'?'.(!empty($params[2]) ? $params[2].'&' : '').'is_export=2';
+                $result['msg'] = "您刚才下载的文件（{$shoFileName}）已生成，请点击确定进行下载。";
+                $result['url'] = $downUrl;
+                break;
+            }
+        }
+        echo json_encode($result);exit;
+    }
+    
+    /**
      * 继承
      */
     public function actions()
