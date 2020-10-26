@@ -9,7 +9,7 @@ $nameAttribute = $generator->getNameAttribute();
 echo "<?php\n";
 ?>
 use yii\helpers\Html;
-use yii\grid\GridView;
+use webadmin\widgets\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 
@@ -40,13 +40,6 @@ use yii\helpers\Url;
 
             	<?= "<?= " ?>GridView::widget([
                     'dataProvider' => $dataProvider,
-                    'pager' => [
-                    	'firstPageLabel' => Yii::t('common','首页'),
-                    	'prevPageLabel' => Yii::t('common','上一页'),
-                    	'nextPageLabel' => Yii::t('common','下一页'),
-                    	'lastPageLabel' => Yii::t('common','尾页'),
-                    ],
-                    'layout' => "{items}\n<div class='row margin-top-10'><div class='col-xs-12 text-center'><div class='pull-left'>{summary}</div>{pager}</div></div>",
                     <?= "'filterModel' => \$model,\n                    'columns' => [\n"; ?>
                     	[
                     	    'class' => '\yii\grid\CheckboxColumn',

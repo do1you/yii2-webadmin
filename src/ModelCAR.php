@@ -166,6 +166,7 @@ class ModelCAR extends \yii\db\ActiveRecord
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => $sorts,
+            'pagination' => ['pageSizeLimit' => [1, 500]],
         ]);
 
         return $dataProvider;

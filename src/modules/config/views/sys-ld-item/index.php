@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\grid\GridView;
+use webadmin\widgets\GridView;
 use yii\helpers\Url;
 use webadmin\modules\config\models\SysLdItem;
 

@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\grid\GridView;
+use webadmin\widgets\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 use webadmin\widgets\ActiveForm;
