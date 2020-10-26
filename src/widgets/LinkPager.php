@@ -83,7 +83,7 @@ class LinkPager extends \yii\widgets\LinkPager
             $url = $this->pagination->createUrl($currentPage);
             $url .= (stripos($url,'?')===false ? '?' : '&').$this->pagination->pageSizeParam.'=';
             $id = md5($url.'_select');
-            $selectPageSize = Html::dropDownList('pager', $this->pagination->pageSize, $selectPageSizeItem, ['prompt' => $this->pageSizeLabel, 'id' => $id]);
+            $selectPageSize = Html::dropDownList('pager', $this->pagination->pageSize, $selectPageSizeItem, ['prompt' => $this->pageSizeLabel, 'id' => $id, 'style'=>"padding-right:3px;"]);
             $buttons[] = Html::tag($linkWrapTag, $selectPageSize, ['class' => 'select-pagesize']);
             
             // JS
@@ -102,7 +102,7 @@ eot;
             $url .= (stripos($url,'?')===false ? '?' : '&').$this->pagination->pageParam.'=';
             $id = md5($url.'_text');
             $thePage = intval($currentPage) + 1;
-            $number = Html::input('text', 'page', $thePage, ['class' => 'redirect-page form-control', 'style'=>'display:inline-block;width:50px;text-align:center;margin-left:-1px;height: 32px;margin-top:-1px;', 'id' => $id]);
+            $number = Html::input('text', 'page', $thePage, ['class' => 'redirect-page form-control', 'style'=>'display:inline-block;width:50px;text-align:center;margin-left:-4px;height:32px;margin-top:-1px;', 'id' => $id]);
             $buttons[] = Html::tag($linkWrapTag, $number, ['class' => 'redirect-page-num']);
             
             //$redirectButton =  Html::button($this->redirectPageLabel, ['class' => 'btn btn-primary btn-redirect', 'data-count' => $pageCount, 'data-url' => $url]);

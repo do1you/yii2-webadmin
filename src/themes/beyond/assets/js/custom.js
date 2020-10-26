@@ -145,6 +145,41 @@
 			theme: 'bootstrap'
 		});
 	});
+	 
+	// 表格行头固定
+ 	if($('table.table').not('.notFix').length){
+ 		$(window).on('scroll',function(){
+ 			var scrollTop = $(window).scrollTop();
+ 			$('table.table').not('.notFix').each(function(){
+ 				var box = $(this),
+ 					width = box.width(),
+ 					fixhdiv = box.data('fixhdiv'),
+ 					offset = box.offset();
+ 				if(!fixhdiv){
+ 					box.find('>thead th').each(function(){
+ 						var w = $(this).width();
+ 						$(this).width(w)
+ 					});
+ 					fixhdiv = box.clone().css({
+ 						'position' : 'fixed',
+ 						'top' : '0',
+ 						'left' : offset.left,
+ 						'width' : (width+2),
+ 						'z-index' : '999',
+ 						'display' : 'none'
+ 					});
+ 					fixhdiv .find('>tbody').remove();
+ 					box.after(fixhdiv);
+ 					box.data('fixhdiv',fixhdiv);
+ 				}
+ 				if(offset.top < scrollTop){
+ 					fixhdiv.show();
+ 				}else{
+ 					fixhdiv.hide();
+ 				}
+ 			});
+ 		}).scroll();
+ 	}
 
 	// 筛选对象
 	$.grepObj = function(obj,fn){
@@ -152,7 +187,6 @@
 		for(i in obj) if($.isFunction(fn) && fn(i,obj[i])===true) f[i] = obj[i];
 		return f;
 	};
-
 
 	// 默认风格
 	if(!readCookie("current-skin")&&$("#skin-changer li a").length){
