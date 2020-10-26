@@ -102,7 +102,7 @@ eot;
             $url .= (stripos($url,'?')===false ? '?' : '&').$this->pagination->pageParam.'=';
             $id = md5($url.'_text');
             $thePage = intval($currentPage) + 1;
-            $number = Html::input('text', 'page', $thePage, ['class' => 'redirect-page form-control', 'style'=>'display:inline-block;width:50px;text-align:center;margin-left:-4px;height: 32px;margin-top:-1px;', 'id' => $id]);
+            $number = Html::input('text', 'page', $thePage, ['class' => 'redirect-page form-control', 'style'=>'display:inline-block;width:50px;text-align:center;margin-left:-1px;height: 32px;margin-top:-1px;', 'id' => $id]);
             $buttons[] = Html::tag($linkWrapTag, $number, ['class' => 'redirect-page-num']);
             
             //$redirectButton =  Html::button($this->redirectPageLabel, ['class' => 'btn btn-primary btn-redirect', 'data-count' => $pageCount, 'data-url' => $url]);
