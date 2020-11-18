@@ -657,7 +657,7 @@ class Http_Sock {
         //解析URL地址
         $url = parse_url($this->uri);
         $host = $url['host'];
-        $port = isset($url['port']) && ($url['port'] != '') ? $url['port'] : 80;
+        $port = isset($url['port']) && ($url['port'] != '') ? $url['port'] : ($url['scheme'] == 'https' ? 443 : 80);
         $path = isset($url['path']) && ($url['path'] != '') ? $url['path'] : '/';
         $path .= isset($url['query']) ? "?" . $url['query'] : '';
 

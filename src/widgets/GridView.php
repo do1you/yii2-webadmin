@@ -57,7 +57,11 @@ class GridView extends \yii\grid\GridView
                 
                 if(!empty($total[$attribute]) || !empty($total[$attributeValue])){
                     $this->showFooter = true;
-                    $column->footer = (!empty($total[$attribute]) ? $total[$attribute] : $total[$attributeValue]);
+                    $value = (!empty($total[$attribute]) ? $total[$attribute] : $total[$attributeValue]);
+                    $value = $value ? number_format($value, 4, '', '') : '';
+                    if(strlen($value) && !preg_match("/^\d{8,50}$/",$value) && !(preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0')){
+                        $column->footer = $value;
+                    }
                 }
             }
         }
@@ -95,6 +99,10 @@ class GridView extends \yii\grid\GridView
         if($this->showPageSummary && $this->totalColumns){
             $cells = [];
             foreach ($this->columns as $k=>$column) {
+                $value = isset($this->totalColumns[$k]) ? number_format($this->totalColumns[$k], 4, '', '') : '';
+                if(strlen($value) && (preg_match("/^\d{8,50}$/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0'))){
+                    unset($this->totalColumns[$k]);
+                }
                 $cells[] = Html::tag('td', (isset($this->totalColumns[$k]) ? $this->totalColumns[$k] : $this->emptyCell), $column->footerOptions);
             }
             $content .= Html::tag('tr', implode('', $cells), $this->footerRowOptions);
