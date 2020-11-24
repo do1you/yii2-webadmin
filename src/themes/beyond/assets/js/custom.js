@@ -162,18 +162,20 @@
  					});
  					fixhdiv = box.clone().css({
  						'position' : 'fixed',
- 						'top' : '0',
  						'left' : offset.left,
  						'width' : (width+2),
- 						//'z-index' : '999',
+ 						'z-index' : '13',
  						'display' : 'none'
  					});
- 					fixhdiv.addClass('notFix').find('>tbody').remove();
+ 					fixhdiv.addClass('notFix').find('>tbody,>tfoot').remove();
  					box.after(fixhdiv);
  					box.data('fixhdiv',fixhdiv);
  				}
  				if(offset.top < scrollTop){
- 					fixhdiv.show().css({'left' : offset.left});
+ 					fixhdiv.show().css({
+						'top' : ($('.page-header-fixed').length ? '85px' : ($('.navbar-fixed-top').length ? '45px' : '0')),
+						'left' : offset.left
+					});
  				}else{
  					fixhdiv.hide();
  				}

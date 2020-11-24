@@ -154,12 +154,8 @@ class GridView extends \yii\grid\GridView
         if($this->showPageSummary && $this->totalColumns){
             $cells = [];
             foreach ($this->columns as $k=>$column) {
-                $value = isset($this->totalColumns[$k]) ? number_format($this->totalColumns[$k], 3, '.', '') : '';
-                if(strlen($value) && (preg_match("/^\d{8,50}/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0'))){
-                    unset($this->totalColumns[$k]);
-                }
                 if(count($cells)==0){
-                    $cells[] = Html::tag('td', '小计：', $column->footerOptions);
+                    $cells[] = Html::tag('td', '小计：', array_merge($column->footerOptions,['nowrap'=>'nowrap']));
                 }else{
                     $cells[] = Html::tag('td', (isset($this->totalColumns[$k]) ? floatval($this->totalColumns[$k]) : $this->emptyCell), $column->footerOptions);
                 }                
@@ -168,7 +164,7 @@ class GridView extends \yii\grid\GridView
         }
         $cells = [];
         foreach ($this->columns as $column) {
-            $cells[] = (count($cells)==0 ? Html::tag('td', '总计：', $column->footerOptions) : $column->renderFooterCell());
+            $cells[] = (count($cells)==0 ? Html::tag('td', '总计：', array_merge($column->footerOptions,['nowrap'=>'nowrap'])) : $column->renderFooterCell());
             if($column->footer){
                 $showFooter = true;
             }
@@ -192,7 +188,7 @@ class GridView extends \yii\grid\GridView
     public function renderTableRow($model, $key, $index)
     {
         $cells = [];
-        /* @var $column Column */
+        $num = 0;
         foreach ($this->columns as $k=>$column) {
             $cell = $column->renderDataCell($model, $key, $index);
             
@@ -204,7 +200,7 @@ class GridView extends \yii\grid\GridView
                 $attributeValue = $attributeValue ? explode(".", $attributeValue) : [];
                 $attributeValue = $attributeValue ? end($attributeValue) : '';
                 
-                if(strlen($value) && is_numeric($value) && (empty($this->skip_total) 
+                if($num++ > 1 && strlen($value) && is_numeric($value) && (empty($this->skip_total) 
                     || (is_array($this->skip_total) && !in_array($attribute,$this->skip_total) && !in_array($attributeValue,$this->skip_total)))
                 ){ // 汇总
                     if(!isset($this->totalColumns[$k])) $this->totalColumns[$k] = 0;
@@ -213,6 +209,17 @@ class GridView extends \yii\grid\GridView
             }
             $cells[] = $cell;
         }
+        
+        // 删除大数
+        if($this->totalColumns && is_array($this->totalColumns)){
+            foreach ($this->totalColumns as $k=>$value) {
+                $value = number_format($value, 3, '.', '');
+                if(strlen($value) && (preg_match("/^\d{8,50}/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0'))){
+                    unset($this->totalColumns[$k]);
+                }
+            }
+        }
+        
         if ($this->rowOptions instanceof Closure) {
             $options = call_user_func($this->rowOptions, $model, $key, $index, $this);
         } else {
