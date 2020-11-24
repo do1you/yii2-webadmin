@@ -30,6 +30,11 @@ class GridView extends \yii\grid\GridView
     public $totalRows = false;
     
     /**
+     * footer放在BODY后面
+     */
+    public $placeFooterAfterBody = true;
+    
+    /**
      * 跳过不做数据汇总的属性
      */
     public $skip_total = [];

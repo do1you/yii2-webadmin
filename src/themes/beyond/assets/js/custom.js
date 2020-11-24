@@ -148,7 +148,7 @@
 	 
 	// 表格行头固定
  	if($('table.table').not('.notFix').length){
- 		$(window).on('scroll',function(){
+ 		$(window).add('.grid-view').on('scroll',function(){
  			var scrollTop = $(window).scrollTop();
  			$('table.table').not('.notFix').each(function(){
  				var box = $(this),
@@ -165,15 +165,15 @@
  						'top' : '0',
  						'left' : offset.left,
  						'width' : (width+2),
- 						'z-index' : '999',
+ 						//'z-index' : '999',
  						'display' : 'none'
  					});
- 					fixhdiv .find('>tbody').remove();
+ 					fixhdiv.addClass('notFix').find('>tbody').remove();
  					box.after(fixhdiv);
  					box.data('fixhdiv',fixhdiv);
  				}
  				if(offset.top < scrollTop){
- 					fixhdiv.show();
+ 					fixhdiv.show().css({'left' : offset.left});
  				}else{
  					fixhdiv.hide();
  				}
