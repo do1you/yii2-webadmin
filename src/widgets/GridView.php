@@ -35,9 +35,14 @@ class GridView extends \yii\grid\GridView
     public $skip_total = [];
     
     /**
+     * 列合并
+     */
+    public $colspans = [];
+    
+    /**
      * 行尾属性
      */
-    public $footerRowOptions = ['class'=>'warning'];
+    public $footerRowOptions = ['class'=>'success']; // primary warning info danger success palegreen
     
     /**
      * 初始化
@@ -58,10 +63,7 @@ class GridView extends \yii\grid\GridView
                 if(!empty($total[$attribute]) || !empty($total[$attributeValue])){
                     $this->showFooter = true;
                     $value = (!empty($total[$attribute]) ? $total[$attribute] : $total[$attributeValue]);
-                    $value = $value ? number_format($value, 4, '', '') : '';
-                    if(strlen($value) && !preg_match("/^\d{8,50}$/",$value) && !(preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0')){
-                        $column->footer = $value;
-                    }
+                    $column->footer = floatval($value);
                 }
             }
         }
@@ -91,6 +93,54 @@ class GridView extends \yii\grid\GridView
     }
     
     /**
+     * 输出header头
+     */
+    public function renderTableHeader()
+    {
+        $content = '';
+        if($this->colspans){
+            $cells = [];
+            foreach ($this->columns as $column) {
+                $attribute = $column->attribute;
+                $attributeValue = (!empty($column->value)&&is_string($column->value) ? $column->value : $column->attribute);
+                $attributeValue = $attributeValue ? explode(".", $attributeValue) : [];
+                $attributeValue = $attributeValue ? end($attributeValue) : '';
+                
+                if(isset($this->colspans[$attribute]) || isset($this->colspans[$attributeValue])){
+                    $begin = isset($this->colspans[$attribute]) ? $attribute : $attributeValue;
+                    $num = 1;
+                }
+                
+                if(!empty($begin)){
+                    if($this->colspans[$begin]['attribute']==$attribute || $this->colspans[$begin]['attribute']==$attributeValue){
+                        $cells[] = Html::tag('th', $this->colspans[$begin]['label'], array_merge($column->headerOptions,['colspan'=>$num]));
+                        unset($begin);
+                    }else{
+                        $num++;
+                    }                    
+                }else{
+                    $cells[] = Html::tag('th', $this->emptyCell, $column->headerOptions);
+                }
+                
+            }
+            $content .= Html::tag('tr', implode('', $cells), $this->headerRowOptions);
+        }
+        $cells = [];
+        foreach ($this->columns as $column) {
+            /* @var $column Column */
+            $cells[] = $column->renderHeaderCell();
+        }
+        $content .= Html::tag('tr', implode('', $cells), $this->headerRowOptions);
+        if ($this->filterPosition === self::FILTER_POS_HEADER) {
+            $content = $this->renderFilters() . $content;
+        } elseif ($this->filterPosition === self::FILTER_POS_BODY) {
+            $content .= $this->renderFilters();
+        }
+        
+        return "<thead>\n" . $content . "\n</thead>";
+    }
+    
+    /**
      * 输出footer数据
      */
     public function renderTableFooter()
@@ -99,22 +149,31 @@ class GridView extends \yii\grid\GridView
         if($this->showPageSummary && $this->totalColumns){
             $cells = [];
             foreach ($this->columns as $k=>$column) {
-                $value = isset($this->totalColumns[$k]) ? number_format($this->totalColumns[$k], 4, '', '') : '';
-                if(strlen($value) && (preg_match("/^\d{8,50}$/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0'))){
+                $value = isset($this->totalColumns[$k]) ? number_format($this->totalColumns[$k], 3, '.', '') : '';
+                if(strlen($value) && (preg_match("/^\d{8,50}/",$value) || (preg_match("/^\d{2,50}$/",$value) && substr($value,0,1)=='0'))){
                     unset($this->totalColumns[$k]);
                 }
-                $cells[] = Html::tag('td', (isset($this->totalColumns[$k]) ? $this->totalColumns[$k] : $this->emptyCell), $column->footerOptions);
+                if(count($cells)==0){
+                    $cells[] = Html::tag('td', '小计：', $column->footerOptions);
+                }else{
+                    $cells[] = Html::tag('td', (isset($this->totalColumns[$k]) ? floatval($this->totalColumns[$k]) : $this->emptyCell), $column->footerOptions);
+                }                
             }
             $content .= Html::tag('tr', implode('', $cells), $this->footerRowOptions);
         }
         $cells = [];
         foreach ($this->columns as $column) {
-            $cells[] = $column->renderFooterCell();
+            $cells[] = (count($cells)==0 ? Html::tag('td', '总计：', $column->footerOptions) : $column->renderFooterCell());
             if($column->footer){
                 $showFooter = true;
             }
         }
-        if(!empty($showFooter)) $content .= Html::tag('tr', implode('', $cells), $this->footerRowOptions);
+        if(!empty($showFooter)){
+            $footerRowOptions = $this->footerRowOptions;
+            if(!isset($footerRowOptions['class'])) $footerRowOptions['class'] = '';
+            $footerRowOptions['class'] .= " warning";
+            $content .= Html::tag('tr', implode('', $cells), $footerRowOptions); //  warning info danger success
+        }
         if ($this->filterPosition === self::FILTER_POS_FOOTER) {
             $content .= $this->renderFilters();
         }

@@ -118,12 +118,48 @@ class PhpExcel
         
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->getStyle('A:Z')->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
         $row = 1;
         $totalRow = [];
         
-        // 父标题
-        if(isset($options['parent_titles'])){
-            // 预留
+        // 合并栏位，仅支持二级
+        if(isset($options['colspans'])){
+            $index = 0;
+            $colspans = $options['colspans'];
+            foreach($titles as $tkey=>$tval){
+                $let = \webadmin\ext\Helpfn::intToChr($index++);
+                
+                $attribute = is_array($tval) ? (isset($tval['attribute']) ? $tval['attribute'] : $tkey) : $tval;
+                $attributeValue = (!empty($tval['value'])&&is_string($tval['value']) ? $tval['value'] : $attribute);
+                $attributeValue = $attributeValue ? explode(".", $attributeValue) : [];
+                $attributeValue = $attributeValue ? end($attributeValue) : '';
+                
+                if(isset($colspans[$attribute]) || isset($colspans[$attributeValue])){
+                    $begin = isset($colspans[$attribute]) ? $attribute : $attributeValue;
+                    $start = $let.$row;
+                }
+                
+                if(!empty($begin)){
+                    $sheet->setCellValueExplicit($let.$row, $colspans[$begin]['label'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    if($colspans[$begin]['attribute']==$attribute || $colspans[$begin]['attribute']==$attributeValue){
+                        unset($begin);
+                        $end = $let.$row;
+                        if($start!=$end) $sheet->mergeCells("{$start}:{$end}");  // 横向合并
+                    }
+                }else{
+                    $start = $let.$row;
+                    $end = $let.($row+1);
+                    $label = $model ? $model->getAttributeLabel($attribute) : $attribute;
+                    $sheet->setCellValueExplicit($start, $label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    $sheet->mergeCells("{$start}:{$end}");  // 竖向合并
+                }                
+            }
+            $row++;
         }
         
         // 标题
@@ -193,7 +229,7 @@ class PhpExcel
                 $let = \webadmin\ext\Helpfn::intToChr($index++);
                 if(isset($totalRow[$attribute])){
                     $totalRow[$attribute] = round($totalRow[$attribute]*1000)/1000;
-                    $sheet->setCellValueExplicit($let.$row, $totalRow[$attribute], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    $sheet->setCellValueExplicit($let.$row, ($index==1 ? '总计：' : $totalRow[$attribute]), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     //echo $let.$row."=>".$totalRow[$attribute]."\r\n";
                 }
             }
