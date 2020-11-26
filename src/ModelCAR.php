@@ -159,9 +159,7 @@ class ModelCAR extends \yii\db\ActiveRecord
 	    
 	    $sorts = static::primaryKey();
 	    $sorts = !empty($sorts[0]) ? [
-	        'defaultOrder' => [
-	            $sorts[0] => SORT_DESC, // 默认排序
-	        ]
+	        'defaultOrder' => static::tableName().".{$sorts[0]} desc"
 	    ] : [];
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

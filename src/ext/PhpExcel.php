@@ -106,26 +106,88 @@ class PhpExcel
     /**
      * 导出excel
      */
-    public static function export($model, \yii\data\ActiveDataProvider $dataProvider, $titles = [], $filename = null, $options = [])
+    public static function export($model, \yii\data\BaseDataProvider $dataProvider, $titles = [], $filename = null, $options = [])
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         
-        $modelClass = $dataProvider->query->modelClass;
-        $model = $modelClass ? $modelClass::model() : null; // 数据模型
-        $titles = $titles ? $titles : ($model ? $model->attributeLabels() : array_keys($dataProvider->query->one()->attributes)); // 标题
-        $count = $dataProvider->query->count(); // 总记录数
-        
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet = self::writeSheet($sheet, $model, $dataProvider, $titles, $options);
+
+        // 多个工作表
+        if(!empty($options['sheets']) && is_array($options['sheets'])){
+            $sheets = isset($options['sheets']['dataProvider']) ? [$options['sheets']] : $options['sheets'];
+            foreach($sheets as $sheetItem){
+                if(isset($sheetItem['model']) && isset($sheetItem['dataProvider']) && isset($sheetItem['titles'])){
+                    $newSheet = $spreadsheet->createSheet();
+                    $newSheet = self::writeSheet($newSheet, $sheetItem['model'], $sheetItem['dataProvider'], $sheetItem['titles'], $options);
+                    
+                    // 工作表名称
+                    if(isset($sheetItem['title'])){
+                        $newSheet->setTitle($sheetItem['title']);
+                    }
+                }
+            }
+        }
+        
+        // 输出文件
+        if(!$filename) $filename = date('YmdHis');
+        else $filename = str_replace(array(":","-"),"_",$filename);
+        if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
+            $savePath = Yii::getAlias((isset($options['save_path']) ? trim($options['save_path'],'/').'/' : '@runtime/excels/').$filename.".xlsx");
+            if(stristr(PHP_OS, 'WIN')){
+                $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
+                $savePath = iconv('UTF-8', $encode, $savePath); // 转码适应不同操作系统的编码规则
+            }
+            \yii\helpers\FileHelper::createDirectory(dirname($savePath));
+        }else{ // 正常模式
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition:attachment;filename="'.$filename.'.xlsx"');
+            header("Content-Transfer-Encoding: binary");
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Pragma: no-cache");
+            $savePath = 'php://output';
+        }
+        ob_clean();
+        ob_start();
+        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $objWriter->save($savePath);
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        ob_end_flush();
+        if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
+            return $savePath;
+        }else{
+            exit;
+        }        
+    }
+    
+    /**
+     * 根据model\titles写入工作表
+     */
+    public static function writeSheet($sheet, $model, \yii\data\BaseDataProvider $dataProvider, $titles = [], $options = [])
+    {
         $sheet->getStyle('A:Z')->applyFromArray([
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ],
         ]);
+        
+        $modelClass = $dataProvider->query->modelClass;
+        $model = $modelClass ? $modelClass::model() : null; // 数据模型
+        $titles = $titles ? $titles : ($model ? $model->attributeLabels() : array_keys($dataProvider->query->one()->attributes)); // 标题
+        $count = $dataProvider->query->count(); // 总记录数
+        
         $row = 1;
         $totalRow = [];
+        
+        // 工作表名称
+        if(isset($options['title'])){
+            $sheet->setTitle($options['title']);
+        }
         
         // 合并栏位，仅支持二级
         if(isset($options['colspans'])){
@@ -157,7 +219,7 @@ class PhpExcel
                     $label = $model ? $model->getAttributeLabel($attribute) : $attribute;
                     $sheet->setCellValueExplicit($start, $label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     $sheet->mergeCells("{$start}:{$end}");  // 竖向合并
-                }                
+                }
             }
             $row++;
         }
@@ -236,37 +298,7 @@ class PhpExcel
             $row++;
         }
         
-        // 输出文件
-        if(!$filename) $filename = date('YmdHis');
-        else $filename = str_replace(array(":","-"),"_",$filename);
-        if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
-            $savePath = Yii::getAlias((isset($options['save_path']) ? trim($options['save_path'],'/').'/' : '@runtime/excels/').$filename.".xlsx");
-            if(stristr(PHP_OS, 'WIN')){
-                $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
-                $savePath = iconv('UTF-8', $encode, $savePath); // 转码适应不同操作系统的编码规则
-            }
-            \yii\helpers\FileHelper::createDirectory(dirname($savePath));
-        }else{ // 正常模式
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition:attachment;filename="'.$filename.'.xlsx"');
-            header("Content-Transfer-Encoding: binary");
-            header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Pragma: no-cache");
-            $savePath = 'php://output';
-        }
-        ob_clean();
-        ob_start();
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $objWriter->save($savePath);
-        $spreadsheet->disconnectWorksheets();
-        unset($spreadsheet);
-        ob_end_flush();
-        if(preg_match("/cli/i", php_sapi_name()) || !empty($options['return'])){ // cli模式，异步导出EXCEL
-            return $savePath;
-        }else{
-            exit;
-        }        
+        return $sheet;
     }
     
     /**
