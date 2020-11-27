@@ -159,9 +159,11 @@ class ModelCAR extends \yii\db\ActiveRecord
 	    
 	    $sorts = static::primaryKey();
 	    $sorts = !empty($sorts[0]) ? [
-	        'defaultOrder' => static::tableName().".{$sorts[0]} desc"
+	        'defaultOrder' => [
+	            $sorts[0] => SORT_DESC,
+	        ],
 	    ] : [];
-        $dataProvider = new ActiveDataProvider([
+	    $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => $sorts,
             'pagination' => ['pageSizeLimit' => [1, 500]],
