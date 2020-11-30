@@ -154,6 +154,7 @@
  				var box = $(this),
  					width = box.width(),
  					fixhdiv = box.data('fixhdiv'),
+					scrollObj = box.data('scrollObj'),
  					offset = box.offset();
  				if(!fixhdiv){
  					box.find('>thead th').each(function(){
@@ -171,14 +172,22 @@
  					box.after(fixhdiv);
  					box.data('fixhdiv',fixhdiv);
  				}
+				scrollObj && clearTimeout(scrollObj);
  				if(offset.top < scrollTop){
- 					fixhdiv.show().css({
+ 					fixhdiv.css({
 						'top' : ($('.page-header-fixed').length ? '85px' : ($('.navbar-fixed-top').length ? '45px' : '0')),
 						'left' : offset.left
-					});
+					}).show();
+					scrollObj = setTimeout(function(){
+						fixhdiv.hide().show();
+					},100);
  				}else{
  					fixhdiv.hide();
+					scrollObj = setTimeout(function(){
+						fixhdiv.show().hide();
+					},100);
  				}
+				box.data('scrollObj',scrollObj);
  			});
  		}).scroll();
  	}
