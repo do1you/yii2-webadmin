@@ -1,9 +1,9 @@
 <?php
-if(in_array($item->config_type,['selectmult','selectajaxmult','ddmulti'])){
-    $item->value = $item->value ? explode(',',$item->value) : [];
+if(in_array($item['config_type'],['selectmult','selectajaxmult','ddmulti'])){
+    $item['value'] = $item['value'] ? explode(',',$item['value']) : [];
 }
 $field = $form->field($item, 'value')->label($item['label_name']);
-!empty($item['label_note']) && $field->hint($item['label_note']); 
+!empty($item['label_note']) && $field->hint($item['label_note']);
 $arr = Yii::$app->controller->action->id=='config' ? ['readonly'=>'readonly', 'disabled'=>'disabled'] : [];
 switch($item['config_type'])
 {
@@ -27,6 +27,18 @@ switch($item['config_type'])
         break;
     case 'selectmult': // 下拉多选框
         echo $field->duallistbox($item['v_config_params'], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr);
+        break;
+    case 'select2': // 升级下拉框
+        echo $field->select2($item['v_config_params'], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]", 'prompt'=>'请选择']+$arr);
+        break;
+    case 'select2mult': // 升级下拉框多选
+        echo $field->select2($item['v_config_params'], ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]", 'prompt'=>'请选择', 'multiple'=>'multiple', 'style'=>'min-width:250px;']+$arr);
+        break;
+    case 'ddselect2': // 数据字典
+        echo $field->select2(\webadmin\modules\config\models\SysLdItem::dd($item['config_params']), ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]", 'prompt'=>'请选择']+$arr);
+        break;
+    case 'ddselect2multi': // 数据字典多选
+        echo $field->select2(\webadmin\modules\config\models\SysLdItem::dd($item['config_params']), ['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]", 'prompt'=>'请选择', 'multiple'=>'multiple', 'style'=>'min-width:250px;']+$arr);
         break;
     case 'selectajax': // 下拉异步
     case 'selectajaxmult': // 下拉异步多选框

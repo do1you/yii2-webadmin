@@ -46,6 +46,11 @@ class AController extends ActiveController
         // 指定错误方法
         Yii::$app->controllerMap['apibase'] = '\webadmin\restful\AController';
         Yii::$app->errorHandler->errorAction = 'apibase/error'; 
+        
+        // 定义组件
+        Yii::$app->setComponents([
+            'formatter' => ['class' => '\webadmin\ext\Formatter'],
+        ]);
     }
     
     // 执行前

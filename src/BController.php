@@ -71,6 +71,7 @@ abstract class BController extends \yii\web\Controller
                     ],
                 ]
             ],
+            'formatter' => ['class' => '\webadmin\ext\Formatter'],
         ]);
         
         // 定义别名路径
