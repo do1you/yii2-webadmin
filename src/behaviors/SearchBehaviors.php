@@ -21,6 +21,11 @@ class SearchBehaviors extends \yii\base\Behavior
     public $searchNotKeys = ['is_export'];
     
     /**
+     * 根据指定参数做缓存
+     */
+    public $searchParamsKeys = [];
+    
+    /**
      * 行为触发的事件
      */
     public function events()
@@ -41,6 +46,11 @@ class SearchBehaviors extends \yii\base\Behavior
         // 存在旧的缓存查询数据进行合并
         foreach(['_GET','_POST'] as $key){
             $cacheKey = 'searchBehaviors/'.Yii::$app->session->id.'/'.$module.Yii::$app->controller->id.'/'.$act.'/'.$key;
+            if($this->searchParamsKeys){
+                foreach($this->searchParamsKeys as $k){
+                    $cacheKey .= '/'.$k.'_'.Yii::$app->request->post($k,Yii::$app->request->get($k));
+                }
+            }
             $result = Yii::$app->cache->get($cacheKey);
             if($result && is_array($result)){
                 foreach($this->searchNotKeys as $k) unset($result[$k]); // 不缓存
