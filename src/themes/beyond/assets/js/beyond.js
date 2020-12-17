@@ -56,7 +56,7 @@ if (location.pathname != "index-rtl-fa.html" && location.pathname != "index-rtl-
 }
 /*Loading*/
 $(window)
-    .load(function () {
+    .on('load',function () {
         setTimeout(function () {
             $('.loading-container')
                 .addClass('loading-inactive');

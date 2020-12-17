@@ -66,8 +66,9 @@ abstract class BController extends \yii\web\Controller
                 'bundles'=>[
                     // 重置JQ的包
                     'yii\web\JqueryAsset'=>[
-                        'sourcePath' => '@webadmin/themes/beyond/assets',
-                        'js' => (Yii::$app->request->isAjax ? [] : ['js/jquery.min.js',]),
+                        //'sourcePath' => '@webadmin/themes/beyond/assets',
+                        'sourcePath' => '@bower/jquery/dist',  // 直接采用系统自带的jquery版本
+                        'js' => (Yii::$app->request->isAjax ? [] : ['jquery.min.js',]),
                     ],
                 ]
             ],
