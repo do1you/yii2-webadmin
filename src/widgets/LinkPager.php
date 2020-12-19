@@ -89,8 +89,16 @@ class LinkPager extends \yii\widgets\LinkPager
             // JS
             $script = <<<eot
                 $('#{$id}').on('change',function(){
-                    var val = $(this).val();
-                    val && (location.href = "{$url}" + val);
+                    var _t = $(this),
+                        container = _t.closest('[data-pjax-container]'),
+                        val = $(this).val();
+                    if(val){
+                        if(container.length){
+                            $.pjax({"container":('#'+container.attr('id')),"url":("{$url}" + val)});
+                        }else{
+                            location.href = "{$url}" + val;
+                        }
+                    }
                 });
 eot;
             Yii::$app->controller->view && Yii::$app->controller->view->registerJs($script);
@@ -111,8 +119,16 @@ eot;
             // JS
             $script = <<<eot
                 $('#{$id}').on('change',function(){
-                    var val = $(this).val();
-                    val && (location.href = "{$url}" + val);
+                    var _t = $(this),
+                        container = _t.closest('[data-pjax-container]'),
+                        val = $(this).val();
+                    if(val){
+                        if(container.length){
+                            $.pjax({"container":('#'+container.attr('id')),"url":("{$url}" + val)});
+                        }else{
+                            location.href = "{$url}" + val;
+                        }
+                    }
                 });
 eot;
             Yii::$app->controller->view && Yii::$app->controller->view->registerJs($script);
