@@ -84,6 +84,10 @@ abstract class BController extends \yii\web\Controller
         Yii::$app->request->isAjax && ($this->layout = 'console_ajax');
         if(!empty($_REQUEST['layout'])) $this->layout = trim($_REQUEST['layout']);
         $this->layout = $this->layout ? '@webadmin/views/'.$this->layout : false;
+        
+        // 输出事件监听
+        Yii::$app->response->off(Response::EVENT_BEFORE_SEND);
+        Yii::$app->response->on(Response::EVENT_BEFORE_SEND, [$this, 'beforeSend']);
     }
     
     /**
@@ -190,6 +194,24 @@ abstract class BController extends \yii\web\Controller
             $array['previous'] = $this->convertExceptionToArray($prev);
         }
         return $array;
+    }
+    
+    /**
+     * 输出前处理
+     */
+    public function beforeSend($event)
+    {        
+        $response = Yii::$app->getResponse();
+        if($response->statusCode!=200){
+            if(is_array($response->data)) $response->data['status'] = $response->statusCode;
+            $response->statusCode = 200; // 针对API，任意错误都强制输出200状态
+        }
+        
+        // 设置允许跨域
+        $response->getHeaders()->set('P3P', 'CP=CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR');
+        $response->getHeaders()->set('Access-Control-Allow-Origin', '*');
+        $response->getHeaders()->set('Access-Control-Allow-Methods', 'GET,POST');
+        $response->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
     }
     
 

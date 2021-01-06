@@ -157,8 +157,10 @@ class AController extends ActiveController
         ];
         
         // 设置允许跨域
-        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', '*'); 
-        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
+        $response->getHeaders()->set('P3P', 'CP=CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR');
+        $response->getHeaders()->set('Access-Control-Allow-Origin', '*');
+        $response->getHeaders()->set('Access-Control-Allow-Methods', 'GET,POST');
+        $response->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
         
         //jsonp 格式输出
         if (isset($_GET['callback'])) {

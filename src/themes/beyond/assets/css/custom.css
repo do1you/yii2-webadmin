@@ -63,3 +63,7 @@ table.table.table-nowrap tbody td{text-overflow:ellipsis;overflow:hidden;white-s
 .grid-view{overflow:auto;}
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{line-height:12px;margin-top:0;}
 .select-pagesize select{font-size:12px;}
+.page-container .error-container p.description{color:#666666;}
+.page-container .error-container{background:none;}
+.page-container .return-btn{display:none;}
+.error-container h1{line-height:110%;margin-top:-110px;}
