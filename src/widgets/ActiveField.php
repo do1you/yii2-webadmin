@@ -212,7 +212,7 @@ class ActiveField extends \yii\widgets\ActiveField
                     }
                 }
             };
-        ");
+        ",\yii\web\View::POS_END);
         
         return $this;
     }
@@ -307,7 +307,7 @@ class ActiveField extends \yii\widgets\ActiveField
                     }
                 }
             };
-        ");
+        ",\yii\web\View::POS_END);
         
         $this->model[$this->attribute] = $oldVal;
         return $this;
