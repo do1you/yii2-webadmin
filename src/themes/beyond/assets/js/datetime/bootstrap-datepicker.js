@@ -1488,7 +1488,7 @@
 				.children('div')
 				.hide()
 				.filter('.datepicker-' + DPGlobal.viewModes[this.viewMode].clsName)
-					.show();
+					.show().css('display','block');
 			this.updateNavArrows();
       this._trigger('changeViewMode', new Date(this.viewDate));
 		}
