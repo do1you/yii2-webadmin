@@ -59,6 +59,36 @@ class LogApiRequest extends \webadmin\ModelCAR
     }
     
     /**
+     * 编码转换
+     */
+    public static function toGbk($vars = '')
+    {
+        if(is_array($vars)){
+            foreach($vars as $k=>$v){
+                $vars[$k] = self::toGbk($v);
+            }
+        }else{
+            $vars = iconv('UTF-8', 'GBK//IGNORE', $vars);   // 转换编码
+        }
+        return $vars;
+    }
+    
+    /**
+     * 编码转换
+     */
+    public static function toUtf8($vars = '')
+    {
+        if(is_array($vars)){
+            foreach($vars as $k=>$v){
+                $vars[$k] = self::toUtf8($v);
+            }
+        }else{
+            $vars = iconv('GBK', 'UTF-8//IGNORE', $vars);   // 转换编码
+        }
+        return $vars;
+    }
+    
+    /**
      * 对外的API请求
      * url：请求地求
      * $vars：请求参数，可以数组，也可以是字符串，body的内容
@@ -68,14 +98,16 @@ class LogApiRequest extends \webadmin\ModelCAR
      * $options：其他参数
      * $httpType：请求类型 1 CURL 2 SOCKET 3 Stream
      */
-    public static function post($url = '', $vars = [], $header = [], $cookie = '', $timeout = 10, $options = [], $httpType='1', $method = 'POST')
+    public static function post($url = '', $vars = [], $header = [], $cookie = '', $timeout = 10, $options = [], $httpType='1', $isGbk=false, $method = 'POST')
     {
         try{
+            $data = $isGbk ? self::toGbk($vars) : $vars;   // 转换编码
             if($method=='GET'){
-                $result = trim(Yii::createObject('webadmin\ext\http\Httper')->getHttp($httpType)->get($url, $vars, $header, $cookie, $timeout, $options));
+                $result = trim(Yii::createObject('webadmin\ext\http\Httper')->getHttp($httpType)->get($url, $data, $header, $cookie, $timeout, $options));
             }else{
-                $result = trim(Yii::createObject('webadmin\ext\http\Httper')->getHttp($httpType)->post($url, $vars, $header, $cookie, $timeout, $options));
-            }            
+                $result = trim(Yii::createObject('webadmin\ext\http\Httper')->getHttp($httpType)->post($url, $data, $header, $cookie, $timeout, $options));
+            }
+            $result = $isGbk ? self::toUtf8($result) : $result;   // 转换编码
         }catch(Exception $e) {
             $message = $e->getMessage();
             $code = $e->getCode();
@@ -99,9 +131,9 @@ class LogApiRequest extends \webadmin\ModelCAR
     /**
      * GET请求API
      */
-    public static function get($url = '', $vars = [], $header = [], $cookie = '', $timeout = 10, $options = [], $httpType='1')
+    public static function get($url = '', $vars = [], $header = [], $cookie = '', $timeout = 10, $options = [], $httpType='1', $isGbk=false)
     {
-        return static::post($url, $vars, $header, $cookie, $timeout, $options, $httpType, 'GET');
+        return static::post($url, $vars, $header, $cookie, $timeout, $options, $httpType, $isGbk, 'GET');
     }
     
     // 搜索

@@ -49,9 +49,9 @@ class Imageer
     public function getpic($pic='',$width=null,$height=null,$master=null)
     {
         $uppath = (defined('UP_PATH') ? UP_PATH : 'upfile/'); // 上传目录
-        $rootpath = Yii::getAlias('@webroot').'/'; // 根目录 
-        $urlPre = Yii::getAlias('@web').'/';
-        
+        $rootpath = Yii::getAlias('@app/web/'); // 根目录 
+        $urlPre = isset(Yii::$aliases['@web']) ? Yii::getAlias('@web/') : '';
+
         $arrs = $pic ? explode(".",$pic) : array();
         $ext = $arrs ? end($arrs) : '';
         if($pic && in_array(strtolower($ext),array('gif','jpg','png','jpeg'))){
