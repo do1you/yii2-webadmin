@@ -177,12 +177,12 @@
  					fixhdiv.css({
 						'top' : ($('.page-header-fixed').length ? '85px' : ($('.navbar-fixed-top').length ? '45px' : '0')),
 						'left' : offset.left
-					}).show();
+					}).show().find('input,select').prop('disabled',false);
 					scrollObj = setTimeout(function(){
 						fixhdiv.hide().show();
 					},100);
  				}else{
- 					fixhdiv.hide();
+ 					fixhdiv.hide().find('input,select').prop('disabled',true);
 					scrollObj = setTimeout(function(){
 						fixhdiv.show().hide();
 					},100);
