@@ -229,4 +229,23 @@ class GridView extends \yii\grid\GridView
         
         return Html::tag('tr', implode('', $cells), $options);
     }
+    
+    /**
+     * 移除数组的查询过滤器
+     */
+    public function renderFilters()
+    {
+        if(($model = $this->filterModel) !== null && $model instanceof \yii\base\Model) {
+            foreach ($this->columns as $column) {
+                if($column instanceof \yii\grid\DataColumn){
+                    $value = \yii\helpers\Html::getAttributeValue($model, $column->attribute);
+                    if(is_array($value)){
+                        $column->filter = false;
+                    }
+                }
+            }
+        }
+        
+        return parent::renderFilters();
+    }
 }
