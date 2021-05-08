@@ -237,7 +237,7 @@ class GridView extends \yii\grid\GridView
     {
         if(($model = $this->filterModel) !== null && $model instanceof \yii\base\Model) {
             foreach ($this->columns as $column) {
-                if($column instanceof \yii\grid\DataColumn){
+                if(($column instanceof \yii\grid\DataColumn) && $column->attribute !== null && $model->isAttributeActive($column->attribute)){
                     $value = \yii\helpers\Html::getAttributeValue($model, $column->attribute);
                     if(is_array($value)){
                         $column->filter = false;
