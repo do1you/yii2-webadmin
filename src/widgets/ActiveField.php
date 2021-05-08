@@ -34,6 +34,23 @@ class ActiveField extends \yii\widgets\ActiveField
     }
     
     /**
+     * 日期-年份
+     */
+    public function dateyear($options = [])
+    {
+        $options['data-date-format'] = 'yyyy'; 
+        $this->textInput($options);
+        if(!empty($this->parts['{input}'])){
+            $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-calendar'></i></span>";
+        }
+        $id = $this->getInputId($options);
+        $view = $this->form->getView();
+        $view->registerJsFile('@assetUrl/js/datetime/bootstrap-datepicker.js',['depends' => \webadmin\WebAdminAsset::className()]);
+        $view->registerJs("$('#{$id}').datepicker({'format':'yyyy','startView':2,'minViewMode':2});");
+        return $this;
+    }
+    
+    /**
      * 日期
      */
     public function date($options = [])
