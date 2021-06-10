@@ -110,6 +110,17 @@ class SysQueue extends \webadmin\ModelCAR
                     }
                 }
             }catch(\Exception $e) { //捕获异常
+                // 记录计划任务日志
+                \webadmin\modules\logs\models\LogCrontab::insertion([
+                    'command' => dirname($this->taskphp),
+                    'action' => basename($this->taskphp),
+                    'args' => trim(trim(json_encode($this->params),'['),']'),
+                    'exit_code' => '3',
+                    'message' => $e->getMessage(),
+                    'starttime' => $this->start_time,
+                    'endtime' => date('Y-m-d H:i:s'),
+                    'user_id' => '0',
+                ]);
             }
             $this->unLock();
         }

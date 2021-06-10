@@ -79,6 +79,7 @@ class SysCrontab extends \webadmin\ModelCAR
     {
         if($this->lock()){
             try{
+                $startTime = date('Y-m-d H:i:s');
                 $this->run_state = 1;
                 if($this->save(false)){
                     $result = SysCrontab::runCmd($this->command, [], true);
@@ -88,6 +89,17 @@ class SysCrontab extends \webadmin\ModelCAR
                     $this->save(false);
                 }
             }catch(\Exception $e) { //捕获异常
+                // 记录计划任务日志
+                \webadmin\modules\logs\models\LogCrontab::insertion([
+                    'command' => dirname($this->command),
+                    'action' => basename($this->command),
+                    'args' => '',
+                    'exit_code' => '3',
+                    'message' => $e->getMessage(),
+                    'starttime' => $startTime,
+                    'endtime' => date('Y-m-d H:i:s'),
+                    'user_id' => '0',
+                ]);
             }
             $this->unLock();
         }
@@ -138,12 +150,26 @@ class SysCrontab extends \webadmin\ModelCAR
         
         $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
         if($isCmd){ // 命令行模式
+            $isWindows = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false);
+            $dir = Yii::getAlias('@runtime').DIRECTORY_SEPARATOR.'process'.DIRECTORY_SEPARATOR.'cmdlogs';
+            \yii\helpers\FileHelper::createDirectory($dir);
+            $path = $dir . DIRECTORY_SEPARATOR . date('Ymd').'.log';
+            $putFile = $isWindows
+                ? ' >> ' . $path . ' '// >nul
+                : ' >> '. $path .' '; // 2>&1 &
+            
             $processPath = Yii::getAlias('@vendor/../');
-            $cmd = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false)
+            $cmd = $isWindows
                 ? $processPath.'yii.bat '.$command
                 : $processPath.'yii '.$command;
             if($params) $cmd .= ' "' . implode('" "',$params).'"';
+            $cmd .= $putFile;
+            
+            $startTime = date('Y-m-d H:i:s');
             exec($cmd,$result,$code);
+            $isWindows 
+            ? exec("echo \"{$startTime} TO ".date('Y-m-d H:i:s')." Command:({$command})\"".$putFile) 
+            : exec("echo -e \"\\n{$startTime} TO ".date('Y-m-d H:i:s')." Command:({$command})\\n\"".$putFile);
             
             if(strlen($code)>0 && $code!='0') return false;
             if($result){
