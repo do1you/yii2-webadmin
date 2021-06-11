@@ -81,6 +81,7 @@ class SysCrontab extends \webadmin\ModelCAR
             try{
                 $startTime = date('Y-m-d H:i:s');
                 $this->run_state = 1;
+                $this->last_time = time();
                 if($this->save(false)){
                     $result = SysCrontab::runCmd($this->command, [], true);
                     
