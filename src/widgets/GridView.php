@@ -22,7 +22,7 @@ class GridView extends \yii\grid\GridView
     /**
      * 当页汇总数据信息缓存
      */
-    protected $totalColumns = [];
+    public $totalColumns = [];
     
     /**
      * 所有分页汇总数据
@@ -57,18 +57,18 @@ class GridView extends \yii\grid\GridView
         parent::init();
         
         // 显示所有数据汇总
-        $total = $this->totalRows;
+        $total = $this->totalSummary();
         if(!empty($total)){
             foreach($this->columns as $key=>$column){
-                $attribute = $column->attribute;
-                $attributeValue = (!empty($column->value)&&is_string($column->value) ? $column->value : $column->attribute);
+                $attribute = isset($column->attribute)?$column->attribute:'';
+                $attributeValue = (!empty($column->value)&&is_string($column->value) ? $column->value : $attribute);
                 $attributeValue = $attributeValue ? explode(".", $attributeValue) : [];
                 $attributeValue = $attributeValue ? end($attributeValue) : '';
                 
-                if(!empty($total[$attribute]) || !empty($total[$attributeValue])){
+                if(isset($total[$attribute]) || isset($total[$attributeValue])){
                     $this->showFooter = true;
                     $value = (!empty($total[$attribute]) ? $total[$attribute] : $total[$attributeValue]);
-                    $column->footer = floatval($value);
+                    $column->footer = round($value*10000)/10000;
                 }
             }
         }
@@ -77,6 +77,27 @@ class GridView extends \yii\grid\GridView
         if($this->showPageSummary){
             $this->showFooter = true;
         }
+    }
+    
+    /**
+     * 处理汇总数据
+     */
+    private function totalSummary()
+    {
+        if($this->totalRows){
+            if(is_string($this->totalRows) && ($this->dataProvider instanceof \yii\data\ActiveDataProvider) && $this->dataProvider->query){
+                $query = clone $this->dataProvider->query;
+                if($query->groupBy){
+                    $query = (new \yii\db\Query)->from($query)->select(new \yii\db\Expression($this->totalRows));
+                }else{
+                    $query->select(new \yii\db\Expression($this->totalRows));
+                }
+                $this->totalRows = $query->createCommand()->queryOne();
+            }
+            return $this->totalRows;
+        }
+        
+        return false;
     }
     
     /**
@@ -228,24 +249,5 @@ class GridView extends \yii\grid\GridView
         $options['data-key'] = is_array($key) ? json_encode($key) : (string) $key;
         
         return Html::tag('tr', implode('', $cells), $options);
-    }
-    
-    /**
-     * 移除数组的查询过滤器
-     */
-    public function renderFilters()
-    {
-        if(($model = $this->filterModel) !== null && $model instanceof \yii\base\Model) {
-            foreach ($this->columns as $column) {
-                if(($column instanceof \yii\grid\DataColumn) && $column->attribute !== null && $model->isAttributeActive($column->attribute)){
-                    $value = \yii\helpers\Html::getAttributeValue($model, $column->attribute);
-                    if(is_array($value)){
-                        $column->filter = false;
-                    }
-                }
-            }
-        }
-        
-        return parent::renderFilters();
     }
 }
