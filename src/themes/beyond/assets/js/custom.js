@@ -166,7 +166,8 @@
  						'left' : offset.left,
  						'width' : (width+2),
  						'z-index' : '13',
- 						'display' : 'none'
+ 						'display' : 'none',
+ 						'max-width' : 'none'
  					});
  					fixhdiv.addClass('notFix').find('>tbody,>tfoot').remove();
  					box.after(fixhdiv);

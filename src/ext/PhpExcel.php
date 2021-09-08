@@ -228,7 +228,7 @@ class PhpExcel
         if($titles){
             $index = 0;
             foreach($titles as $tkey=>$tval){
-                $attribute = is_array($tval) ? (isset($tval['attribute']) ? $tval['attribute'] : null) : $tval;
+                $attribute = is_array($tval) ? (isset($tval['label']) ? $tval['label'] : (isset($tval['attribute']) ? $tval['attribute'] : null)) : $tval;
                 $attribute = $attribute&&is_string($attribute) ? $attribute : $tkey;
                 $label = $model ? $model->getAttributeLabel($attribute) : $attribute;
                 $let = \webadmin\ext\Helpfn::intToChr($index++);
