@@ -1,6 +1,6 @@
 <?php
 if(in_array($item['config_type'],['selectmult','selectajaxmult','ddmulti'])){
-    $item['value'] = $item['value'] ? explode(',',$item['value']) : [];
+    $item['value'] = $item['value'] ? (is_array($item['value']) ? $item['value'] : explode(',',$item['value'])) : [];
 }
 $field = $form->field($item, 'value')->label($item['label_name']);
 !empty($item['label_note']) && $field->hint($item['label_note']);
