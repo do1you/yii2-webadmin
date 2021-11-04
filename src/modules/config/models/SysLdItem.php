@@ -101,7 +101,9 @@ class SysLdItem extends \webadmin\ModelCAR
     {
         // 更新缓存
         if($this->parent_id && ($topParent = $this->topParent) && !empty($topParent['ident'])){
-            self::dd($topParent['ident'],false,false,true);
+            //self::dd($topParent['ident'],false,false,true);
+            $cachekey = 'config/ddlist/'.md5($topParent['ident']);
+            Yii::$app->cache->delete($cachekey);
         }
         
         return parent::afterSave($insert, $changedAttributes);
@@ -111,7 +113,9 @@ class SysLdItem extends \webadmin\ModelCAR
     {
         // 更新缓存
         if($this->parent_id && ($topParent = $this->topParent) && !empty($topParent['ident'])){
-            self::dd($topParent['ident'],false,false,true);
+            //self::dd($topParent['ident'],false,false,true);
+            $cachekey = 'config/ddlist/'.md5($topParent['ident']);
+            Yii::$app->cache->delete($cachekey);
         }
         
         return parent::afterDelete();
