@@ -44,8 +44,8 @@
 							'class': 'check-submit-form',
 							style: 'display:none'
 						}).appendTo(form);
-						form.find('input[type=checkbox][value]:checked,input[type=hidden]').each(function(name, values) {
-							$form.append($('<input/>').attr({type: 'hidden', name: $(this).attr('name'), value: $(this).attr('value')}));
+						form.find('input[type=checkbox][value]:checked,input[type=hidden],select').each(function(name, values) {
+							$form.append($('<input/>').attr({type: 'hidden', name: $(this).attr('name'), value: ($(this).attr('value') || $(this).val())}));
 						});
 						$form.submit();
 					}else{
