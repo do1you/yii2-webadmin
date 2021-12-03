@@ -186,9 +186,9 @@ trait TreeTrait
     
     // 刷新树型数据缓存
     public static function reloadCache($parentIds=null){
-        self::treeOptions('0',[],0,true);
-        self::treeData('0',[],[],true);
-        self::treeMenu('0',[],true);
+        self::treeOptions('0',[],0,99);
+        self::treeData('0',[],[],99);
+        self::treeMenu('0',[],99);
 
         $parentIds = is_array($parentIds) ? $parentIds : [$parentIds];
         foreach($parentIds as $parentId){
