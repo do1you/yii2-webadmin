@@ -206,6 +206,12 @@
 		window.location.reload();
 	}
 
+	// 初始化界面
+	$.InitiatePages = function(){
+		if($.fn.select2) $('select.select2').select2();
+		InitiateWidgets();
+	};
+
 	// 解决select2和modal的冲突
 	$.fn.modal.Constructor.prototype.enforceFocus = function () {};
 
@@ -223,8 +229,13 @@
 			}
 		}
 	});
+
+	$(document).ajaxSuccess(function(){
+		$.InitiatePages && $.InitiatePages();
+	});
 })(jQuery);
 
 $(function(){
-	if($.fn.select2) $('select.select2').select2();
+	$.InitiatePages && $.InitiatePages();
 });
+

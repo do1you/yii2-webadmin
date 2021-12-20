@@ -90,7 +90,9 @@ trait TreeTrait
                     
                 if($childs) $data['children'] = self::treeData($childs,$wheres,$selectIds,$reload);
                 
-                $data['type'] = !empty($data['children']) ? 'folder' : 'item';
+                if(isset($item['type'])) $data['type'] = $item['type'];
+                else $data['type'] = !empty($data['children']) ? 'folder' : 'item';
+
                 if($selectIds && in_array($data[$model->col_id],$selectIds)) $data['selected'] = true;
                 $result[] = $data;
             }
