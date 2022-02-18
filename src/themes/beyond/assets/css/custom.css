@@ -54,7 +54,8 @@ table.table.table-nowrap tbody td{text-overflow:ellipsis;overflow:hidden;white-s
 .table>thead>tr>th{vertical-align:middle;}
 .table-tool-cus{height:40px;position: absolute;top:-46px;right:98px;}
 .table-tool-cus .dt-button-collection.dropdown-menu{max-height:500px;overflow:hidden;overflow-y:auto;}
-.DTFC_LeftBodyWrapper{top:1px !important;}
+.DTFC_LeftBodyWrapper{top:0px !important;}
+.DTFC_LeftWrapper div.DTFC_LeftHeadWrapper table,.DTFC_LeftWrapper div.DTFC_RightHeadWrapper table{border-bottom:1px solid #ddd !important;}
 .form-group.required>.control-label:after{content:"*";color: red;}
 .form-inline .form-control{display: inline-block;width:auto;vertical-align: middle;}
 .form-inline .control-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}

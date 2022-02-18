@@ -21,6 +21,30 @@ class ModelCAR extends \yii\db\ActiveRecord
 	    return Yii::createObject(get_called_class());
 	}
 	
+	// 返回对象的多关键值对应
+	public function getModelKey($model, $attributes)
+	{
+	    $key = [];
+	    foreach ($attributes as $attribute) {
+	        $key[] = $this->normalizeModelKey($model[$attribute]);
+	    }
+	    if (count($key) > 1) {
+	        return serialize($key);
+	    }
+	    $key = reset($key);
+	    return is_scalar($key) ? $key : serialize($key);
+	}
+	
+	// 兼容toString的对象处理
+	public function normalizeModelKey($value)
+	{
+	    if (is_object($value) && method_exists($value, '__toString')) {
+	        $value = $value->__toString();
+	    }
+	    
+	    return $value;
+	}
+	
 	// 保存后动作
 	public function afterSave($insert, $changedAttributes)
 	{
