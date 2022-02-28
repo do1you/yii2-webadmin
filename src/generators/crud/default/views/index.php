@@ -49,7 +49,7 @@ use yii\helpers\Url;
                     	       return '<label><input type="checkbox" name="id[]" class="checkActive" value="'.$key.'"><span class="text"></span></label>';
             	            },
             	        ],
-                    	['class' => '\yii\grid\SerialColumn'],
+                    	//['class' => '\yii\grid\SerialColumn'],
 
 <?php
 $count = 0;

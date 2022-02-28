@@ -187,7 +187,7 @@ class SysConfig extends \webadmin\ModelCAR
     {
         $config_params = $this->config_params ? $this->config_params : "";
         if(stripos($config_params, '.')!==false){
-            return \yii\helpers\Url::to(['select2','key'=>$this->key]);
+            return \yii\helpers\Url::to(['/config/sys-config/select2','key'=>$this->key]);
         }else{
             return \yii\helpers\Url::to($config_params);
         }

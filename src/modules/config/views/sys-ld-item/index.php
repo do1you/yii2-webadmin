@@ -49,7 +49,7 @@ use webadmin\modules\config\models\SysLdItem;
                             	       return '<label><input type="checkbox" name="id[]" class="checkActive" value="'.$key.'"><span class="text"></span></label>';
                     	            },
                     	        ],
-                            	['class' => '\yii\grid\SerialColumn'],
+                            	//['class' => '\yii\grid\SerialColumn'],
         
                         	     'id',
                         	     'name',

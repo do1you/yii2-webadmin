@@ -86,7 +86,9 @@ class SysConfigController extends \webadmin\BController
         $q = Yii::$app->request->post('q',Yii::$app->request->get('q'));
         $model = $k ? SysConfig::findOne($k) : null;
         $result = ['items'=>[], 'total_count' => 0,];
-        if($model && ($arr=explode('.', $model['config_params'])) && count($arr)==3){
+        if(($model && ($arr=explode('.', $model['config_params'])) && count($arr)==3)
+            || (($arr=explode('.', $k)) && count($arr)==3)
+        ){
             list($table,$key,$text) = $arr;
             if($table && $key && $text){
                 $limit = 20;
