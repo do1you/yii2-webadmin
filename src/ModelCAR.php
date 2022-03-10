@@ -25,9 +25,14 @@ class ModelCAR extends \yii\db\ActiveRecord
 	public function getModelKey($model, $attributes)
 	{
 	    $key = [];
-	    foreach ($attributes as $attribute) {
-	        $key[] = $this->normalizeModelKey($model[$attribute]);
+	    if(is_array($attributes)){
+	        foreach ($attributes as $attribute) {
+	            $key[] = $this->normalizeModelKey($model[$attribute]);
+	        }
+	    }else{
+	        $key[] = $this->normalizeModelKey($model[$attributes]);
 	    }
+	    
 	    if (count($key) > 1) {
 	        return serialize($key);
 	    }

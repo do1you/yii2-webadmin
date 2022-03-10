@@ -5,6 +5,10 @@
 namespace webadmin\restful;
 
 use Yii;
+use yii\base\Arrayable;
+use yii\base\Model;
+use yii\data\DataProviderInterface;
+
 
 class Serializer extends \yii\rest\Serializer
 {
@@ -28,5 +32,21 @@ class Serializer extends \yii\rest\Serializer
             'status' => 422,
             'info' => $result,
         ];
+    }
+    
+    /**
+     * 覆盖格式化方法
+     */
+    public function serialize($data)
+    {
+        if ($data instanceof DataProviderInterface) {
+            return $this->serializeDataProvider($data);
+        } elseif ($data instanceof Model && $data->hasErrors()) {
+            return $this->serializeModelErrors($data);
+        } elseif ($data instanceof Arrayable) {
+            return $this->serializeModel($data);
+        }
+        
+        return $data;
     }
 }
