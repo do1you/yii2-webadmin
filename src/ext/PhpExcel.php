@@ -106,7 +106,7 @@ class PhpExcel
     /**
      * 导出excel
      */
-    public static function export($model, \yii\data\BaseDataProvider $dataProvider, $titles = [], $filename = null, $options = [])
+    public static function export($model, \yii\data\DataProviderInterface $dataProvider, $titles = [], $filename = null, $options = [])
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
@@ -167,7 +167,7 @@ class PhpExcel
     /**
      * 根据model\titles写入工作表
      */
-    public static function writeSheet($sheet, $model, \yii\data\BaseDataProvider $dataProvider, $titles = [], $options = [])
+    public static function writeSheet($sheet, $model, \yii\data\DataProviderInterface $dataProvider, $titles = [], $options = [])
     {
         $sheet->getStyle('A:Z')->applyFromArray([
             'alignment' => [
@@ -176,10 +176,10 @@ class PhpExcel
             ],
         ]);
         
-        $modelClass = $dataProvider->query->modelClass;
+        $modelClass = isset($dataProvider['query']) ? $dataProvider->query->modelClass : '';
         $model = $modelClass ? $modelClass::model() : null; // 数据模型
         $titles = $titles ? $titles : ($model ? $model->attributeLabels() : array_keys($dataProvider->query->one()->attributes)); // 标题
-        $count = $dataProvider->query->count(); // 总记录数
+        $count = $dataProvider->getCount(); // 总记录数
         
         $row = 1;
         $totalRow = [];
