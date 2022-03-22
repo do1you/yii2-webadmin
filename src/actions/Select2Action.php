@@ -39,6 +39,11 @@ class Select2Action extends \yii\base\Action
     public $col_sort = null;
     
     /**
+     * 懒加载数据
+     */
+    public $model_withs = null;
+    
+    /**
      * 初始化
      */
     public function init()
@@ -61,8 +66,20 @@ class Select2Action extends \yii\base\Action
         $text = $this->col_text;
         $query = class_exists($className) ? $className::find() : (new \yii\db\Query);
         
-        $query->andFilterWhere(['like',$text,$q])
-              ->andFilterWhere([$key=>$id]);
+        if(class_exists($className) && $this->model_withs){
+            $query->with($this->model_withs);
+        }
+        
+        if($text && is_array($text)){
+            $params = ['or'];
+            foreach($text as $t){
+                $params[] = ['like',$t,$q];
+            }
+            $query->andFilterWhere($params)->andFilterWhere([$key=>$id]);
+        }else{
+            $query->andFilterWhere(['like',$text,$q])->andFilterWhere([$key=>$id]);
+        }
+        
         
         if(!class_exists($className)){
             $query->select(["{$key} as id","{$text} as text"])
@@ -74,6 +91,9 @@ class Select2Action extends \yii\base\Action
         
         $dataProvider = new \yii\data\ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSizeLimit' => [1, 5000],
+            ],
         ]);
         
         $id && $dataProvider->setPagination(false);
@@ -83,7 +103,7 @@ class Select2Action extends \yii\base\Action
             foreach($dataProvider->getModels() as $m){
                 $result['items'][] = [
                     'id' => $m[$key],
-                    'text' => $m[$this->col_v_text ? $this->col_v_text : $text],
+                    'text' => $m[$this->col_v_text ? $this->col_v_text : (is_array($text) ? reset($text) : $text)],
                 ];
             }
         }else{
