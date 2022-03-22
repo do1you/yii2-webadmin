@@ -200,12 +200,6 @@
 		return f;
 	};
 
-	// 默认风格
-	if(!readCookie("current-skin")&&$("#skin-changer li a").length){
-		createCookie("current-skin", $("#skin-changer li a:eq(0)").attr('rel'), 10);
-		window.location.reload();
-	}
-
 	// 初始化界面
 	$.InitiatePages = function(){
 		if($.fn.select2) $('select.select2').select2();
