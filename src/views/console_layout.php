@@ -119,7 +119,7 @@ use yii\helpers\Url;
                 $allMenus = \webadmin\modules\authority\models\AuthAuthority::treeMenu();
                 $userAuthoritys = Yii::$app->user->identity ? Yii::$app->user->identity->getCache('getAuthorithIds',[Yii::$app->user->id]) : [];
 				if(Yii::$app->controller->currUrl === null) 
-				    Yii::$app->controller->currUrl = (!(Yii::$app->controller->module instanceof \yii\base\Application) ? Yii::$app->controller->module->id.'/' : '') . Yii::$app->controller->id.'/'.(in_array(Yii::$app->controller->action->id,array('create','update','view','index')) ? 'index' : Yii::$app->controller->action->id);
+				    Yii::$app->controller->currUrl = (!(Yii::$app->controller->module instanceof \yii\base\Application) ? Yii::$app->controller->module->id.'/' : '') . Yii::$app->controller->id.'/'.(in_array(Yii::$app->controller->action->id,['create','update','view','index','tree']) ? 'index' : Yii::$app->controller->action->id);
 				echo $this->render('@webadmin/views/_navmenu', ['navMenus'=>$allMenus,'userAuthoritys'=>$userAuthoritys,'currUrl'=>Yii::$app->controller->currUrl]);
 				?>
             </div>
