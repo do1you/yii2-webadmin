@@ -26,6 +26,11 @@ class SearchBehaviors extends \yii\base\Behavior
     public $searchParamsKeys = [];
     
     /**
+     * 缓存的作用域
+     */
+    public $cacheKey;
+    
+    /**
      * 行为触发的事件
      */
     public function events()
@@ -39,13 +44,18 @@ class SearchBehaviors extends \yii\base\Behavior
     public function beforeAction($event)
     {
         $act = $event->action->id;
-        $module = !(Yii::$app->controller->module instanceof \yii\base\Application) ? Yii::$app->controller->module->id.'/' : '';
         
         if(!in_array($act,$this->searchCacheActions)) return true;
         
+        // 设置默认查询缓存作用空间
+        if(!$this->cacheKey){
+            $module = !(Yii::$app->controller->module instanceof \yii\base\Application) ? Yii::$app->controller->module->id.'/' : '';
+            $this->cacheKey = Yii::$app->session->id.'/'.$module.Yii::$app->controller->id.'/'.$act;
+        }
+        
         // 存在旧的缓存查询数据进行合并
         foreach(['_GET','_POST'] as $key){
-            $cacheKey = 'searchBehaviors/'.Yii::$app->session->id.'/'.$module.Yii::$app->controller->id.'/'.$act.'/'.$key;
+            $cacheKey = 'searchBehaviors/'.$this->cacheKey.'/'.$key;
             if($this->searchParamsKeys){
                 foreach($this->searchParamsKeys as $k){
                     $cacheKey .= '/'.$k.'_'.Yii::$app->request->post($k,Yii::$app->request->get($k));
