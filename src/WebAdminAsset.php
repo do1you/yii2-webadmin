@@ -46,4 +46,12 @@ class WebAdminAsset extends \yii\web\AssetBundle
         
         return parent::init();
     }
+    
+    public function registerAssetFiles($view)
+    {
+        parent::registerAssetFiles($view);
+        
+        $url = $this->baseUrl ? $this->baseUrl.'/' : '';
+        $url && $view->registerJs("window._TPL_='{$url}';", 1, 'setTplUrl');
+    }
 }
