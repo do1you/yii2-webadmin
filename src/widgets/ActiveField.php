@@ -807,10 +807,15 @@ class ActiveField extends \yii\widgets\ActiveField
                 if($validator->enableClientValidation) {
                     switch(basename(get_class($validator))){
                         case 'CompareValidator': // 校验字段一致性
-                            if(!isset($htmlOptions['data-bv-identical']) && in_array($validator->operator, ['==', '==='])){
+                            if(!isset($htmlOptions['data-bv-identical'])){
                                 $compareAttribute = $validator->compareAttribute===null ? $attribute.'_repeat' : $validator->compareAttribute;
-                                $htmlOptions['data-bv-identical'] = 'true';
-                                $htmlOptions['data-bv-identical-field'] = Html::getInputName($this->model,$compareAttribute);
+                                if(in_array($validator->operator, ['==', '==='])){
+                                    $htmlOptions['data-bv-identical'] = 'true';
+                                    $htmlOptions['data-bv-identical-field'] = Html::getInputName($this->model,$compareAttribute);
+                                }elseif(in_array($validator->operator, ['!=', '!=='])){
+                                    $htmlOptions['data-bv-different'] = 'true';
+                                    $htmlOptions['data-bv-different-field'] = Html::getInputName($this->model,$compareAttribute);
+                                }
                             }
                             break;
                         case 'DateValidator': // 日期
