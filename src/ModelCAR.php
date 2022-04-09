@@ -76,7 +76,7 @@ class ModelCAR extends \yii\db\ActiveRecord
 	    if(empty($key)) return null;
 	    //if(!method_exists($this,$key) && !property_exists($this,$key)) return null;
 	    
-	    $cachekey = 'modelCacheData/'.get_called_class().'/'.$key.'/'.md5(serialize($params));
+	    //$cachekey = 'modelCacheData/'.get_called_class().'/'.$key.'/'.md5(serialize($params));
 	    $cachekey = 'modelCacheData/'.get_called_class().'/'.$key.'/'.md5(serialize($this)).'/'.md5(serialize($params));
 	    $result = Yii::$app->cache->get($cachekey);
 	    if($result===false || $f5){
