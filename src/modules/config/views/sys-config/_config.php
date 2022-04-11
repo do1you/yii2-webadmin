@@ -61,6 +61,9 @@ switch($item['config_type'])
     case 'datetimerange': // 日期时间范围
         echo $field->datetimerange(['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr);
         break;
+    case 'dateyear': // 年份
+        echo $field->dateyear(['id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr);
+        break;
     case 'text': // 文本框
     default: // 默认文本框
         echo $field->textInput(['maxlength' => true, 'id' => "SysConfig_{$k}", 'name' => "SysConfig[{$k}]"]+$arr);
