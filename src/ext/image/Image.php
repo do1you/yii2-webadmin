@@ -44,6 +44,8 @@ class Image {
 	// Reference to the current image filename
 	protected $image = '';
 
+	protected $exif = [];
+
 	/**
 	 * Creates a new Image instance and returns it.
 	 *
@@ -82,6 +84,8 @@ class Image {
 		// Disable error reporting, to prevent PHP warnings
 		$ER = error_reporting(0);
 
+		$this->exif = exif_read_data($image);
+
 		// Fetch the image size and mime type
 		$image_info = getimagesize($image);
 
@@ -117,7 +121,6 @@ class Image {
         else{
             $this->config = $config;
         }
-
 		// Set driver class name
 		$driver = 'Image_'.ucfirst($this->config['driver']).'_Driver';
 
@@ -241,6 +244,30 @@ class Image {
 	{
 		$degrees = (int) $degrees;
 
+		switch($this->exif['Orientation'])
+	    {
+	                          
+	        case 3: // 180 rotate left
+	            $degrees -= 180;
+	        	break;
+	        case 5: // vertical flip + 90 rotate right
+	            $degrees += 90;
+	        	break;
+	               
+	        case 6: // 90 rotate right
+	            $degrees += 90;
+	        	break;
+	               
+	        case 7: // horizontal flip + 90 rotate right
+	            $degrees += 90;
+	        	break;
+	               
+	        case 8:    // 90 rotate left
+	             $degrees -= 90;
+	        	break;
+
+	    }
+
 		if ($degrees > 180)
 		{
 			do
@@ -260,7 +287,7 @@ class Image {
 			}
 			while($degrees < -180);
 		}
-
+		
 		$this->actions['rotate'] = $degrees;
 
 		return $this;
@@ -337,7 +364,6 @@ class Image {
 
 		if ( ! is_writable($dir))
 			throw new Exception('image directory unwritable');
-
 		if ($status = $this->driver->process($this->image, $this->actions, $dir, $file))
 		{
 			if ($chmod !== FALSE)
