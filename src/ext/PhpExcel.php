@@ -176,10 +176,10 @@ class PhpExcel
             ],
         ]);
         
-        $modelClass = $dataProvider->canGetProperty('query') ? $dataProvider->query->modelClass : '';
+        $modelClass = $dataProvider->canGetProperty('query')&&$dataProvider->query->canGetProperty('modelClass') ? $dataProvider->query->modelClass : '';
         $model = $modelClass ? $modelClass::model() : null; // 数据模型
         $titles = $titles ? $titles : ($model ? $model->attributeLabels() : array_keys($dataProvider->canGetProperty('query') ? $dataProvider->query->one()->attributes : [])); // 标题
-        $count = $dataProvider->getCount(); // 总记录数
+        $count = $dataProvider->getTotalCount(); // 总记录数
         
         $row = 1;
         $totalRow = [];
@@ -242,7 +242,7 @@ class PhpExcel
         
         // 数据，分批量查询数据
         $dataProvider->setPagination(false);
-        foreach(($dataProvider->canGetProperty('query') ? $dataProvider->query->batch() : [$dataProvider->getModels()]) as $data)
+        foreach(($dataProvider->canGetProperty('query')&&!empty($options['batch']) ? $dataProvider->query->batch(100,$dataProvider->db) : [$dataProvider->getModels()]) as $data)
         {
             foreach($data as $item){
                 $index = 0;
