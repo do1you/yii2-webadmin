@@ -44,6 +44,11 @@ class Select2Action extends \yii\base\Action
     public $model_withs = null;
     
     /**
+     * 关联模型
+     */
+    public $join_withs = null;
+    
+    /**
      * 初始化
      */
     public function init()
@@ -66,8 +71,10 @@ class Select2Action extends \yii\base\Action
         $text = $this->col_text;
         $query = class_exists($className) ? $className::find() : (new \yii\db\Query);
         
-        if(class_exists($className) && $this->model_withs){
-            $query->with($this->model_withs);
+        if(class_exists($className)){
+            $this->model_withs && $query->with($this->model_withs);
+            
+            $this->join_withs && $query->joinWith($this->join_withs);
         }
         
         if($text && is_array($text)){
