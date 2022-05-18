@@ -84,7 +84,9 @@ class Image {
 		// Disable error reporting, to prevent PHP warnings
 		$ER = error_reporting(0);
 
-		$this->exif = exif_read_data($image);
+		if(function_exists('exif_read_data')){
+		    $this->exif = exif_read_data($image);
+		}
 
 		// Fetch the image size and mime type
 		$image_info = getimagesize($image);
@@ -244,29 +246,31 @@ class Image {
 	{
 		$degrees = (int) $degrees;
 
-		switch($this->exif['Orientation'])
-	    {
-	                          
-	        case 3: // 180 rotate left
-	            $degrees -= 180;
-	        	break;
-	        case 5: // vertical flip + 90 rotate right
-	            $degrees += 90;
-	        	break;
-	               
-	        case 6: // 90 rotate right
-	            $degrees += 90;
-	        	break;
-	               
-	        case 7: // horizontal flip + 90 rotate right
-	            $degrees += 90;
-	        	break;
-	               
-	        case 8:    // 90 rotate left
-	             $degrees -= 90;
-	        	break;
-
-	    }
+		if($this->exif){
+		    switch($this->exif['Orientation'])
+		    {
+		        
+		        case 3: // 180 rotate left
+		            $degrees -= 180;
+		            break;
+		        case 5: // vertical flip + 90 rotate right
+		            $degrees += 90;
+		            break;
+		            
+		        case 6: // 90 rotate right
+		            $degrees += 90;
+		            break;
+		            
+		        case 7: // horizontal flip + 90 rotate right
+		            $degrees += 90;
+		            break;
+		            
+		        case 8:    // 90 rotate left
+		            $degrees -= 90;
+		            break;
+		            
+		    }
+		}
 
 		if ($degrees > 180)
 		{

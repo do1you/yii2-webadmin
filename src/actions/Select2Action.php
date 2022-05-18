@@ -107,10 +107,15 @@ class Select2Action extends \yii\base\Action
         
         if(class_exists($className)){
             $result['items'] = [];
+            $keySplit = explode('.',$key);
+            $key = $keySplit ? end($keySplit) : $key;
+            $text = ($this->col_v_text ? $this->col_v_text : (is_array($text) ? reset($text) : $text));
+            $textSplit = explode('.',$text);
+            $text = $textSplit ? end($textSplit) : $text;
             foreach($dataProvider->getModels() as $m){
                 $result['items'][] = [
                     'id' => $m[$key],
-                    'text' => $m[$this->col_v_text ? $this->col_v_text : (is_array($text) ? reset($text) : $text)],
+                    'text' => $m[$text],
                 ];
             }
         }else{
