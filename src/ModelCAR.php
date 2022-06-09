@@ -142,23 +142,43 @@ class ModelCAR extends \yii\db\ActiveRecord
 	        foreach($this->attributes as $key=>$value){
 	            $value = is_array($value) ? $value : trim($value);
 	            if(is_array($value) || strlen($value)>0){
-                    $attribute = static::tableName().'.'.$key;
-                    if(is_array($value)){
-                        $query->andFilterWhere([$attribute=>$value]);
-                    }else{
-                        if(strpos($value, '~')!==false){ // 范围查询
-                            list($start, $end) = explode('~', $value);
-                            $query->andFilterWhere(['>=',$attribute, trim($start)]);
-                            $query->andFilterWhere(['<=',$attribute, trim($end)]);
-                        }elseif(preg_match('/^(<>|!=|>=|>|<=|<|=)/', $value, $matches)){
-                            $operator = $matches[1];
-                            $value = substr($value, strlen($operator));
-                            $query->andFilterWhere([$operator,$attribute, $value]); // 指定操作
-                        }else{
-                            $query->andFilterWhere(['like',$attribute, $value]); // 模糊查询
-                        }
-                    }
-                    break;
+	                $type = isset($columns[$key]) ? $columns[$key] : '';
+	                $attribute = static::tableName().'.'.$key;
+	                if(is_array($value)){
+	                    $query->andFilterWhere([$attribute=>$value]);
+	                }else{
+	                    if(strpos($value, '~')!==false){ // 范围查询
+	                        list($start, $end) = explode('~', $value);
+	                        $query->andFilterWhere(['>=',$attribute, trim($start)]);
+	                        $query->andFilterWhere(['<=',$attribute, trim($end)]);
+	                    }elseif(preg_match('/^(<>|!=|>=|>|<=|<|=)/', $value, $matches)){
+	                        $operator = $matches[1];
+	                        $value = substr($value, strlen($operator));
+	                        $query->andFilterWhere([$operator,$attribute, $value]); // 指定操作
+	                    }else{
+	                        switch ($type) {
+	                            case Schema::TYPE_TINYINT:
+	                            case Schema::TYPE_SMALLINT:
+	                            case Schema::TYPE_INTEGER:
+	                            case Schema::TYPE_BIGINT:
+	                            case Schema::TYPE_BOOLEAN:
+	                            case Schema::TYPE_FLOAT:
+	                            case Schema::TYPE_DOUBLE:
+	                            case Schema::TYPE_DECIMAL:
+	                            case Schema::TYPE_MONEY:
+	                            case Schema::TYPE_DATE:
+	                            case Schema::TYPE_TIME:
+	                            case Schema::TYPE_DATETIME:
+	                            case Schema::TYPE_TIMESTAMP:
+	                                $query->andFilterWhere([$attribute=>$value]);
+	                                break;
+	                            default:
+	                                $query->andFilterWhere(['like', $attribute, $value]); // 模糊查询
+	                                break;
+	                        }
+	                    }
+	                }
+	                
 	            }
 	        }
 	    }
