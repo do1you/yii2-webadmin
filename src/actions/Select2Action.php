@@ -89,8 +89,9 @@ class Select2Action extends \yii\base\Action
         
         
         if(!class_exists($className)){
+            $text = is_array($text) ? reset($text) : $text;
             $query->select(["{$key} as id","{$text} as text"])
-                  ->from($className);
+            ->from($className);
         }
         
         $this->col_where && $query->andFilterWhere($this->col_where);
@@ -122,7 +123,7 @@ class Select2Action extends \yii\base\Action
             $result['items'] = $dataProvider->getModels();
         }
         $result['total_page'] = $id ? 1 : $dataProvider->getPagination()->pageCount;
-
+        
         return $result;
     }
 }

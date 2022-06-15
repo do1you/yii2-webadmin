@@ -389,7 +389,11 @@ class ActiveField extends \yii\widgets\ActiveField
         
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/select2/select2.js',['depends' => \webadmin\WebAdminAsset::className()]);
-        $view->registerJs("$('#{$id}').select2();");
+        if(!empty($options['multiple'])){
+            $view->registerJs("$('#{$id}').select2({closeOnSelect:false});");
+        }else{
+            $view->registerJs("$('#{$id}').select2();");
+        }
         
         return $this;
     }
@@ -434,6 +438,7 @@ class ActiveField extends \yii\widgets\ActiveField
         
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/select2/select2.js',['depends' => \webadmin\WebAdminAsset::className()]);
+        $closeOnSelect = $mult ? 'false' : 'true';
         $view->registerJs("$('#{$id}').select2({
                                      ajax: {
                                          type:'GET',
@@ -455,6 +460,7 @@ class ActiveField extends \yii\widgets\ActiveField
                                          cache: true
                                      },
                                      placeholder:'请选择',
+                                     closeOnSelect:{$closeOnSelect},
                                      language: 'zh-CN',
                                      tags: false,
                                      allowClear: true,
