@@ -19,4 +19,15 @@ class ExcelController extends \webadmin\console\CController
         $this->message = "处理结果（{$result}）：{$path}";
         return $result;
     }
+    /**
+     * 生成csv文档
+     * yii daemon/excel/csv-export
+     */
+    public function actionCsvExport($route='',$session='',$get='',$post='')
+    {
+        $path = \webadmin\ext\PhpCsv::consoleExport($route,$session,$get,$post);
+        $result = file_exists($path) ? 0 : 1;
+        $this->message = "处理结果（{$result}）：{$path}";
+        return $result;
+    }
 }

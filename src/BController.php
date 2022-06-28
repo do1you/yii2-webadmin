@@ -1,4 +1,5 @@
 <?php
+
 namespace webadmin;
 
 use Yii;
@@ -17,55 +18,55 @@ abstract class BController extends \yii\web\Controller
     public $layout = 'console_layout'; // 布局文件
     public $currNav = []; // 当前导航位置
     public $currUrl = null; // 当前菜单位置
-    
+
     public $pageTitle; // 页面标题
     public $keywords; // 页面关键字
     public $description; // 页面描述    
-    
+
     /**
      * 当前授制器是否需要权限验证
      */
     public $isAccessToken = true;
-    
+
     /**
      * 当前控制器中需要缓存查询条件的方法
      */
     public $searchCacheActions = ['index', 'list', 'tree'];
-    
+
     /**
      * 格式化数据用
      */
     public $serializer = '\webadmin\restful\Serializer';
-    
+
     // 初始化
     public function init()
-    {        
+    {
         parent::init();
-        
+
         // 初始化模块
         \webadmin\modules\config\models\SysModules::initModule();
-        
+
         // 定义用户
-        if(!Yii::$app->has('user')){
+        if (!Yii::$app->has('user')) {
             Yii::$app->setComponents([
                 'user' => [
                     'class' => '\yii\web\User',
                     'identityClass' => '\webadmin\modules\authority\models\AuthUser',
                     'enableAutoLogin' => true,
                     'enableSession' => true,
-                    'loginUrl'=>['/authority/user/login'],
+                    'loginUrl' => ['/authority/user/login'],
                 ]
             ]);
         }
-        
+
         // 定义组件
         Yii::$app->setComponents([
             // 资源组件
-            'assetManager'=>[
+            'assetManager' => [
                 'class' => '\yii\web\AssetManager',
-                'bundles'=>[
+                'bundles' => [
                     // 重置JQ的包
-                    'yii\web\JqueryAsset'=>[
+                    'yii\web\JqueryAsset' => [
                         //'sourcePath' => '@webadmin/themes/beyond/assets/js',
                         'sourcePath' => '@bower/jquery/dist',  // 直接采用系统自带的jquery版本
                         'js' => (Yii::$app->request->isAjax ? [] : ['jquery.min.js',]),
@@ -74,22 +75,22 @@ abstract class BController extends \yii\web\Controller
             ],
             'formatter' => ['class' => '\webadmin\ext\Formatter'],
         ]);
-        
+
         // 定义别名路径
-		list($assetPath, $assetUrl) = Yii::$app->getAssetManager()->publish('@webadmin/themes/beyond/assets');
-		Yii::setAlias('@assetPath', $assetPath);  
-		Yii::setAlias('@assetUrl', $assetUrl);  
-        
+        list($assetPath, $assetUrl) = Yii::$app->getAssetManager()->publish('@webadmin/themes/beyond/assets');
+        Yii::setAlias('@assetPath', $assetPath);
+        Yii::setAlias('@assetUrl', $assetUrl);
+
         // AJAX请求页面忽略布局文件
         Yii::$app->request->isAjax && ($this->layout = 'console_ajax');
-        if(!empty($_REQUEST['layout'])) $this->layout = trim($_REQUEST['layout']);
-        $this->layout = $this->layout ? '@webadmin/views/'.$this->layout : false;
-        
+        if (!empty($_REQUEST['layout'])) $this->layout = trim($_REQUEST['layout']);
+        $this->layout = $this->layout ? '@webadmin/views/' . $this->layout : false;
+
         // 输出事件监听
         Yii::$app->response->off(Response::EVENT_BEFORE_SEND);
         Yii::$app->response->on(Response::EVENT_BEFORE_SEND, [$this, 'beforeSend']);
     }
-    
+
     /**
      * 定义默认行为
      * {@inheritDoc}
@@ -127,7 +128,7 @@ abstract class BController extends \yii\web\Controller
             ],
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -135,14 +136,14 @@ abstract class BController extends \yii\web\Controller
     {
         $result = parent::afterAction($action, $result);
         $result = Yii::createObject($this->serializer)->serialize($result);
-        if(Yii::$app->getResponse()->format=='html'){
-            if(is_array($result)) Yii::$app->getResponse()->format = Yii::$app->getRequest()->isAjax ? 'json' : 'xml';
-        }else{
-            if(is_string($result)) Yii::$app->getResponse()->format = 'html';
+        if (Yii::$app->getResponse()->format == 'html') {
+            if (is_array($result)) Yii::$app->getResponse()->format = Yii::$app->getRequest()->isAjax ? 'json' : 'xml';
+        } else {
+            if (is_string($result)) Yii::$app->getResponse()->format = 'html';
         }
         return $result;
     }
-    
+
     /**
      * 读取excel
      */
@@ -150,7 +151,7 @@ abstract class BController extends \yii\web\Controller
     {
         return \webadmin\ext\PhpExcel::readfile($file, $sheet, $columnCnt, $options);
     }
-    
+
     /**
      * 导出excel
      */
@@ -158,7 +159,13 @@ abstract class BController extends \yii\web\Controller
     {
         return \webadmin\ext\PhpExcel::export($model, $dataProvider, $titles, $filename, $options);
     }
-    
+    /**
+     * 导出csv
+     */
+    protected function exportCsv($model, \yii\data\ActiveDataProvider $dataProvider, $titles = [], $filename = null, $options = [])
+    {
+        return \webadmin\ext\PhpCsv::export($model, $dataProvider, $titles, $filename, $options);
+    }
     /**
      * 将异常转换为array输出
      * @param \Exception $exception
@@ -169,23 +176,23 @@ abstract class BController extends \yii\web\Controller
         if (!YII_DEBUG && !$exception instanceof UserException && !$exception instanceof HttpException) {
             $exception = new HttpException(500, Yii::t('common', '服务器发生内部错误'));
         }
-        
+
         $array = [
             'name' => ($exception instanceof Exception || $exception instanceof ErrorException) ? $exception->getName() : 'Exception',
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
         ];
-        if(empty($array['code']) && ($exception instanceof HttpException)) {
+        if (empty($array['code']) && ($exception instanceof HttpException)) {
             $array['code'] = $exception->statusCode;
         }
         // 调试模式输出文件行数
-        if(YII_DEBUG){
+        if (YII_DEBUG) {
             $array['type'] = get_class($exception);
-            if (method_exists($exception, 'getFile') && method_exists($exception, 'getLine')){
+            if (method_exists($exception, 'getFile') && method_exists($exception, 'getLine')) {
                 $array['file'] = $exception->getFile();
                 $array['line'] = $exception->getLine();
                 method_exists($exception, 'getTraceAsString') && ($array['stack-trace'] = explode("\n", $exception->getTraceAsString()));
-                if($exception instanceof \yii\db\Exception) {
+                if ($exception instanceof \yii\db\Exception) {
                     $array['error-info'] = $exception->errorInfo;
                 }
             }
@@ -195,25 +202,22 @@ abstract class BController extends \yii\web\Controller
         }
         return $array;
     }
-    
+
     /**
      * 输出前处理
      */
     public function beforeSend($event)
-    {        
+    {
         $response = Yii::$app->getResponse();
-        if($response->statusCode!=200){
-            if(is_array($response->data)) $response->data['status'] = $response->statusCode;
+        if ($response->statusCode != 200) {
+            if (is_array($response->data)) $response->data['status'] = $response->statusCode;
             $response->statusCode = 200; // 针对API，任意错误都强制输出200状态
         }
-        
+
         // 设置允许跨域
         $response->getHeaders()->set('P3P', 'CP=CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR');
         $response->getHeaders()->set('Access-Control-Allow-Origin', '*');
         $response->getHeaders()->set('Access-Control-Allow-Methods', 'GET,POST');
         $response->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
     }
-    
-
-	
 }
