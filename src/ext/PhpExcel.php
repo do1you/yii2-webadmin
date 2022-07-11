@@ -121,7 +121,8 @@ class PhpExcel
             foreach($sheets as $sheetItem){
                 if(isset($sheetItem['model']) && isset($sheetItem['dataProvider']) && isset($sheetItem['titles'])){
                     $newSheet = $spreadsheet->createSheet();
-                    $newSheet = self::writeSheet($newSheet, $sheetItem['model'], $sheetItem['dataProvider'], $sheetItem['titles'], $options);
+                    $newOptions = array_merge($options,(!empty($sheetItem['options']) ? $sheetItem['options'] : []));
+                    $newSheet = self::writeSheet($newSheet, $sheetItem['model'], $sheetItem['dataProvider'], $sheetItem['titles'], $newOptions);
                     
                     // 工作表名称
                     if(isset($sheetItem['title'])){
@@ -167,9 +168,9 @@ class PhpExcel
     /**
      * 根据model\titles写入工作表
      */
-    public static function writeSheet($sheet, $model, \yii\data\DataProviderInterface $dataProvider, $titles = [], $options = [])
+    public static function writeSheet(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet, $model, \yii\data\DataProviderInterface $dataProvider, $titles = [], $options = [])
     {
-        $sheet->getStyle('A:Z')->applyFromArray([
+        $sheet->getStyle('A:AZ')->applyFromArray([
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
@@ -191,7 +192,7 @@ class PhpExcel
         }
         
         // 合并栏位，仅支持二级
-        if(isset($options['colspans'])){
+        if(!empty($options['colspans']) && is_array($options['colspans'])){
             $index = 0;
             $colspans = $options['colspans'];
             foreach($titles as $tkey=>$tval){
@@ -212,7 +213,11 @@ class PhpExcel
                     if($colspans[$begin]['attribute']==$attribute || $colspans[$begin]['attribute']==$attributeValue){
                         unset($begin);
                         $end = $let.$row;
-                        if($start!=$end) $sheet->mergeCells("{$start}:{$end}");  // 横向合并
+                        if($start!=$end){
+                            $sheet->mergeCells("{$start}:{$end}");  // 横向合并
+                            $sheet->getRowDimension($row)->setRowHeight(60);
+                            $sheet->getStyle($start)->getAlignment()->setWrapText(true);
+                        }
                     }
                 }else{
                     $start = $let.$row;
@@ -234,10 +239,11 @@ class PhpExcel
                 $label = $model ? $model->getAttributeLabel($attribute) : $attribute;
                 $let = \webadmin\ext\Helpfn::intToChr($index++);
                 $sheet->setCellValueExplicit($let.$row, $label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                //$sheet->getColumnDimension($let)->setWidth(max(strlen($label)*2,20,$sheet->getColumnDimension($let)->getWidth()));
+                //$sheet->getColumnDimension($let)->setWidth(max(strlen($label),3));
                 $sheet->getColumnDimension($let)->setAutoSize(true);
                 //echo $let.$row."=>".$label."\r\n";
             }
+            //$sheet->getRowDimension($row)->setRowHeight(40);
             $row++;
         }
         

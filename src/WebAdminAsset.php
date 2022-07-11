@@ -40,7 +40,7 @@ class WebAdminAsset extends \yii\web\AssetBundle
          */
         if(Yii::$app->request->isAjax){
             $this->css = $this->js = $this->depends = [];
-        }elseif(($skins = Yii::$app->request->get('skins')) && file_exists(Yii::getAlias("@assetPath/css/skins/{$skins}.min.css"))){
+        }elseif(($skins = Yii::$app->request->get('skins','blue')) && file_exists(Yii::getAlias("@assetPath/css/skins/{$skins}.min.css"))){
             $this->css[] = "css/skins/{$skins}.min.css";
         }
         
