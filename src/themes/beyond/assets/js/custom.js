@@ -199,6 +199,15 @@
 		for(i in obj) if($.isFunction(fn) && fn(i,obj[i])===true) f[i] = obj[i];
 		return f;
 	};
+	
+	// 查看隐藏的表格内容
+	$('table.table.table-nowrap').on('dblclick','tbody td',function(){
+		$(this).css({
+			"text-overflow": "initial",
+		    "overflow": "visible",
+		    "white-space": "inherit"
+		});
+	});
 
 	// 初始化界面
 	$.InitiatePages = function(){
