@@ -77,14 +77,28 @@ class Select2Action extends \yii\base\Action
             $this->join_withs && $query->joinWith($this->join_withs);
         }
         
+        $wheres = ['or'];
+        $qList = $q ? explode(',',str_replace("，",",",$q)) : [];
         if($text && is_array($text)){
-            $params = ['or'];
             foreach($text as $t){
-                $params[] = ['like',$t,$q];
+                foreach($qList as $qItem){
+                    $qItem = trim($qItem);
+                    if(strlen($qItem)>0){
+                        $wheres[] = ['like',$t,$qItem];
+                    }
+                }
             }
-            $query->andFilterWhere($params)->andFilterWhere([$key=>$id]);
+            $query->andFilterWhere([$key=>$id]); // ->andFilterWhere($wheres) // 调整为支持逗号间隔批量查询
+            count($wheres)>1 && $query->andFilterWhere($wheres);
         }else{
-            $query->andFilterWhere(['like',$text,$q])->andFilterWhere([$key=>$id]);
+            foreach($qList as $qItem){
+                $qItem = trim($qItem);
+                if(strlen($qItem)>0){
+                    $wheres[] = ['like',$text,$qItem];
+                }
+            }
+            $query->andFilterWhere([$key=>$id]);  //->andFilterWhere(['like',$text,$q]) // 调整为支持逗号间隔批量查询
+            count($wheres)>1 && $query->andFilterWhere($wheres);
         }
         
         

@@ -68,3 +68,4 @@ table.table.table-nowrap tbody td{text-overflow:ellipsis;overflow:hidden;white-s
 .page-container .error-container{background:none;}
 .page-container .return-btn{display:none;}
 .error-container h1{line-height:110%;margin-top:-110px;}
+.select2-container--default .select2-selection--multiple .select2-selection__clear{position: absolute;right: 5px;top: 0px;}

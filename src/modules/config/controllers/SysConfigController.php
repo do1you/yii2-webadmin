@@ -91,12 +91,21 @@ class SysConfigController extends \webadmin\BController
         ){
             list($table,$key,$text) = $arr;
             if($table && $key && $text){
+                $wheres = ['or'];
+                $qList = $q ? explode(',',str_replace("，",",",$q)) : [];
+                foreach($qList as $qItem){
+                    $qItem = trim($qItem);
+                    if(strlen($qItem)>0){
+                        $wheres[] = ['like',$text,$qItem];
+                    }
+                }
                 $limit = 20;
                 $query = new \yii\db\Query();
                 $query->select(["{$key} as id","{$text} as text"])
                       ->from($table)
-                      ->andFilterWhere(['like',$text,$q])
+                      //->andFilterWhere(['like',$text,$q]) // 调整为支持逗号间隔批量查询
                       ->andFilterWhere([$key=>$id]);
+                count($wheres)>1 && $query->andFilterWhere($wheres);
                 
                 $dataProvider = new ActiveDataProvider([
                     'query' => $query,
