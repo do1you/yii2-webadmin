@@ -704,6 +704,7 @@ class ActiveField extends \yii\widgets\ActiveField
             $options['id'] = $this->getInputId($options);
         }
         
+        $options['unselect'] = ''; // if(!empty($options['multiple'])) 
         $this->parts['{input}'] = Html::dropDownList($name, $value, $items, $options);
         
         return $this;
