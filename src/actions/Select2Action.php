@@ -78,7 +78,7 @@ class Select2Action extends \yii\base\Action
         }
         
         $wheres = ['or'];
-        $qList = $q ? explode(',',str_replace("，",",",$q)) : [];
+        $qList = $q ? explode(',',str_replace(["，","\r\n","\n","\t"],",",$q)) : [];
         if($text && is_array($text)){
             foreach($text as $t){
                 foreach($qList as $qItem){

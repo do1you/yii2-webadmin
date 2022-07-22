@@ -92,7 +92,7 @@ class SysConfigController extends \webadmin\BController
             list($table,$key,$text) = $arr;
             if($table && $key && $text){
                 $wheres = ['or'];
-                $qList = $q ? explode(',',str_replace("，",",",$q)) : [];
+                $qList = $q ? explode(',',str_replace(["，","\r\n","\n","\t"],",",$q)) : [];
                 foreach($qList as $qItem){
                     $qItem = trim($qItem);
                     if(strlen($qItem)>0){
