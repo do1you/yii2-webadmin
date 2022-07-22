@@ -207,7 +207,7 @@
 		    "overflow": "visible",
 		    "white-space": "inherit"
 		});
-	});
+	});	
 
 	// 初始化界面
 	$.InitiatePages = function(){
@@ -240,5 +240,30 @@
 
 $(function(){
 	$.InitiatePages && $.InitiatePages();
+
+	// select2扩展全选
+	if($.fn.select2){
+		$.fn.oldSelect2 = $.fn.oldSelect2 || $.fn.select2;
+		$.fn.select2 = function (options) {
+			this.oldSelect2(options);
+			this.each(function(){
+				var instance = $(this).data('select2');
+				if(instance && instance.options.get('multiple')){
+					instance.selection.$search.on('keydown',function(e){
+						if(e.originalEvent.ctrlKey){
+							if(e.which==65){ // 全选
+								instance.$results.find('.select2-results__option[aria-selected]').each(function(){
+									console.log($(this).data());
+									instance.trigger('select',$(this).data());
+								});
+								e.preventDefault();
+								e.stopPropagation();
+							}
+						}
+					});
+				}
+			});
+		};
+	}
 });
 
