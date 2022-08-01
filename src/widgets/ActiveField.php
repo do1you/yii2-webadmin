@@ -170,7 +170,7 @@ class ActiveField extends \yii\widgets\ActiveField
         
         $id = $this->getInputId($options);
         $plid = str_replace(["-","_"],"",$id);
-        $url = \yii\helpers\Url::toRoute('/config/default/dropzone-upload',[]);
+        $url = \yii\helpers\Url::to(['/config/default/dropzone-upload']);
         $this->parts['{input}'] .= "<div id='{$plid}One' action='{$url}' class='dropzone'></div>";
         $acceptedFiles = !empty($acceptedFiles) ? $acceptedFiles : "image/*"; // 允许上传文件类型
         $file = trim($this->model[$this->attribute],'/');
@@ -247,7 +247,7 @@ class ActiveField extends \yii\widgets\ActiveField
         $id = $this->getInputId($options);
         $name = is_array($this->model) ? (isset($options['name']) ? $options['name'] : $this->attribute) : Html::getInputName($this->model, $this->attribute);
         $plid = str_replace(["-","_"],"",$id);
-        $url = \yii\helpers\Url::toRoute('/config/default/dropzone-upload',[]);
+        $url = \yii\helpers\Url::to(['/config/default/dropzone-upload']);
         $this->parts['{input}'] = "<div id='{$plid}Many' action='{$url}' class='dropzone'></div>";
         $acceptedFiles = !empty($acceptedFiles) ? $acceptedFiles : "image/*"; // 允许上传文件类型
         
