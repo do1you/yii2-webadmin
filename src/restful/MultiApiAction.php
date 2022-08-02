@@ -117,7 +117,7 @@ class MultiApiAction extends \webadmin\restful\Action
         }
         
         $result = Yii::$app->runAction($route, $params);
-        if ($result instanceof Response){
+        if ($result instanceof \yii\web\Response){
             $response = $result;
         }else{
             $response = Yii::$app->getResponse();
