@@ -36,15 +36,53 @@ class MultiApiAction extends \webadmin\restful\Action
         $apis = $apis ? $apis : Yii::$app->request->getQueryParams();
         $result = [];
         if(!empty($apis) && is_array($apis)){
+            if(!empty($apis['force'])){ // 开启强一致性判断
+                $transaction = Yii::$app->db->beginTransaction(); // 使用事务关联
+                $isError = false;
+            }
             foreach($apis as $route=>$params){
                 if($this->module){
                     $route = trim($this->module,'/').'/'.$route;
                 }
                 
-                if(stripos($route,'/')!==false && ($re = $this->runApi($route,$params)) !== false){
-                    $result[str_replace(array("/","."),$this->space_str,$route)] = $re;
+                $routeKey = str_replace(["/",".","?"],$this->space_str,$route);
+                try{
+                    if(($re = $this->runApi($route,$params)) !== false){
+                        if(isset($re['code']) && $re['code']!='0'){
+                            $isError = true;
+                        }
+                        $result[$routeKey] = $re;
+                    }
+                }catch (\yii\base\Exception $exception){var_dump($apis);exit;
+                    $isError = true;
+                    $result[$routeKey] = [
+                        'name' => ($exception instanceof \yii\base\Exception || $exception instanceof \yii\base\ErrorException) ? $exception->getName() : 'Exception',
+                        'msg' => $exception->getMessage(),
+                        'code' => $exception->getCode(),
+                    ];
                 }
             }
+            
+            // 一致性处理
+            if(!empty($apis['force'])){ // 开启强一致性判断
+                if($isError){
+                    $transaction->rollBack();
+                    if(is_array($result)){
+                        foreach($result as $routeKey=>$routeVal){
+                            if(isset($routeVal['code']) && $routeVal['code']=='0'){
+                                $result[$routeKey] = [
+                                    'name' => 'Force',
+                                    'msg' => "事务回滚",
+                                    'code' => "500",
+                                ];
+                            }
+                        }
+                    }
+                }else{
+                    $transaction->commit(); // 提交事务
+                }
+            }
+            Yii::$app->response->off(\yii\web\Response::EVENT_BEFORE_SEND);
         }
         return $result;
     }
@@ -53,6 +91,7 @@ class MultiApiAction extends \webadmin\restful\Action
      * 执行API，接口地址，参数
      */
     protected function runApi($route,$params){
+        $route = str_replace("?","",$route);
         $controller = Yii::$app->createController($route);
         if(empty($controller) || !$controller[0]->createAction($controller[1])) return false;
         
@@ -61,12 +100,19 @@ class MultiApiAction extends \webadmin\restful\Action
         $oldBodyParams = Yii::$app->request->getBodyParams();
         if($params){
             if(is_string($params)){
-                $params = \yii\helpers\Json::decode($params);
+                try{
+                    $params = \yii\helpers\Json::decode($params);
+                }catch (\yii\base\InvalidArgumentException $e){
+                    parse_str($params, $params);
+                }
             }
             
             if(is_array($params)){
                 Yii::$app->request->setQueryParams(array_merge($oldQueryParams,$params));
                 Yii::$app->request->setBodyParams(array_merge($oldBodyParams,$params));
+                foreach($params as $key=>$value){
+                    $_REQUEST[$key] = $_POST[$key] = $_GET[$key] = $value;
+                }                
             }
         }
         
