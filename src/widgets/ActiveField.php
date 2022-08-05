@@ -390,7 +390,7 @@ class ActiveField extends \yii\widgets\ActiveField
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/select2/select2.js',['depends' => \webadmin\WebAdminAsset::className()]);
         if(!empty($options['multiple'])){
-            $view->registerJs("$('#{$id}').select2({closeOnSelect:false});");
+            $view->registerJs("$('#{$id}').select2();"); // {closeOnSelect:false}
         }else{
             $view->registerJs("$('#{$id}').select2();");
         }

@@ -82,7 +82,6 @@ class MultiApiAction extends \webadmin\restful\Action
                     $transaction->commit(); // 提交事务
                 }
             }
-            Yii::$app->response->off(\yii\web\Response::EVENT_BEFORE_SEND);
         }
         return $result;
     }
