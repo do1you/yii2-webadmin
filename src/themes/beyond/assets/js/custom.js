@@ -156,7 +156,7 @@
  					fixhdiv = box.data('fixhdiv'),
 					scrollObj = box.data('scrollObj'),
  					offset = box.offset();
- 				if(!fixhdiv){
+ 				if(!fixhdiv || width!=fixhdiv.width()){
  					box.find('>thead th').each(function(){
  						var w = $(this).width();
  						$(this).width(w)
@@ -253,6 +253,7 @@ $(function(){
 						if(e.originalEvent.ctrlKey){
 							if(e.which==65){ // 全选
 								instance.$results.find('.select2-results__option[aria-selected]').each(function(){
+									console.log($(this).data());
 									instance.trigger('select',$(this).data());
 								});
 								e.preventDefault();
