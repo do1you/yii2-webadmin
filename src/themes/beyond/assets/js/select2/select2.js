@@ -1049,7 +1049,7 @@ S2.define('select2/results',[
       }
 
       self.setClasses();
-      self.highlightFirstItem();
+      self.options.options.multiple || self.highlightFirstItem();
     });
 
     container.on('unselect', function () {
@@ -1058,7 +1058,7 @@ S2.define('select2/results',[
       }
 
       self.setClasses();
-      self.highlightFirstItem();
+      self.options.options.multiple || self.highlightFirstItem();
     });
 
     container.on('open', function () {
