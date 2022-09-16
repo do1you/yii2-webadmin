@@ -25,7 +25,7 @@ class DefaultController extends \webadmin\console\CController
     public $isWindows = false;
     
     /**
-     * 后台进程
+     * 后台监听进程
      */
     public $processCmd = 'daemon/default/daemon';
     
@@ -105,6 +105,7 @@ class DefaultController extends \webadmin\console\CController
         if(($pid = $this->_processes())){
             $state = $this->ansiFormat('already started', Console::FG_RED);
             Console::output("processes {$this->processName} {$state}({$pid}).");
+            return 0;
         }else{
             $pid = getmypid();
             file_put_contents($this->pidFile, $pid);
@@ -127,8 +128,9 @@ class DefaultController extends \webadmin\console\CController
                 }
             }
             
-            sleep(1);
+            sleep(3);
         }
+        
         return 0;
     }
     
@@ -143,7 +145,7 @@ class DefaultController extends \webadmin\console\CController
         $pid = $this->_processes();
         if(empty($pid)){
             $this->_run($this->processCmd);
-            usleep(250000);
+            usleep(400000);
             if(($pid = $this->_processes())){
                 $state = $this->ansiFormat('startup success', Console::FG_GREEN);
                 Console::output("processes {$this->processName} {$state}({$pid}).");
@@ -267,9 +269,17 @@ class DefaultController extends \webadmin\console\CController
         \yii\helpers\FileHelper::createDirectory($dir);
         $path = $dir . DIRECTORY_SEPARATOR . date('Ymd').'.log';
         $cmd = $this->isWindows
-        ? 'start /b '.$this->processPath.'yii.bat '.$cmd.' >> ' . $path . ' >nul'// >nul
+        ? 'start /b wmic process call create "'.$this->processPath.'yii.bat '.$cmd.' >> ' . $path . ' >nul" | find "ProcessId"'// >nul
         : 'nohup '.$this->processPath.'yii '.$cmd.' >> '. $path .' 2>&1 &'; // 2>&1
-        @pclose(popen($cmd, 'r'));
+        $handle = popen($cmd, 'r');
+        if($this->isWindows){
+            $read = fread($handle, 200);
+            $read = preg_replace('/\D/s', '', $read);
+        }else{
+            $read = 0;
+        }
+        @pclose($handle);
+        return $read;
     }
     
     /**
@@ -335,7 +345,7 @@ class DefaultController extends \webadmin\console\CController
             
             $tasks = SysCrontab::find()->where("
                 state = 0 and (
-                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=180)
+                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=300)
                 )
                 and (
                     (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
@@ -353,13 +363,14 @@ class DefaultController extends \webadmin\console\CController
                         echo "\r\n".date('Y-m-d H:i:s')." Crontab:({$task['command']})".$result."\r\n";
                     }
                 }
+                
+                // 记录数据库操作日志
+                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+            }else{
+                sleep(3);
             }
             
-            // 记录数据库操作日志
-            \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
-            
-            unset($time,$startSec,$endSec,$tasks,$result,$transaction);
-            sleep(1);
+            unset($time,$startSec,$endSec,$tasks,$result);
         }
         $this->_processesPid($pid);
         
@@ -386,19 +397,21 @@ class DefaultController extends \webadmin\console\CController
                         echo "\r\n".date('Y-m-d H:i:s')." Queue:({$task['taskphp']} {$task['params']})".$result."\r\n";
                     }
                 }
+                
+                // 清理失败和卡住的队列
+                if($num==1 || $num==$this->maxProcessNum || $num%100==0){
+                    $thDay = date('Y-m-d H:i:s',time()-86400*3); // 失败的删除三天前数据
+                    $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
+                    SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
+                }
+                
+                // 记录数据库操作日志
+                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+            }else{
+                sleep(3);
             }
             
-            // 清理失败和卡住的队列
-            if($num==1 || $num==$this->maxProcessNum || $num%100==0){
-                $thDay = date('Y-m-d H:i:s',time()-86400*3); // 失败的删除三天前数据
-                $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
-                SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
-            }
-            
-            // 记录数据库操作日志
-            \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
-            
-            sleep(1);
+            unset($time,$tasks,$result);
         }
         $this->_processesPid($pid);
         

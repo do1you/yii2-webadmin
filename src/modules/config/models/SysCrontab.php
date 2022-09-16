@@ -77,16 +77,22 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function run()
     {
-        if($this->lock()){
+        // 增加文件锁
+        if(($this->run_state!='1' || time()-$this->last_time>=300) && $this->lock()){
             try{
                 $startTime = date('Y-m-d H:i:s');
-                $this->run_state = 1;
+                $this->run_state = '1';
                 $this->last_time = time();
-                if($this->save(false)){
+                try {
+                    $re = $this->save(false);
+                } catch (\yii\db\StaleObjectException $e) { // 乐观锁
+                    return false;
+                }
+                if($re){
                     $result = SysCrontab::runCmd($this->command, [], true);
                     
                     $this->last_time = time();
-                    $this->run_state = $result===false ? 3 : 2;
+                    $this->run_state = $result===false ? '3' : '2';
                     $this->save(false);
                 }
             }catch(\Exception $e) { //捕获异常
@@ -127,17 +133,20 @@ class SysCrontab extends \webadmin\ModelCAR
     /**
      * 增加锁限制，调用系统的cache
      */
-    public static function cacheLock($cacheKey=null, $isUnLock=false, $lockTime=30)
+    public static function cacheLock($cacheKey=null, $isUnLock=false, $lockTime=180)
     {
         if(empty($cacheKey)) return false;
-        if($isUnLock) return Yii::$app->cache->delete($cacheKey);
-        $time = time();
-        $lastTime = Yii::$app->cache->get($cacheKey);
-        if(empty($lastTime) || $time-$lastTime>=$lockTime){
-            Yii::$app->cache->set($cacheKey,$time,$lockTime);
-            return true;
-        }else{
+        $cacheKey = "systemCacheLock/{$cacheKey}";
+        
+        // 解锁
+        if($isUnLock) return Yii::$app->cache->delete($cacheKey); 
+        
+        // 加锁
+        if(Yii::$app->cache->get($cacheKey)){
             return false;
+        }else{
+            Yii::$app->cache->set($cacheKey, date('Y-m-d H:i:s'), $lockTime);
+            return true;
         }
     }
     

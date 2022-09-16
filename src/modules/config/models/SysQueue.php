@@ -94,15 +94,21 @@ class SysQueue extends \webadmin\ModelCAR
      */
     public function run()
     {
-        if($this->lock()){
+        // 增加文件锁
+        if($this->state=='0' && $this->lock()){
             try{
-                $this->state = 1;
+                $this->state = '1';
                 $this->start_time = date('Y-m-d H:i:s');
-                if($this->save(false)){
+                try {
+                    $re = $this->save(false);
+                } catch (\yii\db\StaleObjectException $e) { // 乐观锁
+                    return false;
+                }
+                if($re){
                     $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
                     
                     $this->done_time = date('Y-m-d H:i:s');
-                    $this->state = $result===false ? 3 : 2;
+                    $this->state = $result===false ? '3' : '2';
                     if($this->state=='2' && !$this->callback){ // 完成状态且不用回调的直接删除
                         $this->delete();
                     }else{
