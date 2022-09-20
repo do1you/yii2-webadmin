@@ -74,7 +74,7 @@ class LogSms extends \webadmin\ModelCAR
             foreach($mobiles as $key=>$m){
                 if(in_array($m,$whiteMobiles)) continue;
                 $cacheKey = 'logSms/mobileCount/'.$m;
-                $sum = Yii::app()->cache->get($cacheKey);
+                $sum = Yii::$app->cache->get($cacheKey);
                 $time = time();
                 if($sum && is_array($sum)){
                     foreach($sum as $k=>$v){
@@ -96,7 +96,7 @@ class LogSms extends \webadmin\ModelCAR
                     $sum = [];
                 }
                 $sum[] = $time;
-                Yii::app()->cache->set($cacheKey, $sum, (3600*24));
+                Yii::$app->cache->set($cacheKey, $sum, (3600*24));
             }
         }
         

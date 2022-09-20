@@ -44,6 +44,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             [['name'], 'string', 'min'=>2, 'max' => 32],
             [['state'], 'integer'],
             [['access_token'], 'string', 'max' => 64],
+            [['sso_id'], 'string', 'max' => 20],
             [['note', 'roleList', 'role_id'], 'safe'],
             [['login_name', 'mobile'], 'unique', 'filter'=>"state != -1"],
             
@@ -75,6 +76,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             'note' => Yii::t('authority', '备注'),
             'state' => Yii::t('authority', '状态'),
             'access_token' => Yii::t('authority', '认证口令'),
+            'sso_id' => Yii::t('authority', '用户中心用户id'),
             'password_confirm' => Yii::t('authority', '确认新密码'),
             'old_password' => Yii::t('authority', '旧密码'),
             'password_curr' => Yii::t('authority', '当前密码'),

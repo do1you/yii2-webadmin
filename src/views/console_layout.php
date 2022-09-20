@@ -76,7 +76,7 @@ use yii\helpers\Url;
                                         </ul>
                                     </li>
                                     <!--/Theme Selector Area-->
-                                    <li class="dropdown-footer"><a href="<?php echo Url::toRoute('/authority/user/logout')?>">退出登录</a></li>
+                                    <li class="dropdown-footer"><a href="<?php echo Url::toRoute('/user/logout')?>">退出登录</a></li>
                                 </ul>
                                 <!--/Login Area Dropdown-->
                             </li>
