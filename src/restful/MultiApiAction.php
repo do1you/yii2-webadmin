@@ -53,7 +53,7 @@ class MultiApiAction extends \webadmin\restful\Action
                         }
                         $result[$routeKey] = $re;
                     }
-                }catch (\yii\base\Exception $exception){var_dump($apis);exit;
+                }catch (\yii\base\Exception $exception){
                     $isError = true;
                     $result[$routeKey] = [
                         'name' => ($exception instanceof \yii\base\Exception || $exception instanceof \yii\base\ErrorException) ? $exception->getName() : 'Exception',
