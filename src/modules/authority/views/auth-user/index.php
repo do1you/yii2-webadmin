@@ -63,6 +63,7 @@ use webadmin\modules\config\models\SysLdItem;
             	             'attribute' => 'roleList',
             	             'value' => 'v_roleList',
             	         ],
+            	         'sso_id',
             	         [
             	             'class' => '\yii\grid\ActionColumn',
             	             'buttonOptions' => ['data-pjax'=>'1'],

@@ -48,6 +48,7 @@ class AuthUserController extends \webadmin\BController
     public function actionCreate()
     {
         $model = new AuthUser();
+        $model->loadDefaultValues();
         $model->setScenario('insert');
 
         if ($model->load(Yii::$app->request->post()) && $model->ajaxValidation() && $model->validate()) {

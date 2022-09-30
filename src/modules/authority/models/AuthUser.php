@@ -42,9 +42,8 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             [['password'], 'string', 'min'=>6, 'max' => 64],
             [['login_name'], 'string', 'min'=>4, 'max' => 32],
             [['name'], 'string', 'min'=>2, 'max' => 32],
-            [['state'], 'integer'],
+            [['state', 'sso_id'], 'integer'],
             [['access_token'], 'string', 'max' => 64],
-            [['sso_id'], 'string', 'max' => 20],
             [['note', 'roleList', 'role_id'], 'safe'],
             [['login_name', 'mobile'], 'unique', 'filter'=>"state != -1"],
             
@@ -76,7 +75,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             'note' => Yii::t('authority', '备注'),
             'state' => Yii::t('authority', '状态'),
             'access_token' => Yii::t('authority', '认证口令'),
-            'sso_id' => Yii::t('authority', '用户中心用户id'),
+            'sso_id' => Yii::t('authority', '用户中心ID'),
             'password_confirm' => Yii::t('authority', '确认新密码'),
             'old_password' => Yii::t('authority', '旧密码'),
             'password_curr' => Yii::t('authority', '当前密码'),
@@ -222,7 +221,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'state' => '0']);
+        return static::model()->getCache('findOne', [['id' => $id, 'state' => '0']], 600);
     }
     
     /**
@@ -230,7 +229,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return static::findOne(['access_token' => $token, 'state' => '0']);
+        return static::model()->getCache('findOne', [['access_token' => $token, 'state' => '0']], 600);
     }
     
     /**

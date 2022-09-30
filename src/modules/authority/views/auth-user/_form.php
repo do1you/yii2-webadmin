@@ -48,6 +48,8 @@ if($model->roleList===null && $model->id)
 
              <?= $form->field($model, 'state')->dropDownList($model->getV_state(false),[]) ?>
              
+             <?= $form->field($model, 'sso_id')->textInput(['maxlength' => true]) ?>
+             
              <?= $form->field($model, 'roleList')->duallistbox($roleList) ?>
              
              <?= $form->field($model, 'note')->textarea(['rows' => 6]) ?>
