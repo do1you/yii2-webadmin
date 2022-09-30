@@ -49,6 +49,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             
             // 修改资料
             [['name', 'mobile'], 'required', 'on'=>'info'],
+            [['sso_id'], 'checksso', 'on'=>'info'],
             
             // 新增用户
             [['password'], 'required', 'on'=>'insert'],
@@ -59,6 +60,19 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             [['password_confirm'], 'compare', 'compareAttribute' => 'password', 'message'=>'两次输入的密码不一致', 'on'=>'password'],
             [['old_password'], 'validateOldPassword', 'on'=>'password'],
         ];
+    }
+    
+    /**
+     * 校验SSO是否是被直接修改
+     */
+    public function checksso($attribute, $params)
+    {
+        if($this->sso_id && $this->oldAttributes['sso_id'] && $this->oldAttributes['sso_id']!=$this->sso_id){
+            $this->addError('sso_id', '禁止修改用户中心ID！');
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -103,6 +117,11 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
                 $rmodel->save(false);
             }
         }
+        
+        // 更新缓存
+        static::model()->getCache('findOne', [['id' => $this->id, 'state' => '0']], 600, true);
+        static::model()->getCache('findOne', [['access_token' => $this->access_token, 'state' => '0']], 600, true);
+        
         return parent::afterSave($insert, $changedAttributes);
     }
     

@@ -12,7 +12,11 @@ use webadmin\widgets\ActiveForm;
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 
             <?= $form->field($model, 'mobile')->textInput(['maxlength' => true]) ?>
-        
+            
+            <?= $form->field($model, 'sso_id', [
+                'template' => "{label}\n<div class='col-sm-10'><div class='input-group'>{input}<span class='input-group-btn'><button class='btn btn-primary shiny' id='unbind_btn' type='button'>解除绑定</button></span></div>\n{hint}\n{error}</div>",
+            ])->textInput(['maxlength' => true, 'disabled' => 'disabled', 'readonly' => 'readonly']) ?>
+            
             <?= $form->field($model, 'note')->textarea(['maxlength' => true]) ?>
         
             <div class="form-group">
@@ -21,6 +25,13 @@ use webadmin\widgets\ActiveForm;
                 </div>
             </div>
         
+        	<?= $form->field($model, 'sso_id', ['template' => '{input}'])->hiddenInput() ?>
             <?php ActiveForm::end(); ?>
 	</div>
 </div>
+
+<?php $this->registerJs("
+$('#unbind_btn').on('click', function(){
+    $('input[name=\"AuthUser[sso_id]\"]').val('');
+});
+");?>
