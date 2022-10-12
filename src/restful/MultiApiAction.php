@@ -57,7 +57,7 @@ class MultiApiAction extends \webadmin\restful\Action
                     $isError = true;
                     $result[$routeKey] = [
                         'name' => ($exception instanceof \yii\base\Exception || $exception instanceof \yii\base\ErrorException) ? $exception->getName() : 'Exception',
-                        'msg' => $exception->getMessage(),
+                        'message' => $exception->getMessage(),
                         'code' => $exception->getCode(),
                     ];
                 }
@@ -72,7 +72,7 @@ class MultiApiAction extends \webadmin\restful\Action
                             if(isset($routeVal['code']) && $routeVal['code']=='0'){
                                 $result[$routeKey] = [
                                     'name' => 'Force',
-                                    'msg' => "事务回滚",
+                                    'message' => "事务回滚",
                                     'code' => "500",
                                 ];
                             }

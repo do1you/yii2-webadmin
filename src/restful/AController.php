@@ -138,7 +138,9 @@ class AController extends ActiveController
     {
         $response = $event->sender;
         
-        $isSuccessful = $response->isSuccessful;
+        $isSuccessful = $response->isSuccessful; // 默认输出状态
+        
+        // 判断抛出错误
         if($response->statusCode==401 || ($response->statusCode>=300 && $response->statusCode<400)){
             $response->data = $this->convertExceptionToArray(new HttpException(401,Yii::t('common', '需要正确的认证口令才允许访问.')));
             $isSuccessful = false;
@@ -147,10 +149,17 @@ class AController extends ActiveController
             $isSuccessful = false;
         }
         
+        // 输出状态重置
         if($response->statusCode!=200){
             $response->data['status'] = $response->statusCode;
             $response->statusCode = 200; // 针对API，任意错误都强制输出200状态
         }
+        
+        // 判断页面错误
+        if(isset($response->data['code']) && $response->data['code']!='0'){
+            $isSuccessful = false;
+        }
+        
         $response->data = [
             'success' => $isSuccessful,
             'data' => $response->data,
@@ -166,6 +175,10 @@ class AController extends ActiveController
         if (isset($_GET['callback'])) {
             $response->format = Response::FORMAT_JSONP;
             $response->data['callback'] = $_GET['callback'];
+        }
+        
+        if(is_array($response->data) && in_array($response->format, ['html'])){
+            $response->format = 'json';
         }
     }
     
@@ -250,6 +263,15 @@ class AController extends ActiveController
     }
     
     /**
+     * 格式化输出错误
+     */
+    protected function respData($code='0',$data=[],$message='')
+    {
+        $message = $message ? $message : ($code == 0 ? '操作成功' : '操作失败');
+        return ['code' => $code, 'message' => $message, 'data' => $data];
+    }
+    
+    /**
      * 格式化接口内容输出
      * @see \yii\rest\Controller::serializeData()
      */
@@ -263,6 +285,5 @@ class AController extends ActiveController
      */
     public function actionError()
     {
-        
     }
 }
