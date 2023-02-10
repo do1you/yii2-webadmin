@@ -45,6 +45,8 @@ class Serializer extends \yii\rest\Serializer
             return $this->serializeModelErrors($data);
         } elseif ($data instanceof Arrayable) {
             return $this->serializeModel($data);
+        } elseif (is_array($data)) {
+            $data = $this->serializeModels($data);
         }
         
         return $data;

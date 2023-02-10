@@ -287,9 +287,18 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      * 校验密码是否正确
      * @return boolean
      */
-    public function validatePassword($password)
+    public function validatePassword($password, $checkPass = false)
     {
-        return Yii::$app->security->validatePassword($password, $this->password);
+        $checkPass = $checkPass!==false ? $checkPass : $this->password;
+        if($password && $checkPass){
+            if(strlen($checkPass)==32){
+                return (strtolower(md5(md5($password))) == strtolower($checkPass));
+            }else{
+                return Yii::$app->security->validatePassword($password, $checkPass);
+            }
+        }else{
+            return false;
+        }
     }
     
     /**
@@ -298,7 +307,8 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      */
     public function validateOldPassword()
     {
-        $result = Yii::$app->security->validatePassword($this->old_password, $this->password_curr);
+        $result = $this->validatePassword($this->old_password, $this->password_curr);
+        //$result = Yii::$app->security->validatePassword($this->old_password, $this->password_curr);
         $result || $this->addError('old_password', Yii::t('authority', '旧密码不正确'));
         return $result;
     }
