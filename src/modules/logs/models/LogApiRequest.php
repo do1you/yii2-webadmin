@@ -15,6 +15,8 @@ namespace webadmin\modules\logs\models;
 
 use Yii;
 
+defined('YII_BEGIN_TIME') or define('YII_BEGIN_TIME', microtime(true));
+
 class LogApiRequest extends \webadmin\ModelCAR
 {
     /**
@@ -31,8 +33,8 @@ class LogApiRequest extends \webadmin\ModelCAR
     public function rules()
     {
         return [
-            [['interface', 'url', 'result_code', 'result_msg', 'params', 'create_time'], 'safe'],
-            [['user_id'], 'integer'],
+            [['interface', 'url', 'result_code', 'result_msg', 'params', 'create_time', 'end_time'], 'safe'],
+            [['user_id', 'run_millisec'], 'integer'],
             [['params', 'result_msg'], 'string'],
             [['create_time'], 'safe'],
             [['interface'], 'string', 'max' => 80],
@@ -54,8 +56,29 @@ class LogApiRequest extends \webadmin\ModelCAR
             'result_msg' => Yii::t('logs', '结果'),
             'params' => Yii::t('logs', '参数'),
             'create_time' => Yii::t('logs', '操作时间'),
+            'end_time' => Yii::t('logs', '结束时间'),
+            'run_millisec' => Yii::t('logs', '执行毫秒'),
             'user_id' => Yii::t('logs', '操作用户'),
         ];
+    }
+    
+    // 获取用户
+    public function getUser(){
+        return $this->hasOne(\webadmin\modules\authority\models\AuthUser::className(), ['id' => 'user_id']);
+    }
+    
+    // 快速插入
+    public static $begions = [];
+    public static function insertion($data = [])
+    {
+        if($data && !isset($data['end_time'])){
+            $begionTime = LogApiRequest::$begions ? array_pop(LogApiRequest::$begions) : YII_BEGIN_TIME;
+            $data['create_time'] = date('Y-m-d H:i:s', floor($begionTime));
+            $data['end_time'] = date('Y-m-d H:i:s');
+            $data['run_millisec'] = round((microtime(true) - $begionTime)*1000);
+        }
+        
+        return parent::insertion($data);
     }
     
     /**
@@ -108,7 +131,7 @@ class LogApiRequest extends \webadmin\ModelCAR
                 $result = trim(Yii::createObject('webadmin\ext\http\Httper')->getHttp($httpType)->post($url, $data, $header, $cookie, $timeout, $options));
             }
             $result = $isGbk ? self::toUtf8($result) : $result;   // 转换编码
-        }catch(Exception $e) {
+        }catch(\Exception $e) {
             $message = $e->getMessage();
             $code = $e->getCode();
             $result = false;
@@ -162,10 +185,5 @@ class LogApiRequest extends \webadmin\ModelCAR
         $this->load($params);
         
         return $result;
-    }
-    
-    // 获取用户
-    public function getUser(){
-        return $this->hasOne(\webadmin\modules\authority\models\AuthUser::className(), ['id' => 'user_id']);
     }
 }

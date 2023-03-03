@@ -11,6 +11,8 @@ use yii\base\UserException;
 use yii\base\Exception;
 use yii\base\ErrorException;
 
+defined('YII_BEGIN_TIME') or define('YII_BEGIN_TIME', microtime(true));
+
 class AController extends ActiveController
 {
     /**
@@ -208,17 +210,6 @@ class AController extends ActiveController
         $imei = Yii::$app->request->getBodyParam('imei',Yii::$app->request->getQueryParam('imei',''));
         $code = !empty($sult['code']) ? $sult['code'] : (!empty($sult['status']) ? $sult['status'] : '0');
         $msg = !empty($sult['message']) ? $sult['message'] : json_encode(isset($resp['success']) ? $resp['success'] : $resp);
-        \webadmin\modules\logs\models\LogApiResponse::insertion([
-            'interface' => $interface,
-            'platform' => $platform,
-            'imei' => $imei,
-            'ip' => Yii::$app->request->userIP,
-            'result_code' => $code,
-            'result_msg' => print_r($resp,true),
-            'params' => ($data ? print_r($data,true) : ""),
-            'create_time' => date('Y-m-d H:i:s'),
-            'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : '0'),
-        ]);
         
         // 更新iemi
         \webadmin\modules\logs\models\LogImei::upimei([
@@ -227,6 +218,21 @@ class AController extends ActiveController
             'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : '0'),
             'create_time' => date('Y-m-d H:i:s'),
         ]);
+        
+        \webadmin\modules\logs\models\LogApiResponse::insertion([
+            'interface' => $interface,
+            'platform' => $platform,
+            'imei' => $imei,
+            'ip' => Yii::$app->request->userIP,
+            'result_code' => $code,
+            'result_msg' => print_r($resp,true),
+            'params' => ($data ? print_r($data,true) : ""),
+            'create_time' => date('Y-m-d H:i:s', floor(YII_BEGIN_TIME)),
+            'end_time' => date('Y-m-d H:i:s'),
+            'run_millisec' => round((microtime(true) - YII_BEGIN_TIME)*1000),
+            'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : '0'),
+        ]);
+        
     }
     
     /**
@@ -294,5 +300,15 @@ class AController extends ActiveController
      */
     public function actionError()
     {
+    }
+    
+    /**
+     * 获取毫秒时间
+     * @return number
+     */
+    protected function getMillisecond()
+    {
+        list($s1, $s2) = explode(' ', microtime());
+        return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
     }
 }

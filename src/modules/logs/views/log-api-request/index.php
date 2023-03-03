@@ -48,6 +48,8 @@ use yii\helpers\Url;
                 	         'attribute' => 'create_time',
                 	         'filter' => false,
                 	     ],
+                        'end_time',
+                        'run_millisec',
                 	     [
                 	         'attribute' => 'user_id',
                 	         'value' => 'user.name',

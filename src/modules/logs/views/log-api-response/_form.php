@@ -32,6 +32,10 @@ use webadmin\widgets\ActiveForm;
             <?= $form->field($model, 'ip')->textInput(['maxlength' => true]) ?>
             
             <?= $form->field($model, 'create_time')->textInput() ?>
+            
+            <?= $form->field($model, 'end_time')->textInput() ?>
+            
+            <?= $form->field($model, 'run_millisec')->textInput() ?>
 
             <?= $form->field($model, 'user_id')->textInput(['value'=>$model['user']['name']]) ?>
 

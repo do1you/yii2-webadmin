@@ -45,10 +45,12 @@ use yii\helpers\Url;
                 	     'platform',
                 	     'ip',
                 	     'result_code',
-        	             [
-        	                'attribute' => 'create_time',
-        	                'filter' => false,
-        	             ],
+                        [
+                            'attribute' => 'create_time',
+                            'filter' => false,
+                        ],
+                        'end_time',
+                        'run_millisec',
         	             [
         	                'attribute' => 'user_id',
         	                'value' => 'user.name',

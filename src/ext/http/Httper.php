@@ -106,6 +106,7 @@ class Httper{
 		}else{
 		    $this->_http[$httpType]->reset();
 		}
+		\webadmin\modules\logs\models\LogApiRequest::$begions[] = microtime(true);
 		return $this->_http[$httpType];
 	}
 }

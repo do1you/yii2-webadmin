@@ -33,8 +33,8 @@ class LogApiResponse extends \webadmin\ModelCAR
     public function rules()
     {
         return [
-            [['interface', 'platform', 'imei', 'ip', 'result_code', 'result_msg', 'params', 'create_time'], 'safe'],
-            [['user_id'], 'integer'],
+            [['interface', 'platform', 'imei', 'ip', 'result_code', 'result_msg', 'params', 'create_time','end_time'], 'safe'],
+            [['user_id','run_millisec'], 'integer'],
             [['params'], 'string'],
             [['create_time'], 'safe'],
             [['interface'], 'string', 'max' => 80],
@@ -59,6 +59,8 @@ class LogApiResponse extends \webadmin\ModelCAR
             'result_msg' => Yii::t('logs', '结果描述'),
             'params' => Yii::t('logs', '参数'),
             'create_time' => Yii::t('logs', '操作时间'),
+            'end_time' => Yii::t('logs', '结束时间'),
+            'run_millisec' => Yii::t('logs', '执行毫秒'),
             'user_id' => Yii::t('logs', '操作用户'),
         ];
     }
