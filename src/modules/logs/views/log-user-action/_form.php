@@ -33,6 +33,10 @@ use webadmin\widgets\ActiveForm;
             
             <?= $form->field($model, 'addtime')->textInput() ?>
             
+            <?= $form->field($model, 'endtime')->textInput() ?>
+            
+            <?= $form->field($model, 'run_millisec')->textInput() ?>
+            
             <?= $form->field($model, 'request')->textarea(['rows' => 8]) ?>
 
             <?php if(Yii::$app->controller->action->id!='view'):?>

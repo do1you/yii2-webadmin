@@ -52,7 +52,8 @@ use yii\helpers\Url;
                 	         'attribute' => 'addtime',
                 	         'filter' => false,
                 	     ],
-                	     
+                	     'endtime',
+                         'run_millisec',
                         [
                         	'class' => '\yii\grid\ActionColumn',
                         	'buttonOptions' => ['data-pjax'=>'1'],

@@ -8,6 +8,8 @@ use Yii;
 use yii\base\ActionEvent;
 use yii\web\Controller;
 
+defined('YII_BEGIN_TIME') or define('YII_BEGIN_TIME', microtime(true));
+
 class LogBehaviors extends \yii\base\Behavior
 {    
     
@@ -42,7 +44,9 @@ class LogBehaviors extends \yii\base\Behavior
                 'remark' => (property_exists($controller,'currNav') ? ($controller->currNav&&is_array($controller->currNav) ? implode('-',$controller->currNav) : '') : ''),
                 'action' => (!($controller->module instanceof \yii\base\Application) ? $controller->module->id.'/' : '').$controller->id.'/'.$controller->action->id,
                 'request' => ($data ? print_r($data,true) : ""),
-                'addtime' => date('Y-m-d H:i:s'),
+                'addtime' => date('Y-m-d H:i:s', floor(YII_BEGIN_TIME)),
+                'endtime' => date('Y-m-d H:i:s'),
+                'run_millisec' => round((microtime(true) - YII_BEGIN_TIME)*1000),
                 'ip' => Yii::$app->request->userIP,
                 'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : 0),
             ]);

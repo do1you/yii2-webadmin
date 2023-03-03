@@ -30,10 +30,9 @@ class LogUserAction extends \webadmin\ModelCAR
     public function rules()
     {
         return [
-            [['remark', 'action', 'request', 'addtime', 'ip'], 'safe'],
+            [['remark', 'action', 'request', 'addtime', 'endtime', 'ip'], 'safe'],
             [['request'], 'string'],
-            [['addtime'], 'safe'],
-            [['user_id'], 'integer'],
+            [['user_id', 'run_millisec'], 'integer'],
             [['remark', 'action'], 'string', 'max' => 60],
             [['ip'], 'string', 'max' => 32],
         ];
@@ -49,7 +48,9 @@ class LogUserAction extends \webadmin\ModelCAR
             'remark' => Yii::t('logs', '描述'),
             'action' => Yii::t('logs', '动作'),
             'request' => Yii::t('logs', '请求内容'),
-            'addtime' => Yii::t('logs', '时间'),
+            'addtime' => Yii::t('logs', '操作时间'),
+            'endtime' => Yii::t('logs', '结束时间'),
+            'run_millisec' => Yii::t('logs', '执行毫秒'),
             'ip' => Yii::t('logs', 'IP'),
             'user_id' => Yii::t('logs', '操作用户'),
         ];
