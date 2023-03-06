@@ -31,6 +31,8 @@ use webadmin\widgets\ActiveForm;
             <?= $form->field($model, 'starttime')->textInput() ?>
 
             <?= $form->field($model, 'endtime')->textInput() ?>
+            
+            <?= $form->field($model, 'run_millisec')->textInput() ?>
 
             <?= $form->field($model, 'user_id')->textInput() ?>
 

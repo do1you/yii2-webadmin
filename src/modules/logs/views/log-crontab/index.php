@@ -53,6 +53,8 @@ use yii\helpers\Url;
                 	         'attribute' => 'starttime',
                 	         'filter' => false,
                 	     ],
+                         'endtime',
+                         'run_millisec',
 
                         [
                         	'class' => '\yii\grid\ActionColumn',

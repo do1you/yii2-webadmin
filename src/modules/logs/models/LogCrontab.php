@@ -33,7 +33,7 @@ class LogCrontab extends \webadmin\ModelCAR
     {
         return [
             [['command', 'action', 'args', 'message', 'starttime', 'endtime'], 'safe'],
-            [['exit_code', 'user_id'], 'integer'],
+            [['exit_code', 'user_id', 'run_millisec'], 'integer'],
             [['starttime', 'endtime'], 'safe'],
             [['command', 'action'], 'string', 'max' => 50],
             [['args'], 'string', 'max' => 255],
@@ -54,6 +54,7 @@ class LogCrontab extends \webadmin\ModelCAR
             'message' => Yii::t('logs', '描述'),
             'starttime' => Yii::t('logs', '开始时间'),
             'endtime' => Yii::t('logs', '结束时间'),
+            'run_millisec' => Yii::t('logs', '执行毫秒'),
             'user_id' => Yii::t('logs', '触发用户'),
         ];
     }

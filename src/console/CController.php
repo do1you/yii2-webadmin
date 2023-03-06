@@ -6,13 +6,10 @@ namespace webadmin\console;
 
 use Yii;
 
+defined('YII_BEGIN_TIME') or define('YII_BEGIN_TIME', microtime(true));
+
 abstract class CController extends \yii\console\Controller
 {
-    /**
-     * 开始执行时间
-     */
-    private $_startTime;
-    
     /**
      * 执行结果描述
      */
@@ -32,8 +29,6 @@ abstract class CController extends \yii\console\Controller
      */
     public function beforeAction($action)
     {
-        $this->_startTime = date('Y-m-d H:i:s');
-        
         return parent::beforeAction($action);
     }
     
@@ -47,8 +42,9 @@ abstract class CController extends \yii\console\Controller
             'args' => trim(trim(json_encode(Yii::$app->requestedParams),'['),']'),
             'exit_code' => (strlen($result) ? $result : '0'),
             'message' => $this->message,
-            'starttime' => $this->_startTime,
+            'starttime' => date('Y-m-d H:i:s', floor(YII_BEGIN_TIME)),
             'endtime' => date('Y-m-d H:i:s'),
+            'run_millisec' => round((microtime(true) - YII_BEGIN_TIME)*1000),
             'user_id' => '0',
         ]);
         
