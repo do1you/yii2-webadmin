@@ -417,7 +417,6 @@ class ActiveField extends \yii\widgets\ActiveField
         Yii::$app->set('request', $request);
         $result = Yii::$app->runAction($route,$params);
         Yii::$app->set('request', $oldRequest);
-        
         if(!empty($result['items'])){
             $result = \yii\helpers\ArrayHelper::map($result['items'], 'id', 'text');
         }else{
@@ -432,9 +431,13 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function selectajax($url='', $options = [], $mult = false)
     {
-        if($mult) $options['multiple'] = 'multiple';
+        $value = $this->model[$this->attribute];
+        if($mult){
+            $options['multiple'] = 'multiple';
+            $value = isset($options['value'])?$options['value']:$value;
+        }
         $id = $this->getInputId($options);
-        $this->dropDownList($this->_ajax_options($url,$this->model[$this->attribute]), $options);
+        $this->dropDownList($this->_ajax_options($url,$value), $options);
         
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/select2/select2.js',['depends' => \webadmin\WebAdminAsset::className()]);
