@@ -25,7 +25,7 @@ class SysCrontabController extends \webadmin\BController
     {
         $model = $this->findModel($id);
         if(($msg = $model->run())){
-            Yii::$app->session->setFlash('success',Yii::t('config', ($msg ? $msg : '计划任务执行成功')));
+            Yii::$app->session->setFlash('success',Yii::t('config', (is_string($msg) ? $msg : '计划任务执行成功')));
         }else{
             Yii::$app->session->setFlash('error',Yii::t('config', '计划任务执行失败'));
         }

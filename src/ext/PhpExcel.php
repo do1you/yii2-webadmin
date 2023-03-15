@@ -345,10 +345,10 @@ class PhpExcel
             Yii::$app->user->login($nModel,86400);
         }
         $path = Yii::$app->runAction($route);
+        $cacheName = self::exportCacheName($route,$session,$get,$post);
         Yii::$app = $app;
         
         if(!$path || !file_exists($path)) return false;
-        $cacheName = self::exportCacheName($route,$session,$get,$post);
         Yii::$app->cache->set($cacheName,$path);
         
         return $path;
@@ -470,6 +470,9 @@ eot;
     public static $identParams = '';
     public static function exportCacheName($route='',$session='',$get='',$post='')
     {
-        return $route.'/'.(md5($get)).(self::$identParams ? '/'.md5(self::$identParams) : '');
+        $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
+        $idParam = Yii::$app->has('user') ? Yii::$app->user->idParam : '';
+        $uid = $uid ? $uid : ($idParam&&isset($session[$idParam]) ? $session[$idParam] : 'notuser');
+        return $route.'/'.$uid.'/'.(md5($get)).(self::$identParams ? '/'.md5(self::$identParams) : '');
     }
 }
