@@ -35,7 +35,7 @@ class SysQueue extends \webadmin\ModelCAR
         return [
             [['taskphp', 'params', 'create_time', 'start_time', 'done_time'], 'required'],
             [['params'], 'string'],
-            [['state', 'user_id', 'callback', 'run_nums'], 'integer'],
+            [['state', 'user_id', 'callback', 'priority', 'delay', 'ttr', 'run_nums'], 'integer'],
             [['create_time', 'start_time', 'done_time'], 'safe'],
             [['taskphp'], 'string', 'max' => 255],
         ];
@@ -52,6 +52,9 @@ class SysQueue extends \webadmin\ModelCAR
             'params' => Yii::t('config', '参数'),
             'state' => Yii::t('config', '状态'),
             'user_id' => Yii::t('config', '用户'),
+            'priority' => Yii::t('config', '优先级'),
+            'delay' => Yii::t('config', '延迟时间'),
+            'ttr' => Yii::t('config', '最长时长'),
             'create_time' => Yii::t('config', '创建时间'),
             'start_time' => Yii::t('config', '开始时间'),
             'done_time' => Yii::t('config', '完成时间'),
@@ -63,7 +66,7 @@ class SysQueue extends \webadmin\ModelCAR
     
     
     /**
-     * 加入队列
+     * 插入队列
      */
     public static function addQueue($data=[]){
         if($data){
@@ -71,10 +74,10 @@ class SysQueue extends \webadmin\ModelCAR
             return self::queue($data['taskphp'],(isset($data['params']) ? $data['params'] : []));
         }
         return false;
-    }
+    }    
     
     /**
-     * 插入队列，执行方法，参数，其他参数
+     * 插入队列，执行方法，参数，其他参数(priority:优先级，delay:延迟时间)
      */
     public static function queue($route = '', $params = [], $data = [])
     {
@@ -90,31 +93,40 @@ class SysQueue extends \webadmin\ModelCAR
     }
     
     /**
-     * 运行队列
+     * 弹出队列
      */
-    public function run()
+    public static function reserve()
     {
-        // 增加文件锁
-        if($this->state=='0' && $this->lock()){
+        $payload = self::find()
+        ->andWhere(['state' => '0',])
+        ->andWhere('unix_timestamp(create_time) + delay <= unix_timestamp(now())')
+        ->orderBy(['priority' => SORT_DESC, 'id' => SORT_ASC])
+        ->limit(1)
+        ->one();
+        if($payload){
+            $payload->state = '1';
+            $payload->start_time = date('Y-m-d H:i:s');
+            try {
+                if($payload->save()){
+                    return $payload;
+                }
+            } catch (\yii\db\StaleObjectException $e) {
+                // 捕获乐观锁，任务被其他进程执行了，弹出一条新的任务
+                return self::reserve();
+            }
+        }
+        return;
+    }
+    
+    /**
+     * 执行队列
+     */
+    public function handle()
+    {
+        // 增加锁
+        if($this->lock()){
             try{
-                $this->state = '1';
-                $this->start_time = date('Y-m-d H:i:s');
-                try {
-                    $re = $this->save(false);
-                } catch (\yii\db\StaleObjectException $e) { // 乐观锁
-                    return false;
-                }
-                if($re){
-                    $result = \webadmin\modules\config\models\SysCrontab::runCmd($this->taskphp, $this->params, true);
-                    
-                    $this->done_time = date('Y-m-d H:i:s');
-                    $this->state = $result===false ? '3' : '2';
-                    if($this->state=='2' && !$this->callback){ // 完成状态且不用回调的直接删除
-                        $this->delete();
-                    }else{
-                        $this->save(false);
-                    }
-                }
+                $result = SysCrontab::runCmd($this->taskphp, $this->params, true);
             }catch(\Exception $e) { //捕获异常
                 // 记录计划任务日志
                 \webadmin\modules\logs\models\LogCrontab::insertion([
@@ -129,9 +141,75 @@ class SysQueue extends \webadmin\ModelCAR
                 ]);
             }
             $this->unLock();
+            return $result;
         }
-        
-        return (isset($result) ? $result : false);
+        return false;
+    }
+    
+    /**
+     * 完成队列
+     */
+    public function release($result)
+    {
+        if($this->id){
+            $this->state = $result===false ? '3' : '2';
+            $this->done_time = date('Y-m-d H:i:s');
+            
+            if($this->state=='2' && !$this->callback){
+                // 完成状态且不用回调的直接删除
+                $this->delete();
+            }else{
+                $this->save(false);
+            }
+        }
+    }
+    
+    /**
+     * 监听队列
+     */
+    public static function listen($maxNum = 9999, $timeout = 3)
+    {
+        $num = 0;
+        while($num < $maxNum){
+            $num++;
+            if ($payload = SysQueue::reserve()) {
+                //echo "\r\n{$num}:queue-{$payload->id}";
+                $payload->release($payload->handle());                
+                
+                // 清理失败和卡住的队列
+                if($num==1 || $num==$maxNum || $num%100==0){
+                    $thDay = date('Y-m-d H:i:s',time()-86400*3); // 失败的删除三天前数据
+                    $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
+                    SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
+                }
+                
+                // 记录数据库操作日志
+                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+            } elseif ($timeout) {
+                //echo "\r\n{$num}:sleep";
+                sleep($timeout);
+            }
+        }
+    }
+    
+    /**
+     * 运行队列
+     */
+    public function run()
+    {
+        try {
+            if($this->id){
+                $this->state = '1';
+                $this->start_time = date('Y-m-d H:i:s');
+                if($this->save()){
+                    $result = $this->handle();
+                    $this->release($result);
+                    return $result;
+                }
+            }
+        } catch (\Exception $e) {
+        }
+        return false;
     }
     
     /**
@@ -139,7 +217,7 @@ class SysQueue extends \webadmin\ModelCAR
      */
     public function lock()
     {
-        return SysCrontab::cacheLock('SysQueue/'.$this->id);
+        return SysCrontab::cacheLock('SysQueue/lock/'.$this->id);
     }
     
     /**
@@ -147,7 +225,7 @@ class SysQueue extends \webadmin\ModelCAR
      */
     public function unLock()
     {
-        return SysCrontab::cacheLock('SysQueue/'.$this->id, true);
+        return SysCrontab::cacheLock('SysQueue/lock/'.$this->id, true);
     }
     
     /**

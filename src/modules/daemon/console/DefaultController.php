@@ -17,7 +17,7 @@ class DefaultController extends \webadmin\console\CController
     /**
      * 进程最多可执行次数
      */
-    public $maxProcessNum = 1200;
+    public $maxProcessNum = 5000;
     
     /**
      * 是否windows系统
@@ -257,7 +257,7 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionHelp()
     {
-        Console::output("command list: start | stop | restart | status | help.");
+        Console::output("command list: start | stop | restart | rstart | status | help.");
     }
     
     /**
@@ -338,40 +338,7 @@ class DefaultController extends \webadmin\console\CController
     {
         set_time_limit(0);
         $pid = $this->_processesPid();
-        while($this->_increase()<=$this->maxProcessNum){
-            $time = time();
-            $startSec = date('H:i:s');
-            $endSec = date('H:i:s',$time+3600);
-            
-            $tasks = SysCrontab::find()->where("
-                state = 0 and (
-                    run_state != 1 or (run_state = 1 and '{$time}'-last_time>=300)
-                )
-                and (
-                    (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
-                    or (crontab_type = 1 and '{$time}'-last_time>=timing_day*3600*24-3600*23
-                        and time_to_sec(timing_time)<=time_to_sec('{$startSec}') and time_to_sec(timing_time)+1200>=time_to_sec('{$startSec}')
-                       )
-                )
-                    order by id asc limit 1
-                ")->all();
-            
-            if($tasks){
-                foreach($tasks as $task){
-                    $result = $task->run();
-                    if(is_string($result)){
-                        echo "\r\n".date('Y-m-d H:i:s')." Crontab:({$task['command']})".$result."\r\n";
-                    }
-                }
-                
-                // 记录数据库操作日志
-                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
-            }else{
-                sleep(3);
-            }
-            
-            unset($time,$startSec,$endSec,$tasks,$result);
-        }
+        SysCrontab::listen($this->maxProcessNum);
         $this->_processesPid($pid);
         
         return 0;
@@ -385,34 +352,7 @@ class DefaultController extends \webadmin\console\CController
     {
         set_time_limit(0);
         $pid = $this->_processesPid();
-        while(($num = $this->_increase())<=$this->maxProcessNum){
-            $time = time();
-            
-            $tasks = SysQueue::find()->where("state=0 order by id asc limit 1")->all();
-            
-            if($tasks){
-                foreach($tasks as $task){
-                    $result = $task->run();
-                    if(is_string($result)){
-                        echo "\r\n".date('Y-m-d H:i:s')." Queue:({$task['taskphp']} {$task['params']})".$result."\r\n";
-                    }
-                }
-                
-                // 清理失败和卡住的队列
-                if($num==1 || $num==$this->maxProcessNum || $num%100==0){
-                    $thDay = date('Y-m-d H:i:s',time()-86400*3); // 失败的删除三天前数据
-                    $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
-                    SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
-                }
-                
-                // 记录数据库操作日志
-                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
-            }else{
-                sleep(3);
-            }
-            
-            unset($time,$tasks,$result);
-        }
+        SysQueue::listen($this->maxProcessNum);        
         $this->_processesPid($pid);
         
         return 0;

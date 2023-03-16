@@ -65,36 +65,54 @@ class SysCrontab extends \webadmin\ModelCAR
     }
     
     /**
-     * 增加乐观锁
+     * 弹出任务
      */
-    public function optimisticLock()
+    public static function reserve()
     {
-        return 'run_nums';
+        $time = time();
+        $startSec = date('H:i:s');
+        $payload = self::find()->where("
+            state = 0 
+            and ( run_state != '1' or (run_state = '1' and '{$time}'-last_time>=600) )
+            and (
+                (crontab_type = 0 and '{$time}'-last_time>=repeat_min*60)
+                or 
+                (
+                    crontab_type = 1 
+                    and '{$time}'-last_time>=timing_day*3600*24-3600*23
+                    and time_to_sec(timing_time)<=time_to_sec('{$startSec}') 
+                    and time_to_sec(timing_time)+1200>=time_to_sec('{$startSec}')
+                )
+            )
+        ")
+        ->orderBy(['last_time' => SORT_ASC])
+        ->limit(1)
+        ->one();
+        
+        if($payload){
+            $payload->run_state = '1';
+            $payload->last_time = time();
+            try {
+                if($payload->save()){
+                    return $payload;
+                }
+            } catch (\yii\db\StaleObjectException $e) {
+                // 捕获乐观锁，任务被其他进程执行了，弹出一条新的任务
+                return self::reserve();
+            }
+        }
+        return;
     }
     
     /**
-     * 运行计划任务
+     * 执行任务
      */
-    public function run()
+    public function handle()
     {
-        // 增加文件锁
-        if(($this->run_state!='1' || time()-$this->last_time>=300) && $this->lock()){
+        // 增加锁
+        if($this->lock()){
             try{
-                $startTime = date('Y-m-d H:i:s');
-                $this->run_state = '1';
-                $this->last_time = time();
-                try {
-                    $re = $this->save(false);
-                } catch (\yii\db\StaleObjectException $e) { // 乐观锁
-                    return false;
-                }
-                if($re){
-                    $result = SysCrontab::runCmd($this->command, [], true);
-                    
-                    $this->last_time = time();
-                    $this->run_state = $result===false ? '3' : '2';
-                    $this->save(false);
-                }
+                $result = SysCrontab::runCmd($this->command, [], true);
             }catch(\Exception $e) { //捕获异常
                 // 记录计划任务日志
                 \webadmin\modules\logs\models\LogCrontab::insertion([
@@ -103,15 +121,68 @@ class SysCrontab extends \webadmin\ModelCAR
                     'args' => '',
                     'exit_code' => '3',
                     'message' => $e->getMessage(),
-                    'starttime' => $startTime,
+                    'starttime' => date('Y-m-d H:i:s', $this->last_time),
                     'endtime' => date('Y-m-d H:i:s'),
                     'user_id' => '0',
                 ]);
             }
             $this->unLock();
+            return $result;
         }
-        
-        return (isset($result) ? $result : false);
+        return false;
+    }
+    
+    /**
+     * 完成任务
+     */
+    public function release($result)
+    {
+        if($this->id){
+            $this->last_time = time();
+            $this->run_state = $result===false ? '3' : '2';
+            $this->save(false);
+        }
+    }
+    
+    /**
+     * 监听任务
+     */
+    public static function listen($maxNum = 9999, $timeout = 3)
+    {
+        $num = 0;
+        while($num < $maxNum){
+            $num++;
+            if ($payload = SysCrontab::reserve()) {
+                //echo "\r\n{$num}:crontab-{$payload->id}";
+                $payload->release($payload->handle());
+                
+                // 记录数据库操作日志
+                \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+            } elseif ($timeout) {
+                //echo "\r\n{$num}:sleep";
+                sleep($timeout);
+            }
+        }
+    }
+    
+    /**
+     * 运行计划任务
+     */
+    public function run()
+    {
+        try {
+            if($this->id){
+                $this->run_state = '1';
+                $this->last_time = time();
+                if($this->save()){
+                    $result = $this->handle();
+                    $this->release($result);
+                    return $result;
+                }
+            }
+        } catch (\Exception $e) {
+        }
+        return false;
     }
     
     /**
@@ -119,7 +190,7 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function lock()
     {
-        return SysCrontab::cacheLock('SysCrontab/'.$this->id);
+        return SysCrontab::cacheLock('SysCrontab/lock/'.$this->id);
     }
     
     /**
@@ -127,7 +198,7 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public function unLock()
     {
-        return SysCrontab::cacheLock('SysCrontab/'.$this->id, true);
+        return SysCrontab::cacheLock('SysCrontab/lock/'.$this->id, true);
     }
     
     /**
@@ -292,5 +363,13 @@ class SysCrontab extends \webadmin\ModelCAR
     public function getV_run_state($val = null)
     {
         return \webadmin\modules\config\models\SysLdItem::dd('crontab_run_state',($val!==null ? $val : $this->run_state));
+    }
+    
+    /**
+     * 增加乐观锁
+     */
+    public function optimisticLock()
+    {
+        return 'run_nums';
     }
 }

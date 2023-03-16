@@ -345,21 +345,21 @@ INSERT INTO `sys_config` VALUES ('white_mobiles', '15359173640', '0', '2', 'text
 -- Table structure for `sys_crontab`
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_crontab`;
-CREATE TABLE `sys_crontab` (
+CREATE TABLE `sys_crontab`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '流水号',
-  `name` varchar(150) NOT NULL COMMENT '计划名称',
-  `command` varchar(150) NOT NULL COMMENT '执行脚本',
-  `crontab_type` varchar(20) NOT NULL DEFAULT '0' COMMENT '周期类型0 间隔 1 定时',
-  `repeat_min` int(11) NOT NULL DEFAULT '60' COMMENT '间隔时间(分钟)',
-  `timing_day` smallint(6) NOT NULL DEFAULT '1' COMMENT '定时天数',
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '计划名称',
+  `command` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '执行脚本',
+  `crontab_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '周期类型0 间隔 1 定时',
+  `repeat_min` int(11) NOT NULL DEFAULT 60 COMMENT '间隔时间(分钟)',
+  `timing_day` smallint(6) NOT NULL DEFAULT 1 COMMENT '定时天数',
   `timing_time` time NOT NULL DEFAULT '03:00:00' COMMENT '定时时间',
-  `run_nums` int(11) NOT NULL DEFAULT '0' COMMENT '任务锁',
+  `run_nums` int(11) NOT NULL DEFAULT 0 COMMENT '任务锁',
   `last_time` bigint(20) NOT NULL COMMENT '最后执行时间',
-  `state` int(11) NOT NULL DEFAULT '0' COMMENT '状态 0 正常 1 禁用',
-  `run_state` tinyint(4) NOT NULL DEFAULT '0' COMMENT '执行状态 0 未执行 1 执行中 2 执行成功 3 执行失败',
-  PRIMARY KEY (`id`),
-  KEY `last_time` (`last_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='计划任务表';
+  `state` int(11) NOT NULL DEFAULT 0 COMMENT '状态 0 正常 1 禁用',
+  `run_state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '执行状态 0 未执行 1 执行中 2 执行成功 3 执行失败',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `last_time`(`last_time`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '计划任务表';
 
 -- ----------------------------
 -- Records of sys_crontab
@@ -21399,22 +21399,24 @@ INSERT INTO `sys_pinyin` VALUES ('20883', '鱒', 'z', 'zun', '0', '0', 'zun1');
 -- Table structure for `sys_queue`
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_queue`;
-CREATE TABLE `sys_queue` (
+CREATE TABLE `sys_queue`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `taskphp` varchar(255) NOT NULL COMMENT '任务处理脚本',
-  `params` text NOT NULL COMMENT '参数',
-  `state` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
-  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户',
+  `taskphp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务处理脚本',
+  `params` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '参数',
+  `state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态',
+  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户',
+  `priority` smallint(6) NOT NULL DEFAULT 0 COMMENT '优先级',
+  `delay` smallint(6) NOT NULL DEFAULT 0 COMMENT '延迟时间',
+  `ttr` smallint(6) NOT NULL DEFAULT 0 COMMENT '最长时长',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `start_time` datetime NOT NULL COMMENT '开始时间',
   `done_time` datetime NOT NULL COMMENT '完成时间',
-  `callback` varchar(255) NOT NULL COMMENT '回调',
-  `run_nums` int(11) NOT NULL DEFAULT '0' COMMENT '队列锁',
-  PRIMARY KEY (`id`),
-  KEY `taskphp` (`taskphp`(191)),
-  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='队列任务表';
-
+  `callback` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '回调',
+  `run_nums` int(11) NOT NULL DEFAULT 0 COMMENT '队列锁',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `taskphp`(`taskphp`(191)) USING BTREE,
+  INDEX `user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '队列任务表';
 -- ----------------------------
 -- Records of sys_queue
 -- ----------------------------
