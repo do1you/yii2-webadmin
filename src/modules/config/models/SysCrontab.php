@@ -93,7 +93,7 @@ class SysCrontab extends \webadmin\ModelCAR
             $payload->run_state = '1';
             $payload->last_time = time();
             try {
-                if($payload->save()){
+                if($payload->save(false)){
                     return $payload;
                 }
             } catch (\yii\db\StaleObjectException $e) {
@@ -174,7 +174,7 @@ class SysCrontab extends \webadmin\ModelCAR
             if($this->id){
                 $this->run_state = '1';
                 $this->last_time = time();
-                if($this->save()){
+                if($this->save(false)){
                     $result = $this->handle();
                     $this->release($result);
                     return $result;

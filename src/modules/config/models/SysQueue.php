@@ -107,7 +107,7 @@ class SysQueue extends \webadmin\ModelCAR
             $payload->state = '1';
             $payload->start_time = date('Y-m-d H:i:s');
             try {
-                if($payload->save()){
+                if($payload->save(false)){
                     return $payload;
                 }
             } catch (\yii\db\StaleObjectException $e) {
@@ -201,7 +201,7 @@ class SysQueue extends \webadmin\ModelCAR
             if($this->id){
                 $this->state = '1';
                 $this->start_time = date('Y-m-d H:i:s');
-                if($this->save()){
+                if($this->save(false)){
                     $result = $this->handle();
                     $this->release($result);
                     return $result;
