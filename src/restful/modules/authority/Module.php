@@ -5,7 +5,7 @@ namespace apiadmin\authority;
 /**
  * Module module definition class
  */
-class Module extends \yii\base\Module
+class Module extends \webadmin\Module
 {
     /**
      * {@inheritdoc}

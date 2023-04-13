@@ -1,6 +1,6 @@
 {
     "name": "do1you/yii2-webadmin",
-    "description": "基于YII2.0框架的整合的后台管理界面，实现了权限、配置、日志等基础功能。",
+    "description": "基于YII2.0框架的整合的后台管理界面，实现了权限、配置、日志、SCOKET长连接等基础功能。",
     "type": "yii2-extension",
     "keywords": ["yii2","extension","webadmin","admin"],
     "license": "MIT",
@@ -11,7 +11,13 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "~2.0.0"
+    	"php": ">=5.4.0",
+    	"yiisoft/yii2": "~2.0.14",
+    	"phpoffice/phpspreadsheet": "1.8.2"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.1.0"
     },
     "autoload": {
         "psr-4": {
