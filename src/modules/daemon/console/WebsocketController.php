@@ -165,8 +165,11 @@ class WebsocketController extends \webadmin\console\CController
      */
     public function afterAction($action, $result)
     {
-        Worker::runAll();
-        // return parent::afterAction($action, $result);
+        if(Worker::getAllWorkers()){
+            Worker::runAll();
+        }
+        
+        return parent::afterAction($action, $result);
     }
     
     /**
@@ -305,4 +308,35 @@ class WebsocketController extends \webadmin\console\CController
         return 0;
     }
     
+    /**
+     * 向指定用户端发送信息
+     * yii daemon/websocket/send
+     */
+    public function actionSend($client_id, $data)
+    {
+        if($client_id && $data){
+            \GatewayWorker\Lib\Gateway::sendToClient($client_id, $data);
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * 向所有用户或批量用户发送信息
+     * yii daemon/websocket/sendall
+     */
+    public function actionSendall($data, $client_id_array = null, $exclude_client_id = null)
+    {
+        if($data){
+            if($client_id_array){
+                $client_id_array = implode(",",$client_id_array);
+            }
+            if($exclude_client_id){
+                $exclude_client_id = implode(",",$exclude_client_id);
+            }
+            \GatewayWorker\Lib\Gateway::sendToAll($data, $client_id_array, $exclude_client_id);
+        }
+        
+        return 0;
+    }
 }
