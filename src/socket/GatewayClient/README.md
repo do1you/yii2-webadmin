@@ -64,7 +64,7 @@ require_once '真实路径/vendor/autoload.php';
  * === 如果GatewayClient和GatewayWorker在同一台服务器 ===
  * GatewayClient和Register服务都在一台服务器上，ip填写127.0.0.1及即可，无需其它设置。
  **/
-Gateway::$registerAddress = '127.0.0.1:1236';
+Gateway::$registerAddress = '127.0.0.1:1238';
 
 // GatewayClient支持GatewayWorker中的所有接口(Gateway::closeCurrentClient Gateway::sendToCurrentClient除外)
 Gateway::sendToAll($data);

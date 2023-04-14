@@ -315,6 +315,7 @@ class WebsocketController extends \webadmin\console\CController
     public function actionSend($client_id, $data)
     {
         if($client_id && $data){
+            \GatewayWorker\Lib\Gateway::$registerAddress = "{$this->registerHost}:{$this->registerPort}";
             \GatewayWorker\Lib\Gateway::sendToClient($client_id, $data);
         }
         
@@ -334,6 +335,7 @@ class WebsocketController extends \webadmin\console\CController
             if($exclude_client_id){
                 $exclude_client_id = implode(",",$exclude_client_id);
             }
+            \GatewayWorker\Lib\Gateway::$registerAddress = "{$this->registerHost}:{$this->registerPort}";
             \GatewayWorker\Lib\Gateway::sendToAll($data, $client_id_array, $exclude_client_id);
         }
         
