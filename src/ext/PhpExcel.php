@@ -352,10 +352,10 @@ class PhpExcel
             Yii::$app->user->login($nModel, 86400);
         }
         $path = Yii::$app->runAction($route);
+        $cacheName = self::exportCacheName($route, $session, $get, $post);
         Yii::$app = $app;
 
         if (!$path || !file_exists($path)) return false;
-        $cacheName = self::exportCacheName($route, $session, $get, $post);
         Yii::$app->cache->set($cacheName, $path);
 
         return $path;
@@ -462,6 +462,10 @@ eot;
                 Yii::$app->response->redirect($url);
                 Yii::$app->end();
             }
+        }elseif($is_export == '2'){
+            Yii::$app->session->setFlash('error', "异步生成文件失败，请稍候重试{$filePath}");
+            Yii::$app->response->redirect($url);
+            Yii::$app->end();
         }
 
         \webadmin\modules\config\models\SysQueue::queue('daemon/excel/export', [$route, $session, $get, $post], ['callback' => 'excel']);
@@ -477,7 +481,7 @@ eot;
     public static function exportCacheName($route='',$session='',$get='',$post='')
     {
         $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
-        $idParam = Yii::$app->has('user') ? Yii::$app->user->idParam : '';
+        $idParam = Yii::$app->has('user') ? Yii::$app->user->idParam : '__id';
         $uid = $uid ? $uid : ($idParam&&isset($session[$idParam]) ? $session[$idParam] : 'notuser');
         return $route.'/'.$uid.'/'.(md5($get)).(self::$identParams ? '/'.md5(self::$identParams) : '');
     }
