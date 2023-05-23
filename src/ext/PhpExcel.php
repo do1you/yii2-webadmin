@@ -12,6 +12,10 @@ use Yii;
 
 class PhpExcel
 {
+    public static $identParams = '';
+    
+    public static $cacheIdent;
+    
     /**
      * 读取excel
      */
@@ -356,7 +360,7 @@ class PhpExcel
         Yii::$app = $app;
 
         if (!$path || !file_exists($path)) return false;
-        Yii::$app->cache->set($cacheName, $path);
+        PhpExcel::cache()->set($cacheName, $path);
 
         return $path;
     }
@@ -427,7 +431,7 @@ eot;
         $post = http_build_query($_POST);
         $session = http_build_query($_SESSION);
         $cacheName = self::exportCacheName($route, $session, $get, $post);
-        $filePath = Yii::$app->cache->get($cacheName);
+        $filePath = PhpExcel::cache()->get($cacheName);
 
         if ($filePath && file_exists($filePath)) { // 文件已存在
             $cacheFile = preg_replace('/^.+[\\\\\\/]/', '', $filePath);
@@ -437,7 +441,7 @@ eot;
             }
             if ($is_export == '3') { // 重新下载
                 unlink($filePath);
-                Yii::$app->cache->delete($cacheName);
+                PhpExcel::cache()->delete($cacheName);
             } elseif ($is_export == '2') { // 直接下载
                 $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state='2' and taskphp='daemon/excel/export' and (params like :params or params like :params1)", [
                     ':params' => '%' . addcslashes(addcslashes($route, '/'), '/') . '%',
@@ -463,6 +467,11 @@ eot;
                 Yii::$app->end();
             }
         }elseif($is_export == '2'){
+            $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state='2' and taskphp='daemon/excel/export' and (params like :params or params like :params1)", [
+                ':params' => '%' . addcslashes(addcslashes($route, '/'), '/') . '%',
+                ':params1' => '%' . addcslashes($route, '/') . '%',
+            ]);
+            
             Yii::$app->session->setFlash('error', "异步生成文件失败，请稍候重试{$filePath}");
             Yii::$app->response->redirect($url);
             Yii::$app->end();
@@ -477,12 +486,27 @@ eot;
     /**
      * 异步生成EXCEL缓存名
      */
-    public static $identParams = '';
     public static function exportCacheName($route='',$session='',$get='',$post='')
     {
         $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
         $idParam = Yii::$app->has('user') ? Yii::$app->user->idParam : '__id';
         $uid = $uid ? $uid : ($idParam&&isset($session[$idParam]) ? $session[$idParam] : 'notuser');
         return $route.'/'.$uid.'/'.(md5($get)).(self::$identParams ? '/'.md5(self::$identParams) : '');
+    }
+    
+    /**
+     * 返回缓存
+     * @return \yii\caching\FileCache
+     */
+    public static function cache()
+    {
+        if(!self::$cacheIdent){
+            self::$cacheIdent = \Yii::createObject([
+                'class' => '\yii\caching\FileCache',
+                'directoryLevel' => 1,
+                'cachePath' => '@runtime/excelNameCache',
+            ]);
+        }
+        return self::$cacheIdent;
     }
 }
