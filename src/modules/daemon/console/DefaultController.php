@@ -17,7 +17,7 @@ class DefaultController extends \webadmin\console\CController
     /**
      * 进程最多可执行次数
      */
-    public $maxProcessNum = 5000;
+    public $maxProcessNum = -1;
     
     /**
      * 是否windows系统

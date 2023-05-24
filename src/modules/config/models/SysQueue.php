@@ -94,6 +94,7 @@ class SysQueue extends \webadmin\ModelCAR
     
     /**
      * 弹出队列
+     * @return \webadmin\modules\config\models\SysQueue
      */
     public static function reserve()
     {
@@ -170,7 +171,7 @@ class SysQueue extends \webadmin\ModelCAR
     public static function listen($maxNum = 9999, $timeout = 3)
     {
         $num = 0;
-        while($num < $maxNum){
+        while($maxNum === -1 || $num < $maxNum){
             $num++;
             if ($payload = SysQueue::reserve()) {
                 //echo "\r\n{$num}:queue-{$payload->id}";

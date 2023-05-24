@@ -66,6 +66,7 @@ class SysCrontab extends \webadmin\ModelCAR
     
     /**
      * 弹出任务
+     * @return \webadmin\modules\config\models\SysCrontab
      */
     public static function reserve()
     {
@@ -150,7 +151,7 @@ class SysCrontab extends \webadmin\ModelCAR
     public static function listen($maxNum = 9999, $timeout = 3)
     {
         $num = 0;
-        while($num < $maxNum){
+        while($maxNum === -1 || $num < $maxNum){
             $num++;
             if ($payload = SysCrontab::reserve()) {
                 //echo "\r\n{$num}:crontab-{$payload->id}";
