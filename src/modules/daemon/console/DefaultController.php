@@ -71,6 +71,7 @@ class DefaultController extends \webadmin\console\CController
         {
             case 'rstart': // 计划任务启动
                 $this->actionRstart();
+                break;
 			case 'restart': // 重启
                 $this->actionRestart();
                 break;
@@ -102,7 +103,7 @@ class DefaultController extends \webadmin\console\CController
     public function actionDaemon()
     {
         set_time_limit(0);
-        if(($pid = $this->_processes())){
+        if(($pid = $this->_processes()) && $this->_find($pid)){
             $state = $this->ansiFormat('already started', Console::FG_RED);
             Console::output("processes {$this->processName} {$state}({$pid}).");
             return 0;
@@ -142,8 +143,10 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionStart()
     {
-        $pid = $this->_processes();
-        if(empty($pid)){
+        if(($pid = $this->_processes()) && $this->_find($pid)){
+            $state = $this->ansiFormat('already started', Console::FG_RED);
+            Console::output("processes {$this->processName} {$state}({$pid}).");
+        }else{
             $this->_run($this->processCmd);
             usleep(400000);
             if(($pid = $this->_processes())){
@@ -153,9 +156,6 @@ class DefaultController extends \webadmin\console\CController
                 $state = $this->ansiFormat('startup fail', Console::FG_RED);
                 Console::output("processes {$this->processName} {$state}.");
             }
-        }else{
-            $state = $this->ansiFormat('already started', Console::FG_RED);
-            Console::output("processes {$this->processName} {$state}({$pid}).");
         }
         
         return 0;
@@ -176,7 +176,7 @@ class DefaultController extends \webadmin\console\CController
             $state = $this->ansiFormat('not started', Console::FG_RED);
             Console::output("processes {$this->processName} {$state}.");
         }else{
-            $this->_kill($pid);
+            if($this->_find($pid)) $this->_kill($pid);
             unlink($this->pidFile);
             $state = $this->ansiFormat('Shutting down success', Console::FG_GREEN);
             Console::output("processes {$this->processName} {$state}.");
@@ -209,14 +209,14 @@ class DefaultController extends \webadmin\console\CController
      */
     public function actionStatus()
     {
-        $pid = $this->_processes();
-        if(empty($pid)){
-            $state = $this->ansiFormat('not started', Console::FG_RED);
-            Console::output("processes {$this->processName} {$state}.");
-        }else{
+        if(($pid = $this->_processes()) && $this->_find($pid)){
             $state = $this->ansiFormat('is started', Console::FG_GREEN);
             Console::output("processes {$this->processName} {$state}({$pid}).");
+        }else{
+            $state = $this->ansiFormat('not started', Console::FG_RED);
+            Console::output("processes {$this->processName} {$state}.");
         }
+        
         return 0;
     }
     
@@ -241,7 +241,6 @@ class DefaultController extends \webadmin\console\CController
         $cmd = 'ps aux | grep yii | grep '.$this->processCmd;
 		exec($cmd,$result,$code);
 		if(empty($result)){
-		    $this->actionStop();
 		    $this->actionStart();
 		}else{
 		    $pid = $this->_processes();

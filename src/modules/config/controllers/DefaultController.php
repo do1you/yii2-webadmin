@@ -40,7 +40,7 @@ class DefaultController extends \webadmin\BController
         foreach($excelDownCache as $item){
             $params = json_decode($item['params'],true);
             $cacheName = $params ? \webadmin\ext\PhpExcel::exportCacheName($params[0],$params[1],$params[2],$params[3]) : '';
-            $path = $cacheName ? Yii::$app->cache->get($cacheName) : '';
+            $path = $cacheName ? \webadmin\ext\PhpExcel::cache()->get($cacheName) : '';
             if($path && file_exists($path)){
                 if(stristr(PHP_OS, 'WIN')){
                     $encode = stristr(PHP_OS, 'WIN') ? 'GBK' : 'UTF-8';
