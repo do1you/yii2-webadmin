@@ -90,6 +90,7 @@ class SysCrontab extends \webadmin\ModelCAR
         ->limit(1)
         ->one();
         
+        unset($time,$startSec);
         if($payload){
             $payload->run_state = '1';
             $payload->last_time = time();
@@ -152,13 +153,15 @@ class SysCrontab extends \webadmin\ModelCAR
     {
         $num = 0;
         while($maxNum === -1 || $num < $maxNum){
-            $num++;
+            if($maxNum !== -1) $num++;
             if ($payload = SysCrontab::reserve()) {
                 //echo "\r\n{$num}:crontab-{$payload->id}";
                 $payload->release($payload->handle());
                 
                 // 记录数据库操作日志
                 \webadmin\modules\logs\models\LogDatabase::logmodel()->saveLog();
+                
+                unset($payload);
             } elseif ($timeout) {
                 //echo "\r\n{$num}:sleep";
                 sleep($timeout);
@@ -227,9 +230,6 @@ class SysCrontab extends \webadmin\ModelCAR
      */
     public static function runCmd($command = '', $params = [], $isCmd = false)
     {
-        set_time_limit(3600);
-        ini_set('memory_limit', '-1');
-        
         $params = is_array($params) ? $params : ($params ? json_decode($params) : []);
         if($isCmd){ // 命令行模式
             $isWindows = (strtoupper(substr(PHP_OS,0,3))=='WIN' ? true : false);

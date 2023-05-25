@@ -116,6 +116,7 @@ class LogDatabase extends \webadmin\ModelCAR
                 ->batchInsert(self::tableName(),$colTitle,$data)
                 ->execute();
             $this->logs = [];
+            unset($parentId,$data,$colTitle,$time,$item,$table,$act,$oatts,$atts,$primaryKey,$key,$value);
         }
     }
     
@@ -152,7 +153,10 @@ class LogDatabase extends \webadmin\ModelCAR
         return $this->hasOne(\webadmin\modules\authority\models\AuthUser::className(), ['id' => 'user_id']);
     }
 
-	// 返回静态资源类
+	/**
+	 * 返回静态资源类
+	 * @return \webadmin\modules\logs\models\LogDatabase
+	 */
     public static function logmodel()
 	{
 		if(!self::$logdb){

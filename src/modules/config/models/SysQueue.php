@@ -182,6 +182,7 @@ class SysQueue extends \webadmin\ModelCAR
                     $thDay = date('Y-m-d H:i:s',time()-86400*3); // 失败的删除三天前数据
                     $mDay = date('Y-m-d H:i:s',time()-3600*2); // 执行中的删除两个小时前的数据
                     SysQueue::deleteAll("(state=3 and start_time<='{$thDay}') or (state=1 and start_time<='{$mDay}')");
+                    unset($thDay,$mDay);
                 }
                 
                 // 记录数据库操作日志
@@ -190,6 +191,8 @@ class SysQueue extends \webadmin\ModelCAR
                 //echo "\r\n{$num}:sleep";
                 sleep($timeout);
             }
+            
+            if($num>=100000) $num = 0;
         }
     }
     

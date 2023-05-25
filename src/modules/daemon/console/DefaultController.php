@@ -112,22 +112,28 @@ class DefaultController extends \webadmin\console\CController
             file_put_contents($this->pidFile, $pid);
         }
         
+        $config_queue_processes = SysConfig::config('config_queue_processes',3); // 队列进程数
+        $config_crontab_processes = SysConfig::config('config_crontab_processes',1); // 计划任务进程数
         while(true){
             // 处理队列进程数
-            $queueNums = SysConfig::config('config_queue_processes',3) - count($this->_processesPid(true,'run-queue'));
+            $pids = $this->_processesPid(true,'run-queue');
+            $queueNums = $config_queue_processes - count($pids);
             if($queueNums > 0){
                 for($i=0;$i<$queueNums;$i++){
                     $this->_run('daemon/default/run-queue');
                 }
             }
+            unset($pids, $queueNums, $i);
             
             // 处理计划任务进程数
-            $queueNums = SysConfig::config('config_crontab_processes',1) - count($this->_processesPid(true,'run-crontab'));
+            $pids = $this->_processesPid(true,'run-crontab');
+            $queueNums = $config_crontab_processes - count($pids);
             if($queueNums > 0){
                 for($i=0;$i<$queueNums;$i++){
                     $this->_run('daemon/default/run-crontab');
                 }
             }
+            unset($pids, $queueNums, $i);
             
             sleep(3);
         }
@@ -278,6 +284,7 @@ class DefaultController extends \webadmin\console\CController
             $read = 0;
         }
         @pclose($handle);
+        unset($dir, $path, $cmd, $handle);
         return $read;
     }
     
