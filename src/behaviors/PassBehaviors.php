@@ -14,7 +14,7 @@ class PassBehaviors extends \yii\base\Behavior
     /**
      * 简易密码列表
      */
-    public $easyPassword = ['123456','12345678','111111','11111111','888888','123123'];
+    public $easyPassword = ['123456','12345678','111111','11111111'];
     
     /**
      * 行为触发的事件
@@ -30,9 +30,18 @@ class PassBehaviors extends \yii\base\Behavior
     public function beforeAction($event)
     {
         if($event->action->id=='password'){
+            if(Yii::$app->request->isPost){
+                unset(Yii::$app->session['API_PASSWORD']);
+            }
+            
             return true;
         }
         
+        if(Yii::$app->session['API_PASSWORD']){
+            return true;
+        }
+        
+        Yii::$app->session['API_PASSWORD'] = date('Y-m-d H:i:s');
         if($this->easyPassword && is_array($this->easyPassword) && !Yii::$app->user->isGuest && Yii::$app->user->identity){
             foreach($this->easyPassword as $pass){
                 if(Yii::$app->user->identity->validatePassword($pass)){
