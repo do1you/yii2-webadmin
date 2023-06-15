@@ -113,6 +113,10 @@ abstract class BController extends \yii\web\Controller
                 'class' => \webadmin\behaviors\WebAuthFilter::className(),
                 'isAccessToken' => $this->isAccessToken,
             ],
+            // 过于简单的密码判断
+            'passBehaviors' => [
+                'class' => \webadmin\behaviors\PassBehaviors::className(),
+            ],
             // 缓存查询条件
             'searchBehaviors' => [
                 'class' => \webadmin\behaviors\SearchBehaviors::className(),
