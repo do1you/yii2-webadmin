@@ -280,7 +280,14 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['login_name' => $username, 'state' => '0']);
+        $user = static::findOne(['login_name' => $username, 'state' => '0']);
+        
+        // 用户名不存在时根据手机号提取用户
+        if(!$user){
+            $user = static::find()->where(['mobile' => $username, 'state' => '0'])->orderBy('id desc')->one();
+        }
+        
+        return $user;
     }
     
     /**
