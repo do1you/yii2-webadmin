@@ -44,6 +44,23 @@ class Events
     */
    public static function onMessage($client_id, $message)
    {
+       $params = $message ? @json_decode($message, true) : [];
+       if(!empty($params['type'])){
+           switch($params['type'])
+           {
+               // 收到客户端心跳
+               case 'ping':
+                   Gateway::sendToClient($client_id, json_encode([
+                        'type' => 'replyPing'
+                   ]));
+                   break;
+               // 收到客户端回复心跳
+               case 'replyPing':
+                   break;
+           }
+           
+       }
+       
        // 向所有人发送 
        //Gateway::sendToAll("$client_id said $message\r\n");
    }

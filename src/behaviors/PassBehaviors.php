@@ -29,6 +29,10 @@ class PassBehaviors extends \yii\base\Behavior
      */
     public function beforeAction($event)
     {
+        if(preg_match("/cli/i", php_sapi_name())){
+            return true;
+        }
+        
         if($event->action->id=='password'){
             if(Yii::$app->request->isPost){
                 unset(Yii::$app->session['API_PASSWORD']);
