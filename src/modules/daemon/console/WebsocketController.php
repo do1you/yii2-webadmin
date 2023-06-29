@@ -157,7 +157,7 @@ class WebsocketController extends \webadmin\console\CController
      */
     public function init()
     {
-        //ini_set('memory_limit', '256M');
+
     }
     
     /**
@@ -166,6 +166,12 @@ class WebsocketController extends \webadmin\console\CController
     public function afterAction($action, $result)
     {
         if(Worker::getAllWorkers()){
+            $runtime = Yii::getAlias('@runtime');
+            $unique_prefix = 'process_'.$this->module->id.DIRECTORY_SEPARATOR.\basename(__FILE__,'.php');
+            Worker::$pidFile = $runtime.DIRECTORY_SEPARATOR.$unique_prefix.'.pid';
+            Worker::$logFile = $runtime.DIRECTORY_SEPARATOR.$unique_prefix.'.workerman.log';
+            Worker::$statusFile = $runtime.DIRECTORY_SEPARATOR.$unique_prefix.'.status';
+            \yii\helpers\FileHelper::createDirectory(dirname(Worker::$pidFile));
             Worker::runAll();
         }
         
