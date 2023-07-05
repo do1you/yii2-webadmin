@@ -335,10 +335,10 @@ class WebsocketController extends \webadmin\console\CController
     public function actionSendall($data, $client_id_array = null, $exclude_client_id = null)
     {
         if($data){
-            if($client_id_array){
+            if($client_id_array && is_array($client_id_array)){
                 $client_id_array = implode(",",$client_id_array);
             }
-            if($exclude_client_id){
+            if($exclude_client_id && is_array($exclude_client_id)){
                 $exclude_client_id = implode(",",$exclude_client_id);
             }
             \GatewayWorker\Lib\Gateway::$registerAddress = "{$this->registerHost}:{$this->registerPort}";

@@ -187,6 +187,7 @@ class ActiveField extends \yii\widgets\ActiveField
             ]);
         }
         $fileVal = !empty($fileArr) ? json_encode($fileArr) : '""'; // 默认文件
+        $callback = !empty($options['callback']) ? $options['callback'] : "";
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/dropzone/dropzone.min.js',['depends' => \webadmin\WebAdminAsset::className()]);
         $view->registerJs("
@@ -215,6 +216,7 @@ class ActiveField extends \yii\widgets\ActiveField
                         var elname = $('#{$id}').attr('name'),
                             fv = $('form.validate').data('bootstrapValidator');
                         fv && fv.options.fields[elname] && fv.updateStatus(elname,'NOT_VALIDATED', null);
+                        {$callback}
                     });
                     
                     var mockFile = {$fileVal};
