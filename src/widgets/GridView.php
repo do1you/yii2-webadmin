@@ -45,6 +45,11 @@ class GridView extends \yii\grid\GridView
     public $colspans = [];
     
     /**
+     * 表格默认样式
+     */
+    public $tableOptions = ['class' => 'table table-striped table-bordered table-nowrap'];
+    
+    /**
      * 行尾属性
      */
     public $footerRowOptions = ['class'=>'success']; // primary warning info danger success palegreen

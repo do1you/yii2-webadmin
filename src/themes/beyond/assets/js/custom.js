@@ -148,8 +148,9 @@
 	 
 	// 表格行头固定
  	if($('table.table').not('.notFix').length){
- 		$(window).add('.grid-view').on('scroll',function(){
- 			var scrollTop = $(window).scrollTop();
+ 		$(window).add('.grid-view').on('scroll',function(){ // .add('.grid-view')
+ 			var scrollTop = $(window).scrollTop(),
+				scrollLeft = $(window).scrollLeft();
  			$('table.table').not('.notFix').each(function(){
  				var box = $(this),
  					width = box.width(),
@@ -157,9 +158,10 @@
 					scrollObj = box.data('scrollObj'),
  					offset = box.offset();
  				if(!fixhdiv || width!=fixhdiv.width()){
+					fixhdiv && fixhdiv.remove();
  					box.find('>thead th').each(function(){
  						var w = $(this).width();
- 						$(this).width(w)
+ 						$(this).width(w);
  					});
  					fixhdiv = box.clone().css({
  						'position' : 'fixed',
