@@ -264,6 +264,13 @@ class Worker
      * @var string
      */
     public static $pidFile = '';
+    
+    /**
+     * The file used to store the master process status file.
+     *
+     * @var string
+     */
+    public static $statusFile = '';
 
     /**
      * Log file.
@@ -595,7 +602,7 @@ class Worker
 
         // For statistics.
         static::$_globalStatistics['start_timestamp'] = \time();
-        static::$_statisticsFile                      = \sys_get_temp_dir() . "/$unique_prefix.status";
+        static::$_statisticsFile                      = static::$statusFile ? static::$statusFile : \sys_get_temp_dir() . "/$unique_prefix.status";
 
         // Process title.
         static::setProcessTitle('WorkerMan: master process  start_file=' . static::$_startFile);
