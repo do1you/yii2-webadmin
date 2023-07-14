@@ -102,7 +102,7 @@ class WebsocketController extends \webadmin\console\CController
      * @var bool
      * 是否分布式部署，将自动获取Gateway服务的本机IP地址，也可以自行指定
      */
-    public $service;
+    public $service = true;
     
     /**
      * @var bool
@@ -256,7 +256,7 @@ class WebsocketController extends \webadmin\console\CController
         if($this->service && $this->gatewayLanIp=='127.0.0.1'){
             $this->gatewayLanIp = gethostbyname(gethostname());
         }
-        
+
         // gateway 进程，这里使用Text协议，可以用telnet测试 websocket&http&tcp
         $gateway = new Gateway("{$this->gatewayProtocol}://0.0.0.0:{$this->gatewayPort}");
         // gateway名称，status方便查看
@@ -265,8 +265,8 @@ class WebsocketController extends \webadmin\console\CController
         $gateway->count = $this->gatewayCount;
         // 本机ip，分布式部署时gateway使用的内网连接ip，用于注册到register服务
         $gateway->lanIp = $this->gatewayLanIp;
-        // 
-        $gateway->innerTcpWorkerListen = '0.0.0.0'; // 监听服务采用全网段监听形式
+        // 监听服务采用全网段监听形式
+        $gateway->innerTcpWorkerListen = '0.0.0.0'; 
         // 内部通讯起始端口，假如$gateway->count=4，起始端口为4000
         // 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口
         $gateway->startPort = $this->gatewayStartPort;
