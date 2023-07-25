@@ -16,9 +16,15 @@
 namespace webadmin\modules\config\models;
 
 use Yii;
+use phpDocumentor\Reflection\Types\Static_;
 
 class SysQueue extends \webadmin\ModelCAR
 {
+    /**
+     * 已插入队列的记录
+     */
+    public static $insertList = [];
+    
     /**
      * 返回数据库表名称
      */
@@ -79,15 +85,35 @@ class SysQueue extends \webadmin\ModelCAR
     /**
      * 插入队列，执行方法，参数，其他参数(priority:优先级，delay:延迟时间)
      */
-    public static function queue($route = '', $params = [], $data = [])
+    public static function queue($route = '', $params = [], $options = [])
     {
+        if(!isset(static::$insertList[$route])){
+            static::$insertList[$route] = [];
+        }
+        
+        // 当前进程已经插入过队列，不再执行
+        if(in_array([
+            'params' => $params,
+            'data' => $options,
+        ], static::$insertList[$route])){
+            return false;
+        }
+        
         if($route){
+            $data = $options;
             $data['taskphp'] = $route;
             $data['params'] = json_encode($params);
             $isWebMode = Yii::$app instanceof \yii\web\Application;
             if(!isset($data['user_id'])) $data['user_id'] = $isWebMode&&Yii::$app->user->id ? Yii::$app->user->id : '0';
             $data['create_time'] = date('Y-m-d H:i:s');
-            return \webadmin\modules\config\models\SysQueue::insertion($data);
+            $result = \webadmin\modules\config\models\SysQueue::insertion($data);
+            if($result){
+                static::$insertList[$route][] = [
+                    'params' => $params,
+                    'data' => $options,
+                ];
+            }
+            return $result;
         }
         return false;
     }
