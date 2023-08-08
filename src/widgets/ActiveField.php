@@ -11,6 +11,7 @@ use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\JsExpression;
+use yii\bootstrap\BaseHtml;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -21,6 +22,8 @@ class ActiveField extends \yii\widgets\ActiveField
     public $template = "{label}\n<div class='col-sm-10'>{input}\n{hint}\n{error}</div>";
     
     public $enableAjaxValidation = true;
+    
+    public $isSearchInput;
     
     protected $_inputId;
     
@@ -337,9 +340,34 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function searchInput($options = [])
     {
-        $this->template = '{label}{input}{hint}';
-        $this->options = ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'];
-        $this->labelOptions = ['class' => 'control-label padding-right-5'];
+        //$this->template = '{label}{input}{hint}';
+        //$this->options = ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'];
+        //$this->labelOptions = ['class' => 'control-label padding-right-5'];
+        if(isset($options['template'])){
+            $this->template = $options['template'];
+            unset($options['template']);
+        }else{
+            $this->template = '{label}<div class="col-sm-8 no-padding-left no-padding-right">{input}{hint}</div>';
+        }
+        
+        if(isset($options['options'])){
+            $this->options = $options['options'];
+            unset($options['options']);
+        }else{
+            $this->options = ['class' => 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 form-group float-group no-padding-left'];
+        }
+        
+        if(isset($options['labelOptions'])){
+            $this->labelOptions = $options['labelOptions'];
+            unset($options['labelOptions']);
+        }else{
+            $this->labelOptions = ['class' => 'col-sm-4 control-label float-label  padding-right-5 no-padding-left'];
+        }
+        
+        $this->isSearchInput = true;
+        if($this->form && isset($this->form->options['class']) && $this->form->options['class']=='form-inline'){
+            $this->form->options['class'] .= ' row';
+        }
         
         return $this->textInput($options);
     }
@@ -693,12 +721,32 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function dropDownList($items, $options = [])
     {
-        if(!is_array($this->model)){
-            return parent::dropDownList($items, $options);
+        if($this->isSearchInput && isset($options['style']) && ($options['style']=='width:200px;' || $options['style']=='min-width:200px;')){
+            unset($options['style']);
         }
         
         $options = array_merge($this->inputOptions, $options);
-        $name = (isset($options['name']) ? $options['name'] : $this->attribute);
+        $name = (isset($options['name']) ? $options['name'] : (!is_array($this->model) ? BaseHtml::getInputName($this->model, $this->attribute) : $this->attribute));
+        
+        if(!isset($options['unselect'])) $options['unselect'] = ''; // if(!empty($options['multiple']))
+        if (empty($options['multiple'])) {
+            $hiddenOptions = [];
+            if (!empty($options['disabled'])) {
+                $hiddenOptions['disabled'] = $options['disabled'];
+            }
+            $hidden = BaseHtml::hiddenInput($name, $options['unselect'], $hiddenOptions);
+        }else{
+            $hidden = '';
+        }
+        
+        if(!is_array($this->model)){
+            parent::dropDownList($items, $options);
+            if(isset($this->parts['{input}'])){
+                $this->parts['{input}'] = $hidden.$this->parts['{input}'];
+            }
+            return $this;
+        }
+        
         $value = (isset($options['value']) ? $options['value'] : (isset($this->model[$this->attribute]) ? $this->model[$this->attribute] : ''));
         
         if(isset($options['label'])){
@@ -709,8 +757,7 @@ class ActiveField extends \yii\widgets\ActiveField
             $options['id'] = $this->getInputId($options);
         }
         
-        $options['unselect'] = ''; // if(!empty($options['multiple'])) 
-        $this->parts['{input}'] = Html::dropDownList($name, $value, $items, $options);
+        $this->parts['{input}'] = $hidden.Html::dropDownList($name, $value, $items, $options);
         
         return $this;
     }

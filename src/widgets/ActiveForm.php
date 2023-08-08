@@ -34,6 +34,7 @@ class ActiveForm extends \yii\widgets\ActiveForm
             'template' => '{label}{input}{hint}',
             'options' => ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'],
             'labelOptions' => ['class' => 'control-label padding-right-5'],
+            'isSearchInput' => true,
         ];
         
         return $this;
