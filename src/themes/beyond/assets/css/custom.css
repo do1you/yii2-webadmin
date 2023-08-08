@@ -64,7 +64,8 @@ table.table.table-nowrap tbody td{text-overflow:ellipsis;overflow:hidden;white-s
 .form-inline .float-group .input-icon{width:100% !important;}
 .form-inline .float-group .input-icon.icon-right>input,.form-inline .float-group .form-control{width: 100% !important;}
 .form-inline .form-group{margin-top:5px;margin-bottom:5px;}
-.form-inline .select2-container .select2-selection--multiple{min-height:34px;max-height:34px;}
+.form-inline .select2-container .select2-selection--multiple{min-height:34px;}
+.form-inline .select2-container .select2-selection--multiple .select2-selection__rendered{display:block;padding-bottom:2px;}
 .form-inline .form-group button.btn{ margin-left:15px;}
 .dropzone .dz-preview .dz-image img{width:120px;height:120px;}
 .grid-view{overflow:auto;}
