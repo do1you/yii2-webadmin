@@ -23,7 +23,7 @@ use webadmin\widgets\ActiveForm;
                     ],
                 ]); ?>
 
-				<?= $form->field($model, 'addtime')->searchInput()->datetimerange(['style'=>'min-width:280px;']) ?>
+				<?= $form->field($model, 'addtime')->searchInput()->datetimerange() ?>
 				
 				<?= $form->field($model, 'mobile')->searchInput() ?>
 
