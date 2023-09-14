@@ -864,7 +864,9 @@ class ActiveField extends \yii\widgets\ActiveField
         if($clientValidation || $ajaxValidation){
             foreach ($this->model->getActiveValidators($attribute) as $validator){
                 if($validator->enableClientValidation) {
-                    switch(basename(get_class($validator))){
+                    $class = get_class($validator);
+                    $class = basename(str_replace('\\', '/', $class));
+                    switch($class){
                         case 'CompareValidator': // 校验字段一致性
                             if(!isset($htmlOptions['data-bv-identical'])){
                                 $compareAttribute = $validator->compareAttribute===null ? $attribute.'_repeat' : $validator->compareAttribute;
