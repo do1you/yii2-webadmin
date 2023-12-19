@@ -71,7 +71,15 @@ class AuthUserController extends \webadmin\BController
         $model = $this->findModel($id);
         $model->setScenario('update');
 
-        if ($model->load(Yii::$app->request->post()) && $model->ajaxValidation() && $model->validate()) {
+        $data = $resetdata = Yii::$app->request->post();
+
+        //获取成功post值之后，重置原始post
+        if (isset($resetdata['AuthUser'])) {            
+            $encrypass = !empty($resetdata['AuthUser']['password']) ? Yii::$app->security->generatePasswordHash($resetdata['AuthUser']['password']) : '';
+            $resetdata['AuthUser']['password'] = $encrypass;
+            Yii::$app->request->setBodyParams($resetdata);
+        }
+        if ($model->load($data) && $model->ajaxValidation() && $model->validate()) {
             if($model->password){
                 $model->setPassword($model->password); // 密码加密
             }else{

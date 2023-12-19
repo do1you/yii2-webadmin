@@ -396,7 +396,7 @@ class PhpExcel
                 if (!empty($list['0']) || !empty($list['1'])) {
                     $message = "您有" . count($list['0']) . "个文档正在排队中，" . count($list['1']) . "个文档正在后台生成中，请喝杯咖啡耐心等待。";
                     Yii::$app->session->setFlash('info exceldown', $message);
-                    $url = \yii\helpers\Url::to(['/config/default/down', 'uid' => $uid]);
+                    $url = \yii\helpers\Url::to(['/config/default/down']);
                     $script = <<<eot
                     	var timeobj,fn = function(){
                     		$.ajax({
@@ -443,7 +443,8 @@ eot;
                 unlink($filePath);
                 PhpExcel::cache()->delete($cacheName);
             } elseif ($is_export == '2') { // 直接下载
-                $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state='2' and taskphp='daemon/excel/export' and (params like :params or params like :params1)", [
+                $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id=:user_id and state='2' and taskphp='daemon/excel/export' and (params like :params or params like :params1)", [
+                    ':user_id' => $uid,
                     ':params' => '%' . addcslashes(addcslashes($route, '/'), '/') . '%',
                     ':params1' => '%' . addcslashes($route, '/') . '%',
                 ]);

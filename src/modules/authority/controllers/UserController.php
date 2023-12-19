@@ -38,7 +38,10 @@ class UserController extends \webadmin\BController
         
         unset(Yii::$app->session['pageNumArr'],Yii::$app->session['searchWhereArr'],Yii::$app->session['searchQuestUrl']);
         $uid = ((Yii::$app instanceof \yii\web\Application && Yii::$app->user->id) ? Yii::$app->user->id : '');
-        $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id='{$uid}' and state!='2' and create_time<='".date('Y-m-d H:i:s',(time()-180))."'"); // 清空这个人超过三分钟的队列
+        $uid && \webadmin\modules\config\models\SysQueue::deleteAll("user_id=:user_id and state!='2' and create_time<=:create_time",[
+            ':user_id' => $uid,
+            ':create_time' => date('Y-m-d H:i:s',(time()-180)),
+        ]); // 清空这个人超过三分钟的队列
         
         Yii::$app->session->setFlash('success',Yii::t('authority', '缓存更新成功'));
         if(!empty($_SERVER['HTTP_REFERER'])){
@@ -58,8 +61,20 @@ class UserController extends \webadmin\BController
         }
         
         $model = new \webadmin\modules\authority\models\AuthUser();
+        $loginErrors = isset(Yii::$app->session['loginErrors']) ? Yii::$app->session['loginErrors'] : [];
+        $loginErrors = is_array($loginErrors) ? $loginErrors : [];
+        
+        if(count($loginErrors)>=6){
+            $lastTime = end($loginErrors);
+            if(time() - $lastTime > 3600){
+                unset(Yii::$app->session['loginErrors']);
+            }else{
+                Yii::$app->session->setFlash('error',Yii::t('authority', '您的电脑已被锁定，'.(3600 - (time() - $lastTime)).'秒后才能再次登录.'));
+                $lockError = true;
+            }
+        }
 
-        if( isset($_POST['AuthUser']) ){
+        if( isset($_POST['AuthUser']) && empty($lockError) ){
             $model->load(Yii::$app->request->post());
             $login_name = Yii::$app->request->getBodyParam('AuthUser')['login_name'];
             $password = Yii::$app->request->getBodyParam('AuthUser')['password'];
@@ -67,14 +82,25 @@ class UserController extends \webadmin\BController
             if(empty($login_name) || empty($password)){
                 Yii::$app->session->setFlash('error',Yii::t('authority', '用户名和密码不能为空.'));
             }elseif(($nModel = \webadmin\modules\authority\models\AuthUser::findByUsername($login_name))){
-                if($nModel->validatePassword($password) && Yii::$app->user->login($nModel,86400)){
+                if($nModel->validatePassword($password) && Yii::$app->user->login($nModel,3600)){
+                    if ($nModel->checkPassword($password, "reset") !== true) {
+                        //当前密码验证不够安全，强制修改密码
+                        Yii::$app->session['RESET_PASSWORD'] = 1;
+                    }
+                    
+                    // 登录成功
+                    $nModel->last_time = date('Y-m-d H:i:s');
+                    $nModel->save(false);
+                    
                     // 登录成功
                     $url = Yii::$app->user->getReturnUrl(\yii\helpers\Url::toRoute('index'));
                     if(strlen($url)>150 || stripos($url,Yii::$app->request->baseUrl)===false) $url = \yii\helpers\Url::toRoute('index');
                 }else{
+                    Yii::$app->session['loginErrors'] = array_merge($loginErrors,[time()]);
                     Yii::$app->session->setFlash('error',Yii::t('authority', '用户密码不正确.'));
                 }
             }else{
+                Yii::$app->session['loginErrors'] = array_merge($loginErrors,[time()]);
                 Yii::$app->session->setFlash('error',Yii::t('authority', '用户信息不存在.'));
             }
             
@@ -83,7 +109,7 @@ class UserController extends \webadmin\BController
                 'username' => $login_name,
                 'modules' => ($this->module ? $this->module->id : null),
                 'addtime' => date('Y-m-d H:i:s'),
-                'ip' => Yii::$app->request->userIP,
+                'ip' => Yii::$app->request->userIP.(isset($_SERVER['REMOTE_PORT']) ? ':'.$_SERVER['REMOTE_PORT'] : ''),
                 'result' => (!empty($url) ? '0' : '1'),
             ]);
             
@@ -120,10 +146,14 @@ class UserController extends \webadmin\BController
 	    $data = Yii::$app->request->post();	    
 	    if(isset($data['AuthUser'])){
 	        if($model->load($data) && $model->ajaxValidation() && $model->validate()) {
+	            unset(Yii::$app->session['RESET_PASSWORD']);
+	            
 	            $model->setPassword($model->password);
 	            $model->save(false);
-	            Yii::$app->session->setFlash('success',Yii::t('authority', '密码修改成功'));
-	            return $this->redirect(\yii\helpers\Url::toRoute('password'));
+	            Yii::$app->session->setFlash('success',Yii::t('authority', '密码修改成功，请重新登录'));
+	            // return $this->redirect(\yii\helpers\Url::toRoute('password'));
+	            Yii::$app->user->logout();
+	            return $this->redirect(\yii\helpers\Url::toRoute('index'));
 	        }
 	    }
 	    

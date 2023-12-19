@@ -34,8 +34,13 @@ class DefaultController extends \webadmin\BController
     {
         $result = [];
         
-        $user_id = Yii::$app->request->get('uid');
-        $excelDownCache = $user_id ? \webadmin\modules\config\models\SysQueue::find()->where("user_id='{$user_id}' and (state='2' or state='3') and callback='excel' order by id asc")->all() : [];
+        $excelDownCache = \webadmin\modules\config\models\SysQueue::find()->where([
+            'user_id' => Yii::$app->user->id,
+            'state' => ['2', '3'],
+            'callback' => 'excel',
+        ])
+        ->orderBy("id asc")
+        ->all();
         
         foreach($excelDownCache as $item){
             $params = json_decode($item['params'],true);
@@ -70,6 +75,15 @@ class DefaultController extends \webadmin\BController
                 'col_text' => 'name',
                 'col_v_text' => 'v_name',
                 'col_where' => ['level'=>2],
+            ],
+            // 城市包括省份
+            'sys-region-province' => [
+                'class' => '\webadmin\actions\Select2Action',
+                'className' => '\webadmin\modules\config\models\SysRegion',
+                'col_id' => 'id',
+                'col_text' => 'name',
+                'col_v_text' => 'v_name',
+                'col_where' => ['level'=>[1,2]],
             ],
         ];
     }

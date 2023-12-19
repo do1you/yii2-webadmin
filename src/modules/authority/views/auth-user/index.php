@@ -49,7 +49,7 @@ use webadmin\modules\config\models\SysLdItem;
                     	       return '<label><input type="checkbox" name="id[]" class="checkActive" value="'.$key.'"><span class="text"></span></label>';
             	            },
             	        ],
-                    	['class' => '\yii\grid\SerialColumn'],
+                    	//['class' => '\yii\grid\SerialColumn'],
 
                 	     'id',
                 	     'name',
@@ -64,6 +64,9 @@ use webadmin\modules\config\models\SysLdItem;
             	             'value' => 'v_roleList',
             	         ],
             	         'sso_id',
+            	         'reg_time',
+            	         'last_time',
+            	         'pass_time',
             	         [
             	             'class' => '\yii\grid\ActionColumn',
             	             'buttonOptions' => ['data-pjax'=>'1'],

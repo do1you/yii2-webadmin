@@ -11,7 +11,6 @@ use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\JsExpression;
-use yii\bootstrap\BaseHtml;
 
 class ActiveField extends \yii\widgets\ActiveField
 {
@@ -22,8 +21,6 @@ class ActiveField extends \yii\widgets\ActiveField
     public $template = "{label}\n<div class='col-sm-10'>{input}\n{hint}\n{error}</div>";
     
     public $enableAjaxValidation = true;
-    
-    public $isSearchInput;
     
     protected $_inputId;
     
@@ -50,6 +47,23 @@ class ActiveField extends \yii\widgets\ActiveField
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/datetime/bootstrap-datepicker.js',['depends' => \webadmin\WebAdminAsset::className()]);
         $view->registerJs("$('#{$id}').datepicker({'format':'yyyy','startView':2,'minViewMode':2});");
+        return $this;
+    }
+    
+     /**
+     * 日期-年月
+     */
+    public function datemonth($options = [])
+    {
+        $options['data-date-format'] = 'yyyy-mm'; 
+        $this->textInput($options);
+        if(!empty($this->parts['{input}'])){
+            $this->parts['{input}'] = "<span class='input-icon icon-right'> {$this->parts['{input}']} <i class='fa fa-calendar'></i></span>";
+        }
+        $id = $this->getInputId($options);
+        $view = $this->form->getView();
+        $view->registerJsFile('@assetUrl/js/datetime/bootstrap-datepicker.js',['depends' => \webadmin\WebAdminAsset::className()]);
+        $view->registerJs("$('#{$id}').datepicker({'format':'yyyy-mm','startView':1,'minViewMode':1});");
         return $this;
     }
     
@@ -190,7 +204,6 @@ class ActiveField extends \yii\widgets\ActiveField
             ]);
         }
         $fileVal = !empty($fileArr) ? json_encode($fileArr) : '""'; // 默认文件
-        $callback = !empty($options['callback']) ? $options['callback'] : "";
         $view = $this->form->getView();
         $view->registerJsFile('@assetUrl/js/dropzone/dropzone.min.js',['depends' => \webadmin\WebAdminAsset::className()]);
         $view->registerJs("
@@ -219,7 +232,6 @@ class ActiveField extends \yii\widgets\ActiveField
                         var elname = $('#{$id}').attr('name'),
                             fv = $('form.validate').data('bootstrapValidator');
                         fv && fv.options.fields[elname] && fv.updateStatus(elname,'NOT_VALIDATED', null);
-                        {$callback}
                     });
                     
                     var mockFile = {$fileVal};
@@ -340,34 +352,9 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function searchInput($options = [])
     {
-        //$this->template = '{label}{input}{hint}';
-        //$this->options = ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'];
-        //$this->labelOptions = ['class' => 'control-label padding-right-5'];
-        if(isset($options['template'])){
-            $this->template = $options['template'];
-            unset($options['template']);
-        }else{
-            $this->template = '{label}<div class="col-sm-8 no-padding-left no-padding-right">{input}{hint}</div>';
-        }
-        
-        if(isset($options['options'])){
-            $this->options = $options['options'];
-            unset($options['options']);
-        }else{
-            $this->options = ['class' => 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 form-group float-group no-padding-left'];
-        }
-        
-        if(isset($options['labelOptions'])){
-            $this->labelOptions = $options['labelOptions'];
-            unset($options['labelOptions']);
-        }else{
-            $this->labelOptions = ['class' => 'col-sm-4 control-label float-label  padding-right-5 no-padding-left'];
-        }
-        
-        $this->isSearchInput = true;
-        if($this->form && isset($this->form->options['class']) && $this->form->options['class']=='form-inline'){
-            $this->form->options['class'] .= ' row';
-        }
+        $this->template = '{label}{input}{hint}';
+        $this->options = ['class' => 'form-group margin-right-10 margin-top-5 margin-bottom-5'];
+        $this->labelOptions = ['class' => 'control-label padding-right-5'];
         
         return $this->textInput($options);
     }
@@ -709,7 +696,7 @@ class ActiveField extends \yii\widgets\ActiveField
         if(!isset($options['id'])){
             $options['id'] = $this->getInputId($options);
         }
-        
+
         $this->parts['{input}'] = Html::textInput($name, $value, $options);
         
         return $this;
@@ -721,32 +708,12 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public function dropDownList($items, $options = [])
     {
-        if($this->isSearchInput && isset($options['style']) && ($options['style']=='width:200px;' || $options['style']=='min-width:200px;')){
-            unset($options['style']);
+        if(!is_array($this->model)){
+            return parent::dropDownList($items, $options);
         }
         
         $options = array_merge($this->inputOptions, $options);
-        $name = (isset($options['name']) ? $options['name'] : (!is_array($this->model) ? BaseHtml::getInputName($this->model, $this->attribute) : $this->attribute));
-        
-        if(!isset($options['unselect'])) $options['unselect'] = ''; // if(!empty($options['multiple']))
-        if (empty($options['multiple'])) {
-            $hiddenOptions = [];
-            if (!empty($options['disabled'])) {
-                $hiddenOptions['disabled'] = $options['disabled'];
-            }
-            $hidden = BaseHtml::hiddenInput($name, $options['unselect'], $hiddenOptions);
-        }else{
-            $hidden = '';
-        }
-        
-        if(!is_array($this->model)){
-            parent::dropDownList($items, $options);
-            if(isset($this->parts['{input}'])){
-                $this->parts['{input}'] = $hidden.$this->parts['{input}'];
-            }
-            return $this;
-        }
-        
+        $name = (isset($options['name']) ? $options['name'] : $this->attribute);
         $value = (isset($options['value']) ? $options['value'] : (isset($this->model[$this->attribute]) ? $this->model[$this->attribute] : ''));
         
         if(isset($options['label'])){
@@ -757,7 +724,8 @@ class ActiveField extends \yii\widgets\ActiveField
             $options['id'] = $this->getInputId($options);
         }
         
-        $this->parts['{input}'] = $hidden.Html::dropDownList($name, $value, $items, $options);
+        $options['unselect'] = ''; // if(!empty($options['multiple'])) 
+        $this->parts['{input}'] = Html::dropDownList($name, $value, $items, $options);
         
         return $this;
     }
@@ -860,13 +828,13 @@ class ActiveField extends \yii\widgets\ActiveField
         $clientValidation = $this->isClientValidationEnabled(); // 是否开户客户端验证
         $ajaxValidation = $this->isAjaxValidationEnabled(); // 是否开启AJAX验证
         $oldOptions = $htmlOptions = $this->inputOptions;
-        
+
         if($clientValidation || $ajaxValidation){
             foreach ($this->model->getActiveValidators($attribute) as $validator){
-                if($validator->enableClientValidation) {
-                    $class = get_class($validator);
-                    $class = basename(str_replace('\\', '/', $class));
-                    switch($class){
+                if($validator->enableClientValidation) {   
+                    //原写法为  basename(get_class($validator)) 但是在测试以及生产环境，basename不生效，用pathinfo也一样，可能跟操作系统有关系？因此改正则       
+                    $validatorname = preg_replace('/^.+[\\\\\\/]/', '', get_class($validator));
+                    switch($validatorname){
                         case 'CompareValidator': // 校验字段一致性
                             if(!isset($htmlOptions['data-bv-identical'])){
                                 $compareAttribute = $validator->compareAttribute===null ? $attribute.'_repeat' : $validator->compareAttribute;
@@ -925,6 +893,7 @@ class ActiveField extends \yii\widgets\ActiveField
                         case 'FilterValidator': // 过滤器
                         case 'EachValidator': // 校验数组
                         case 'RegularExpressionValidator': // 正则
+                        case 'InlineValidator': // 自定义方法验证
                             if(!isset($htmlOptions['data-bv-remote'])){
                                 $htmlOptions['data-bv-remote'] = 'true';
                                 $htmlOptions['data-bv-remote-delay'] = 300;
@@ -960,8 +929,7 @@ class ActiveField extends \yii\widgets\ActiveField
         if(Yii::$app->controller->action->id=='view'){
             $htmlOptions['disabled'] = 'disabled';
             $htmlOptions['readonly'] = 'readonly';
-        }
-        
+        }        
         return $htmlOptions;
     }
     

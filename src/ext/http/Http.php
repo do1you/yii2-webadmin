@@ -1,4 +1,5 @@
 <?php
+namespace webadmin\ext\http;
 
 /**
  * HTTP功能工厂方法类

@@ -39,7 +39,7 @@ class LogApiResponse extends \webadmin\ModelCAR
             [['create_time'], 'safe'],
             [['interface'], 'string', 'max' => 80],
             [['platform', 'imei', 'result_msg'], 'string', 'max' => 255],
-            [['ip'], 'string', 'max' => 16],
+            [['ip'], 'string', 'max' => 23],
             [['result_code'], 'string', 'max' => 32],
         ];
     }

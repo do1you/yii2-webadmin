@@ -5,9 +5,6 @@
  * 调用示例代码：Yii::createObject('webadmin\ext\http\Httper')->getHttp('1')->post($url,$data)
  */
 namespace webadmin\ext\http;
- 
-require_once __DIR__.'/Http.php';
-use Http;
 
 class Httper{
 

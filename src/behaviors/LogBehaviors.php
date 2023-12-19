@@ -47,7 +47,7 @@ class LogBehaviors extends \yii\base\Behavior
                 'addtime' => date('Y-m-d H:i:s', floor(YII_BEGIN_TIME)),
                 'endtime' => date('Y-m-d H:i:s'),
                 'run_millisec' => round((microtime(true) - YII_BEGIN_TIME)*1000),
-                'ip' => Yii::$app->request->userIP,
+                'ip' => Yii::$app->request->userIP.(isset($_SERVER['REMOTE_PORT']) ? ':'.$_SERVER['REMOTE_PORT'] : ''),
                 'user_id' => (Yii::$app->user->id ? Yii::$app->user->id : 0),
             ]);
         }
