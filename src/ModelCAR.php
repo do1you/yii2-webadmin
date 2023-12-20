@@ -9,6 +9,7 @@ namespace webadmin;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Schema;
+use yii\db\StaleObjectException;
 
 class ModelCAR extends \yii\db\ActiveRecord
 {
@@ -217,5 +218,95 @@ class ModelCAR extends \yii\db\ActiveRecord
      */
     public function getV_self(){
         return $this;
+    }
+    
+    /**
+     * 继承删除关系，用于处理密钥锁
+     */
+    protected function deleteInternal()
+    {
+        if (!$this->beforeDelete()) {
+            return false;
+        }
+        
+        // we do not check the return value of deleteAll() because it's possible
+        // the record is already deleted in the database and thus the method will return 0
+        $condition = $this->getOldPrimaryKey(true);
+        $lock = $this->optimisticLock();
+        if ($lock !== null) {
+            $condition[$lock] = $this->$lock;
+        }
+        
+        if($this->hasMethod('getLockAttribute') && $this->hasMethod('getSecretKey') && $this->hasMethod('getOldSecretKey')){
+            $secretLock = $this->getLockAttribute();
+            $condition[$secretLock] = $this->getOldSecretKey();
+            
+            if($condition[$secretLock] != $this->getOldAttribute($secretLock)){
+                throw new \yii\web\HttpException(200, Yii::t('common', '数据库被篡改，禁止操作!'));
+            }
+        }
+        
+        $result = static::deleteAll($condition);
+        if (($lock !== null || (isset($secretLock) && $condition[$secretLock] != $secretLock)) && !$result) {
+            throw new StaleObjectException('The object being deleted is outdated.');
+        }
+        $this->setOldAttributes(null);
+        $this->afterDelete();
+        
+        return $result;
+    }
+    
+    /**
+     * 继续更新关系，用于处理密钥锁
+     */
+    protected function updateInternal($attributes = null)
+    {
+        if (!$this->beforeSave(false)) {
+            return false;
+        }
+        $values = $this->getDirtyAttributes($attributes);
+        if (empty($values)) {
+            $this->afterSave(false, $values);
+            return 0;
+        }
+        $condition = $this->getOldPrimaryKey(true);
+        $lock = $this->optimisticLock();
+        if ($lock !== null) {
+            $values[$lock] = $this->$lock + 1;
+            $condition[$lock] = $this->$lock;
+        }
+        
+        if($this->hasMethod('getLockAttribute') && $this->hasMethod('getSecretKey') && $this->hasMethod('getOldSecretKey')){
+            $secretLock = $this->getLockAttribute();
+            $condition[$secretLock] = $this->getOldSecretKey();
+            //var_dump($this->getOldSecretKey());var_dump($this->getSecretCol(true));
+            //var_dump($this->getSecretKey());var_dump($this->getSecretCol());
+            //exit;
+            if($condition[$secretLock] != $this->getOldAttribute($secretLock)){
+                throw new \yii\web\HttpException(200, Yii::t('common', '数据库被篡改，禁止操作!'));
+            }
+        }
+        
+        // We do not check the return value of updateAll() because it's possible
+        // that the UPDATE statement doesn't change anything and thus returns 0.
+        $rows = static::updateAll($values, $condition);
+        
+        if (($lock !== null || (isset($secretLock) && $condition[$secretLock] != $this->$secretLock)) && !$rows) {
+            throw new StaleObjectException('The object being updated is outdated.');
+        }
+        
+        if (isset($values[$lock])) {
+            $this->$lock = $values[$lock];
+        }
+        
+        $changedAttributes = [];
+        $oldAttributes = $this->getOldAttributes();
+        foreach ($values as $name => $value) {
+            $changedAttributes[$name] = isset($oldAttributes[$name]) ? $oldAttributes[$name] : null;
+            $this->setOldAttribute($name, $value);
+        }
+        $this->afterSave(false, $changedAttributes);
+        
+        return $rows;
     }
 }

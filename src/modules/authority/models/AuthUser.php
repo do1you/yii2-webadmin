@@ -45,7 +45,7 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
             [['name'], 'string', 'min' => 2, 'max' => 32],
             [['state', 'sso_id'], 'integer'],
             [['access_token'], 'string', 'max' => 64],
-            [['note', 'roleList', 'role_id', 'fail_num', 'unlock_time', 'reg_time', 'pass_time', 'last_time'], 'safe'],
+            [['note', 'roleList', 'role_id', 'fail_num', 'unlock_time', 'reg_time', 'pass_time', 'last_time', 'password'], 'safe'],
             [['login_name', 'mobile'], 'unique', 'filter' => "state != -1"],
 
             // 修改资料
@@ -158,17 +158,17 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
         return parent::delete();
     }
     
-    /**
-     * 增加密钥锁
-     */
-    public function secretKeyLock()
+    public function behaviors()
     {
         return [
-            'secret_key',
-            ['login_name','password','mobile'],
+            'SecretKeyLockBehavior' => [
+                'class' => \webadmin\behaviors\SecretKeyLockBehavior::className(),
+                'lockAttribute' => 'secret_key',
+                'secretAttribute' => ['login_name','password','mobile'],
+            ],
         ];
     }
-
+    
     // 获取状态中文
     public function getV_state($state = null)
     {
@@ -369,10 +369,10 @@ class AuthUser extends \webadmin\ModelCAR implements \yii\web\IdentityInterface
      */
     public function setPassword($password)
     {
-        if($this->id){
-            $this->pass_time = date('Y-m-d H:i:s');
-        }else{
+        if($this->scenario=='password'){ // 修改密码
             $this->pass_time = date('Y-m-d H:i:s', strtotime('+1 month'));
+        }else{
+            $this->pass_time = date('Y-m-d H:i:s'); // 后台创建密码
         }
         return ($this->password = Yii::$app->security->generatePasswordHash($password));
     }
