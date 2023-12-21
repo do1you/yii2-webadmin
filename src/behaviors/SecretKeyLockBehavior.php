@@ -41,6 +41,11 @@ class SecretKeyLockBehavior extends AttributeBehavior
     public $secretKey;
     
     /**
+     * 属于数字的字段，避免数字后有.00的问题
+     */
+    public $numberAttribute;
+    
+    /**
      * 分割符
      */
     public $splitCol = '|*|';
@@ -131,9 +136,14 @@ class SecretKeyLockBehavior extends AttributeBehavior
             $owner = $this->owner;
             $attributes = $isOld ? $owner->getOldAttributes() : $owner->getAttributes();
             $secretAttribute = (array) $secretAttribute;
+            $numberAttribute = $this->numberAttribute ? (array) $this->numberAttribute : [];
             foreach($secretAttribute as $attribute){
                 if($owner->hasAttribute($attribute)!==false){
-                    $resp[] = isset($attributes[$attribute]) ? $attributes[$attribute] : ($isOld ? '' : $owner->getOldAttribute($attribute));
+                    $val = isset($attributes[$attribute]) ? $attributes[$attribute] : ($isOld ? '' : $owner->getOldAttribute($attribute));
+                    if($numberAttribute && in_array($attribute, $numberAttribute)){
+                        $val = floatval($val);
+                    }
+                    $resp[] = (string) $val;
                 }
             }
         }
