@@ -242,7 +242,7 @@ class ModelCAR extends \yii\db\ActiveRecord
             $condition[$secretLock] = $this->getOldSecretKey();
             
             if($condition[$secretLock] != $this->getOldAttribute($secretLock)){
-                throw new \yii\web\HttpException(200, Yii::t('common', '数据库被篡改，禁止操作!'));
+                throw new StaleObjectException(Yii::t('common', '数据库被篡改，禁止操作!'));
             }
         }
         
@@ -283,7 +283,7 @@ class ModelCAR extends \yii\db\ActiveRecord
             //var_dump($this->getSecretKey());var_dump($this->getSecretCol());
             //exit;
             if($condition[$secretLock] != $this->getOldAttribute($secretLock)){
-                throw new \yii\web\HttpException(200, Yii::t('common', '数据库被篡改，禁止操作!'));
+                throw new StaleObjectException(Yii::t('common', '数据库被篡改，禁止操作!'));
             }
         }
         
