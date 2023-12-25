@@ -33,7 +33,8 @@ class WebAuthFilter extends \yii\base\Behavior
         
         // 未登录跳转到登录页
         if(Yii::$app->user->isGuest){
-            Yii::$app->user->loginRequired();
+            $event->isValid = false;
+            return Yii::$app->user->loginRequired();
         }
         
         // 开启系统调试模式或者用户调试模式
@@ -63,8 +64,11 @@ class WebAuthFilter extends \yii\base\Behavior
         if(in_array($pathInfo,$auths) || in_array($controller,$auths) || in_array($moduleAct,$auths) || in_array($module,$auths)){
             return true;
         }else{
+            $event->isValid = false;
             throw new \yii\web\HttpException(200,Yii::t('authority','您没有权限访问！'));
         }
+        
+        return $event->isValid;
     }
 }
 

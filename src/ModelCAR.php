@@ -247,7 +247,7 @@ class ModelCAR extends \yii\db\ActiveRecord
         }
         
         $result = static::deleteAll($condition);
-        if (($lock !== null || (isset($secretLock) && $condition[$secretLock] != $secretLock)) && !$result) {
+        if ($lock !== null && !$result) {
             throw new StaleObjectException('The object being deleted is outdated.');
         }
         $this->setOldAttributes(null);
@@ -278,6 +278,7 @@ class ModelCAR extends \yii\db\ActiveRecord
         
         if($this->hasMethod('getLockAttribute') && $this->hasMethod('getSecretKey') && $this->hasMethod('getOldSecretKey')){
             $secretLock = $this->getLockAttribute();
+            $values[$secretLock] = $this->getSecretKey();
             $condition[$secretLock] = $this->getOldSecretKey();
             //var_dump($this->getOldSecretKey());var_dump($this->getSecretCol(true));
             //var_dump($this->getSecretKey());var_dump($this->getSecretCol());

@@ -74,11 +74,11 @@ class SecretKeyLockBehavior extends AttributeBehavior
      */
     public function events()
     {
-        return Yii::$app->request instanceof \yii\web\Request ? [
+        return [
             BaseActiveRecord::EVENT_BEFORE_INSERT => 'evaluateAttributes',
             BaseActiveRecord::EVENT_BEFORE_UPDATE => 'evaluateAttributes',
             BaseActiveRecord::EVENT_BEFORE_DELETE => 'evaluateAttributes',
-        ] : [];
+        ];
     }
     
     /**
@@ -126,6 +126,21 @@ class SecretKeyLockBehavior extends AttributeBehavior
     }
     
     /**
+     * 解锁密钥锁信息
+     */
+    public function getDeSecretKey()
+    {
+        $lock = $this->getLockAttribute();
+        $owner = $this->owner;
+        if($owner->hasAttribute($lock)!==false){
+            return \webadmin\ext\Helpfn::encrypt($owner->getOldAttribute($lock), 'D', $this->secretKey);
+        }else{
+            return false;
+        }
+        
+    }
+    
+    /**
      * 密钥锁的加密字段
      */
     public function getSecretCol($isOld = false)
@@ -141,7 +156,7 @@ class SecretKeyLockBehavior extends AttributeBehavior
                 if($owner->hasAttribute($attribute)!==false){
                     $val = isset($attributes[$attribute]) ? $attributes[$attribute] : ($isOld ? '' : $owner->getOldAttribute($attribute));
                     if($numberAttribute && in_array($attribute, $numberAttribute)){
-                        $val = floatval($val);
+                        $val = round($val*100000)/100000;
                     }
                     $resp[] = (string) $val;
                 }

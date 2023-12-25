@@ -49,12 +49,14 @@ class PassBehaviors extends \yii\base\Behavior
         if(Yii::$app->user->identity && time() >= strtotime(Yii::$app->user->identity->pass_time)){
             Yii::$app->session->setFlash('info', Yii::t('authority', '您的密码已经到期，请您修改密码！'));
             Yii::$app->getResponse()->redirect(\yii\helpers\Url::toRoute('/authority/user/password'));
+            $event->isValid = false;
             Yii::$app->end();
         }
 
         if (isset(Yii::$app->session['RESET_PASSWORD']) && Yii::$app->session['RESET_PASSWORD'] == 1) {
             Yii::$app->session->setFlash('info', Yii::t('authority', '您当前密码设置过于简单，请您修改密码！'));
             Yii::$app->getResponse()->redirect(\yii\helpers\Url::toRoute('/authority/user/password'));
+            $event->isValid = false;
             Yii::$app->end();
         }
 
@@ -68,6 +70,7 @@ class PassBehaviors extends \yii\base\Behavior
                 if (Yii::$app->user->identity->validatePassword($pass)) {
                     Yii::$app->session->setFlash('info', Yii::t('authority', '您的密码设置过于简单，请您修改密码！'));
                     Yii::$app->getResponse()->redirect(\yii\helpers\Url::toRoute('/authority/user/password'));
+                    $event->isValid = false;
                     Yii::$app->end();
                     break;
                 }

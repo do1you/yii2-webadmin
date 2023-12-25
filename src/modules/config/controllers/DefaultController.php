@@ -9,11 +9,6 @@ use Yii;
 class DefaultController extends \webadmin\BController
 {
     /**
-     * 默认的一些方法不受权限控制
-     */
-    public $isAccessToken = false;
-    
-    /**
      * 不做csrf校验
      */
     public $enableCsrfValidation = false;
@@ -34,13 +29,13 @@ class DefaultController extends \webadmin\BController
     {
         $result = [];
         
-        $excelDownCache = \webadmin\modules\config\models\SysQueue::find()->where([
+        $excelDownCache = Yii::$app->user->id ? \webadmin\modules\config\models\SysQueue::find()->where([
             'user_id' => Yii::$app->user->id,
             'state' => ['2', '3'],
             'callback' => 'excel',
         ])
         ->orderBy("id asc")
-        ->all();
+        ->all() : [];
         
         foreach($excelDownCache as $item){
             $params = json_decode($item['params'],true);
@@ -58,7 +53,7 @@ class DefaultController extends \webadmin\BController
                 break;
             }
         }
-        echo json_encode($result);exit;
+        return json_encode($result);
     }
     
     /**
@@ -103,10 +98,9 @@ class DefaultController extends \webadmin\BController
                         time().mt_rand(1000,9999).'.'.$thumb->extension;
                         \yii\helpers\FileHelper::createDirectory(dirname($path));
                 $thumb->saveAs(Yii::getAlias('@webroot').'/'.$path);
-                echo $path;
-                exit;
+                return $path;
             }
         }
-        exit;
+        return '';
     }
 }
